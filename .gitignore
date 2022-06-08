@@ -1,0 +1,12 @@
+# swap files
+.*.sw*
+
+# object files
+objs/
+*.o
+
+# executable
+minishell
+
+# lib
+libft.a
