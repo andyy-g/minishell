@@ -1,0 +1,66 @@
+
+
+
+Syntax error :
+
+- missing quote : echo "hello
+- pipe en fin de cmd_line : echo test |
+- redirection en fin de cmd (fin de cmd_line ou suivi d'un pipe) : echo test > ou echo test > | ls
+- rediretion suivi d'une autre redirection : echo test > << EOF
+- redirection suivi d'une parenthese : echo test > (file), cat << (EOF)
+
+
+
+AST node struct + enum token type :
+
+#include <stdbool.h>
+
+typedef	enum	e_toktype
+{
+	WORD, 
+	PIPE,			// "|"
+	FILE_IN,		// "<"
+	HEREDOC,		// "<<"
+	FILE_OUT,		// ">"
+	FILE_OUT_APP	// ">>"
+	AND,			// "&&"
+	OR,				// "||"
+	LPAR,			// "("
+	RPAR			// ")"
+}	t_toktype;
+
+typedef struct	s_node	
+{
+	char			*name;
+	t_toktype		type;
+	bool			s_quote; // ??
+	bool			d_quote; // ??
+	struct s_node	*parent;
+	struct s_node	*left;
+	struct s_node	*right;
+}	t_node;
+
+
+
+EBNF grammar :
+
+cmd_line	:=	cmd_pipe { ("&&" | "||") cmd_pipe }
+
+cmd_pipe	:=	cmd_redir { "|" cmd_redir }
+
+cmd_redir	:=	cmd
+				| cmd operator cmd
+				| operator cmd
+				
+cmd			:=	word { word }
+				| "(" cmd_line ")"
+
+word		:=	char { char }
+
+operator	:=	">" | "<" | ">>" | "<<"
+
+
+
+Recursive Descent Parser :
+
+
