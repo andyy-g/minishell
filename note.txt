@@ -8,7 +8,8 @@ Syntax error :
 - redirection en fin de cmd (fin de cmd_line ou suivi d'un pipe) : echo test > ou echo test > | ls
 - rediretion suivi d'une autre redirection : echo test > << EOF
 - redirection suivi d'une parenthese : echo test > (file), cat << (EOF)
-
+- parenthese dans le mauvais sens : )echo test) ou (echo test(
+- missing parenthese : (echo test
 
 
 AST node struct + enum token type :
@@ -33,8 +34,7 @@ typedef struct	s_node
 {
 	char			*name;
 	t_toktype		type;
-	bool			s_quote; // ??
-	bool			d_quote; // ??
+	bool			exp; // ??
 	struct s_node	*parent;
 	struct s_node	*left;
 	struct s_node	*right;
@@ -44,20 +44,23 @@ typedef struct	s_node
 
 EBNF grammar :
 
-cmd_line	:=	cmd_pipe { ("&&" | "||") cmd_pipe }
+cmd_line	:=	cmd_pipe ("&&" | "||") cmd_line
+				| cmd_pipe
 
-cmd_pipe	:=	cmd_redir { "|" cmd_redir }
 
-cmd_redir	:=	cmd
-				| cmd operator cmd
-				| operator cmd
+cmd_pipe	:=	cmd_redir "|" cmd_pipe
+				| cmd_redir
+
+cmd_redir	:=	cmd redir file
+				| redir file cmd
+				| cmd
 				
-cmd			:=	word { word }
-				| "(" cmd_line ")"
+cmd			:=	"(" cmd_line ")"
+				| word { word }
 
-word		:=	char { char }
+file		:=	word
 
-operator	:=	">" | "<" | ">>" | "<<"
+redir		:=	">" | "<" | ">>" | "<<"
 
 
 
