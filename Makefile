@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/05/25 14:28:14 by agranger         ###   ########.fr        #
+#    Updated: 2022/06/11 17:14:36 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,11 @@ LIBFT			=	$(LIBFTDIR)/libft.a
 LIBRARY			=	-lreadline -lft -L$(LIBFTDIR)
 
 CFILES			=	main.c \
+					lexer/ft_parsing.c \
+					lexer/ft_token_bis.c \
+					lexer/ft_token.c \
+					parser/ast.c \
+					parser/parser.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -49,7 +54,9 @@ $(LIBFT)		:
 					@make -sC $(LIBFTDIR)
 
 $(OBJDIR)		:
-					@mkdir -p $(OBJDIR)
+					@mkdir -p $(OBJDIR) \
+						$(OBJDIR)/lexer \
+						$(OBJDIR)/parser
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
 					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)

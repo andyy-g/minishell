@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/10 17:49:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/11 18:32:07 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,17 @@
 
 /* FCT AST
 
-   t_node	*ast_create_node(t_token **token);
+   t_node	*ast_create_node(t_pars **token);
    void		ast_add_children(t_node *parent, t_node *left_child, t_node *rigth_child);
    void		ast_delete_nodes(t_node *node);
    void		ast_add_arg_cmd(t_node **first, t_node *new);
 
  */
 
-t_node	*cmd_line(t_token **token)
+t_node	*cmd_line(t_pars **token)
 {
 	t_node	*ret;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
 	ret = cmd_line1(token);
@@ -40,49 +40,49 @@ t_node	*cmd_line(t_token **token)
 	return (NULL);
 }
 
-t_node	*cmd_line1(t_token **token)
+t_node	*cmd_line1(t_pars **token)
 {
-	t_node	*cmd_pipe;
-	t_node	*cmd_line;
+	t_node	*left;
+	t_node	*right;
 	t_node	*logical_op;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
-	cmd_pipe = cmd_pipe(token);
-	if (!cmd_pipe)
+	left = cmd_pipe(token);
+	if (!left)
 	{
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->type != AND && (*token)->type != OR)
+	if ((*token)->token != AND && (*token)->token != OR)
 	{
-		ast_delete_nodes(cmd_pipe);
+		ast_delete_nodes(left);
 		*token = save;
 		return (NULL);
 	}
 	logical_op = ast_create_node(token);
 	*token = (*token)->next;
-	cmd_line = cmd_line(token);
-	if (!cmd_line)
+	right = cmd_line(token);
+	if (!right)
 	{
-		ast_delete_nodes(cmd_pipe);
+		ast_delete_nodes(left);
 		ast_delete_nodes(logical_op);
 		*token = save;
 		return (NULL);
 	}
-	ast_add_children(logical_op, cmd_pipe, cmd_line);
+	ast_add_children(logical_op, left, right);
 	return (logical_op);
 }
 
-t_node	*cmd_line2(t_token **token)
+t_node	*cmd_line2(t_pars **token)
 {
 	return (cmd_pipe(token));
 }
 
-t_node	*cmd_pipe(t_token **token);
+t_node	*cmd_pipe(t_pars **token)
 {
 	t_node	*ret;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
 	ret = cmd_pipe1(token);
@@ -96,49 +96,49 @@ t_node	*cmd_pipe(t_token **token);
 	return (NULL);
 }
 
-t_node	*cmd_pipe1(t_token **token)
+t_node	*cmd_pipe1(t_pars **token)
 {
-	t_node	*cmd_redir;
-	t_node	*cmd_pipe;
+	t_node	*left;
+	t_node	*right;
 	t_node	*pipe;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
-	cmd_redir = cmd_redir(token);
-	if (!cmd_redir)
+	left = cmd_redir(token);
+	if (!left)
 	{
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->type != PIPE)
+	if ((*token)->token != PIPE)
 	{
-		ast_delete_nodes(cmd_redir);
+		ast_delete_nodes(left);
 		*token = save;
 		return (NULL);
 	}
 	pipe = ast_create_node(token);
 	*token = (*token)->next;
-	cmd_pipe = cmd_pipe(token);
-	if (!cmd_pipe)
+	right = cmd_pipe(token);
+	if (!right)
 	{
-		ast_delete_nodes(cmd_redir);
+		ast_delete_nodes(left);
 		ast_delete_nodes(pipe);
 		*token = save;
 		return (NULL);
 	}
-	ast_add_children(pipe, cmd_redir, cmd_pipe);
+	ast_add_children(pipe, left, right);
 	return (pipe);
 }
 
-t_node	*cmd_pipe2(t_token **token)
+t_node	*cmd_pipe2(t_pars **token)
 {
 	return (cmd_redir(token));
 }
 
-t_node	*cmd_redir(t_token **token)
+t_node	*cmd_redir(t_pars **token)
 {
 	t_node	*ret;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
 	ret = cmd_redir1(token);
@@ -156,83 +156,83 @@ t_node	*cmd_redir(t_token **token)
 	return (NULL);
 }
 
-t_node	*cmd_redir1(t_token **token)
+t_node	*cmd_redir1(t_pars **token)
 {
-	t_node	*cmd;
-	t_node	*file;
 	t_node	*redir;
-	t_token	*token;
+	t_node	*right;
+	t_node	*left;
+	t_pars	*save;
 
 	save = *token;
-	cmd = cmd(token);
-	if (!cmd)
+	left = cmd(token);
+	if (!left)
 	{
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->type > 1 && (*token)->type < 6)
+	if ((*token)->token > 1 && (*token)->token < 6)
 	{
-		ast_delete_nodes(cmd);
+		ast_delete_nodes(left);
 		*token = save;
 		return (NULL);
 	}
 	redir = ast_create_node(token);
 	*token = (*token)->next;
-	file = file(token);
-	if (!file)
+	right = file(token);
+	if (!right)
 	{
-		ast_delete_nodes(cmd);
+		ast_delete_nodes(left);
 		ast_delete_nodes(redir);
 		*token = save;
 		return (NULL);
 	}
-	ast_add_children(redir, cmd, file);
+	ast_add_children(redir, left, right);
 	return (redir);
 }
 
-t_node	*cmd_redir2(t_token **token)
+t_node	*cmd_redir2(t_pars **token)
 {
-	t_node	*cmd;
-	t_node	*file;
 	t_node	*redir;
-	t_token	*token;
+	t_node	*right;
+	t_node	*left;
+	t_pars	*save;
 
 	save = *token;
-	if ((*token)->type > 1 && (*token)->type < 6)
+	if ((*token)->token > 1 && (*token)->token < 6)
 	{
 		*token = save;
 		return (NULL);
 	}
 	redir = ast_create_node(token);
 	*token = (*token)->next;
-	file = file(token);
-	if (!file)
+	right = file(token);
+	if (!right)
 	{
 		ast_delete_nodes(redir);
 		*token = save;
 		return (NULL);
 	}
-	cmd = cmd(token);
-	if (!cmd)
+	left = cmd(token);
+	if (!left)
 	{
-		ast_delete_nodes(cmd);
+		ast_delete_nodes(right);
 		ast_delete_nodes(redir);
 		*token = save;
 		return (NULL);
 	}
-	ast_add_children(redir, cmd, file);
+	ast_add_children(redir, left, right);
 	return (redir);
 }
 
-t_node	*cmd_redir3(t_token **token)
+t_node	*cmd_redir3(t_pars **token)
 {
 	return (cmd(token));
 }
 
-t_node	*cmd(t_token **token)
+t_node	*cmd(t_pars **token)
 {
 	t_node	*ret;
-	t_token	*save;
+	t_pars	*save;
 
 	save = *token;
 	ret = cmd1(token);
@@ -246,29 +246,29 @@ t_node	*cmd(t_token **token)
 	return (NULL);
 }
 
-t_node	*cmd1(t_token **token)
+t_node	*cmd1(t_pars **token)
 {
-	t_node	*cmd_line;
-	t_token	*save;
+	t_node	*ret;
+	t_pars	*save;
 
 	save = *token;
-	if ((*token)->type != LPAR)
+	if ((*token)->token != LPAR)
 	{
 		*token = save;
 		return (NULL);
 	}
 	*token = (*token)->next;
-	cmd_line = cmd_line(token);
-	if ((*token)->type != RPAR)
+	ret = cmd_line(token);
+	if ((*token)->token != RPAR)
 	{
-		ast_delete_nodes(cmd_line);
+		ast_delete_nodes(ret);
 		*token = save;
 		return (NULL);
 	}
-	return (cmd_line);
+	return (ret);
 }
 
-t_node	*cmd2(t_token **token)
+t_node	*cmd2(t_pars **token)
 {
 	t_node	*cmd;
 	t_node	*tmp;
@@ -277,7 +277,7 @@ t_node	*cmd2(t_token **token)
 		return (NULL);
 	cmd = ast_create_node(token);
 	*token = (*token)->next;
-	while (*token && (*token)->type == WORD)
+	while (*token && (*token)->token == WORD)
 	{
 		tmp = ast_create_node(token);
 		ast_add_arg_cmd(&cmd, tmp);
@@ -286,7 +286,7 @@ t_node	*cmd2(t_token **token)
 	return (cmd);
 }
 
-t_node	*file(t_token *token)
+t_node	*file(t_pars **token)
 {
 	t_node	*file;
 
@@ -297,9 +297,9 @@ t_node	*file(t_token *token)
 	return (file);
 }
 
-int	parser(t_node **ast, t_token *token)
+int	parser(t_node **ast, t_pars *token)
 {
-	ast = cmd_line(&token);
+	*ast = cmd_line(&token);
 	if (!ast)
 		return (1);
 	return (0);

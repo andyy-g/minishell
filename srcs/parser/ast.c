@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/10 18:27:57 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/11 17:18:09 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,23 @@
    heredoc limitor
  
 */
-bool	must_be_expand(t_token **token)
+bool	must_be_expand(t_pars **token)
 {
-	
+	(void)token;
+	return false;	
 }
 
-t_node	*ast_create_node(t_token **token)
+t_node	*ast_create_node(t_pars **token)
 {
 	t_node	*ret;
 
-	ret = malloc(*ret);
+	ret = malloc(sizeof(*ret));
 	if (!ret)
 		return (NULL);
-	ret->name = ft_strdup((*token)->name);
+	ret->name = ft_strdup((*token)->str);
 	if (!ret->name)
 		return (NULL);
-	ret->type = (*token)->type;
+	ret->type = (*token)->token;
 	ret->exp = must_be_expand(token);
 	ret->parent = NULL;
 	ret->left = NULL;
@@ -54,7 +55,7 @@ t_node	*ast_create_node(t_token **token)
 	return (ret);
 }
 
-void	ast_add_children(t_node *parent, t_node *left_child, t_node *rigth_child);
+void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child)
 {
 	parent->left = left_child;
 	parent->right = right_child;
@@ -62,7 +63,7 @@ void	ast_add_children(t_node *parent, t_node *left_child, t_node *rigth_child);
 	right_child->parent = parent;
 }
 
-void	ast_delete_nodes(t_node *node);
+void	ast_delete_nodes(t_node *node)
 {
 	if (!node)
 		return ;
@@ -76,7 +77,7 @@ void	ast_delete_nodes(t_node *node);
 	free(node);
 }
 
-void	ast_add_arg_cmd(t_node **first, t_node *new);
+void	ast_add_arg_cmd(t_node **first, t_node *new)
 {
 	t_node	*last;
 

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/11 16:31:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/11 18:33:41 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,13 @@ int	ft_parsing(char *str)
 	return (1);
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	char	*tmp;
 
 	(void) argc;
 	(void) **argv;
+	(void)envp;
 	tmp = readline("");
 	if (tmp)
 	{

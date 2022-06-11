@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/11 16:19:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/11 18:30:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,24 @@ int		ft_input(char *str, t_pars **pars);
 int		ft_output(char *str, t_pars **pars);
 int		ft_and(char *str, t_pars **pars);
 int		ft_word(char *str, t_pars **pars);
+t_node	*ast_create_node(t_pars **token);
+void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child);
+void	ast_delete_nodes(t_node *node);
+void	ast_add_arg_cmd(t_node **first, t_node *new);
+t_node	*cmd_line(t_pars **token);
+t_node	*cmd_line1(t_pars **token);
+t_node	*cmd_line2(t_pars **token);
+t_node	*cmd_pipe(t_pars **token);
+t_node	*cmd_pipe1(t_pars **token);
+t_node	*cmd_pipe2(t_pars **token);
+t_node	*cmd_redir(t_pars **token);
+t_node	*cmd_redir1(t_pars **token);
+t_node	*cmd_redir2(t_pars **token);
+t_node	*cmd_redir3(t_pars **token);
+t_node	*cmd(t_pars **token);
+t_node	*cmd1(t_pars **token);
+t_node	*cmd2(t_pars **token);
+t_node	*file(t_pars **token);
+int		parser(t_node **ast, t_pars *token);
 
 #endif
