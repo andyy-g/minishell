@@ -6,30 +6,30 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/11 17:18:09 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/12 19:01:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
- 	typedef struct	s_node
-	{
-		char			*name;
-		t_toktype		type;
-		bool			exp;
-		struct s_node	*parent;
-		struct s_node	*left;
-		struct s_node	*right;
-	}	t_node;
-*/
+   typedef struct	s_node
+   {
+   char			*name;
+   t_toktype		type;
+   bool			exp;
+   struct s_node	*parent;
+   struct s_node	*left;
+   struct s_node	*right;
+   }	t_node;
+   */
 
 /* EXPANSION
-	
+
    sans quotes
    double quotes
    heredoc limitor
- 
+
 */
 bool	must_be_expand(t_pars **token)
 {
@@ -85,4 +85,16 @@ void	ast_add_arg_cmd(t_node **first, t_node *new)
 	while (last->right)
 		last = last->right;
 	last->right = new;
+}
+
+void	print_ast(t_node *ast)
+{
+	t_node	*curr;
+
+	curr = ast;
+	printf("ROOT = %s\n", curr->name);
+	if (curr->left)
+		printf("LEFT = %s\n", curr->left->name);
+	if (curr->right)
+		printf("RIGHT = %s\n", curr->right->name);
 }

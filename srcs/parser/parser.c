@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/11 18:32:07 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/12 19:01:22 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ t_node	*cmd_redir1(t_pars **token)
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->token > 1 && (*token)->token < 6)
+	if ((*token)->token < 1 || (*token)->token > 6)
 	{
 		ast_delete_nodes(left);
 		*token = save;
@@ -198,7 +198,7 @@ t_node	*cmd_redir2(t_pars **token)
 	t_pars	*save;
 
 	save = *token;
-	if ((*token)->token > 1 && (*token)->token < 6)
+	if ((*token)->token < 1 || (*token)->token > 6)
 	{
 		*token = save;
 		return (NULL);

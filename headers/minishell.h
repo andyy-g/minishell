@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/11 18:30:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/12 18:15:23 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,6 @@ t_node	*cmd1(t_pars **token);
 t_node	*cmd2(t_pars **token);
 t_node	*file(t_pars **token);
 int		parser(t_node **ast, t_pars *token);
+void	print_ast(t_node *ast);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/11 18:33:41 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/12 18:43:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ int	ft_parsing(char *str)
 {
 	t_pars		*pars;
 	t_dblist	*list;
+	t_node		*ast;
 
+	ast = NULL;
 	list = (t_dblist *)malloc(sizeof(t_dblist));
 	pars = ft_create_pars(NULL);
 	if ((list) && (pars))
@@ -62,6 +64,8 @@ int	ft_parsing(char *str)
 		list->first = pars;
 		list->last = pars;
 		ft_add_pars(str, &pars, &list);
+		parser(&ast, list->first);
+		print_ast(ast);
 		ft_free(&list);
 		free(list);
 	}
