@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/12 18:15:23 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:05:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int		ft_line(char *str, t_pars **pars);
 int		ft_input(char *str, t_pars **pars);
 int		ft_output(char *str, t_pars **pars);
 int		ft_and(char *str, t_pars **pars);
-int		ft_bracket(char c, t_pars **pars, int **bracket);
+int		ft_bracket(char c, t_pars **pars, int *bracket);
 int		ft_word(char *str, t_pars **pars);
 t_node	*ast_create_node(t_pars **token);
 void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child);

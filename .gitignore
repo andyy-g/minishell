@@ -10,3 +10,6 @@ minishell
 
 # lib
 libft.a
+
+# ctags
+tags

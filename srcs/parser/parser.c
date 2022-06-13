@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/12 19:01:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:53:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_node	*cmd_line1(t_pars **token)
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->token != AND && (*token)->token != OR)
+	if (!(*token) || ((*token)->token != AND && (*token)->token != OR))
 	{
 		ast_delete_nodes(left);
 		*token = save;
@@ -110,7 +110,7 @@ t_node	*cmd_pipe1(t_pars **token)
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->token != PIPE)
+	if (!(*token) || (*token)->token != PIPE)
 	{
 		ast_delete_nodes(left);
 		*token = save;
@@ -170,7 +170,7 @@ t_node	*cmd_redir1(t_pars **token)
 		*token = save;
 		return (NULL);
 	}
-	if ((*token)->token < 1 || (*token)->token > 6)
+	if (!(*token) || ((*token)->token < 2 || (*token)->token > 5))
 	{
 		ast_delete_nodes(left);
 		*token = save;
@@ -198,7 +198,7 @@ t_node	*cmd_redir2(t_pars **token)
 	t_pars	*save;
 
 	save = *token;
-	if ((*token)->token < 1 || (*token)->token > 6)
+	if (!(*token) || ((*token)->token < 2 || (*token)->token > 5))
 	{
 		*token = save;
 		return (NULL);
@@ -252,19 +252,20 @@ t_node	*cmd1(t_pars **token)
 	t_pars	*save;
 
 	save = *token;
-	if ((*token)->token != LPAR)
+	if (!(*token) || (*token)->token != LPAR)
 	{
 		*token = save;
 		return (NULL);
 	}
 	*token = (*token)->next;
 	ret = cmd_line(token);
-	if ((*token)->token != RPAR)
+	if (!(*token) || (*token)->token != RPAR)
 	{
 		ast_delete_nodes(ret);
 		*token = save;
 		return (NULL);
 	}
+	*token = (*token)->next;
 	return (ret);
 }
 

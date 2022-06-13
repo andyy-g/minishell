@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/11 13:29:21 by charoua          ###   ########.fr       */
+/*   Updated: 2022/06/13 10:56:16 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,19 @@ int	ft_and(char *str, t_pars **pars)
 	return (0);
 }
 
-int	ft_bracket(char c, t_pars **pars, int **bracket)
+int	ft_bracket(char c, t_pars **pars, int *bracket)
 {
 	if (c == '(')
 	{
-		(**bracket)++;
+		(*bracket)++;
 		(*pars)->token = LPAR;
 		return (1);
 	}
 	else
 	{
-		if ((**bracket) > 0)
+		if ((*bracket) > 0)
 		{
-			(**bracket)--;
+			(*bracket)--;
 			(*pars)->token = RPAR;
 			return (1);
 		}
