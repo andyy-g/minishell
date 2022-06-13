@@ -67,13 +67,14 @@ typedef struct s_dblist
 	t_pars	*last;
 }	t_dblist;
 
-int		ft_add_pars(char *str, t_pars **pars, t_dblist **list);
+int		ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 t_pars	*ft_create_pars(t_pars *prev);
 int		ft_quote(char *str, char c, t_pars **pars);
 int		ft_line(char *str, t_pars **pars);
 int		ft_input(char *str, t_pars **pars);
 int		ft_output(char *str, t_pars **pars);
 int		ft_and(char *str, t_pars **pars);
+int		ft_bracket(char c, t_pars **pars, int **bracket);
 int		ft_word(char *str, t_pars **pars);
 t_node	*ast_create_node(t_pars **token);
 void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child);

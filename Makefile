@@ -29,7 +29,7 @@ LIBFT			=	$(LIBFTDIR)/libft.a
 LIBRARY			=	-lreadline -lft -L$(LIBFTDIR)
 
 CFILES			=	main.c \
-					lexer/ft_parsing.c \
+					lexer/ft_lexer.c \
 					lexer/ft_token_bis.c \
 					lexer/ft_token.c \
 					parser/ast.c \

@@ -75,3 +75,24 @@ int	ft_and(char *str, t_pars **pars)
 	}
 	return (0);
 }
+
+int	ft_bracket(char c, t_pars **pars, int **bracket)
+{
+	if (c == '(')
+	{
+		(**bracket)++;
+		(*pars)->token = LPAR;
+		return (1);
+	}
+	else
+	{
+		if ((**bracket) > 0)
+		{
+			(**bracket)--;
+			(*pars)->token = RPAR;
+			return (1);
+		}
+		else
+			return (-2);
+	}
+}

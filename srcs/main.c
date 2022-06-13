@@ -50,22 +50,22 @@ t_pars	*ft_create_pars(t_pars *prev)
 	return (pars);
 }
 
-int	ft_parsing(char *str)
+int	ft_lexer(char *str)
 {
+	int	error;
 	t_pars		*pars;
 	t_dblist	*list;
-	t_node		*ast;
-
-	ast = NULL;
+	error = 0;
 	list = (t_dblist *)malloc(sizeof(t_dblist));
 	pars = ft_create_pars(NULL);
 	if ((list) && (pars))
 	{
 		list->first = pars;
 		list->last = pars;
-		ft_add_pars(str, &pars, &list);
-		parser(&ast, list->first);
-		print_ast(ast);
+		error = ft_add_lex(str, &pars, &list);
+		if (error != 1)
+			printf("Error : %d\n", error);
+//		ft_error(i);
 		ft_free(&list);
 		free(list);
 	}
@@ -73,6 +73,7 @@ int	ft_parsing(char *str)
 		return (0);
 	return (1);
 }
+
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -84,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 	tmp = readline("");
 	if (tmp)
 	{
-		ft_parsing(tmp);
+		ft_lexer(tmp);
 		free(tmp);
 	}
 	return (0);

@@ -54,7 +54,7 @@ int	ft_create_str(char *str, int size, t_pars **pars, t_dblist **list)
 	return (1);
 }
 
-int	ft_token_size(char *str, char c, t_pars **pars)
+int	ft_token_size(char *str, char c, t_pars **pars, int *bracket)
 {
 	int	i;
 
@@ -69,23 +69,27 @@ int	ft_token_size(char *str, char c, t_pars **pars)
 		i = ft_output(str, &(*pars));
 	else if (c == '&')
 		i = ft_and(str, &(*pars));
+	else if (c == '(' || c == ')')
+		i = ft_bracket(c, &(*pars), &bracket);
 	if (c != '\n' && c != ' ' && c != '\t' && i == 0)
 		i = ft_word(str, &(*pars));
 	return (i);
 }
 
-int	ft_add_pars(char *str, t_pars **pars, t_dblist **list)
+int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 {
 	int	i;
 	int	j;
+	int	bracket;
 
 	i = 0;
+	bracket = 0;
 	while (str[i] != '\0')
 	{
 		j = 0;
-		j = ft_token_size(str + i, str[i], &(*pars));
-		if (j == -1)
-			return (0);
+		j = ft_token_size(str + i, str[i], &(*pars), &bracket);
+		if (j < 0)
+			return (j);
 		else if (j > 0)
 		{
 			ft_create_str(str + i, j, &(*pars), &(*list));
@@ -94,6 +98,10 @@ int	ft_add_pars(char *str, t_pars **pars, t_dblist **list)
 		else
 			i++;
 	}
+	if (((*list)->last)->token == PIPE)
+		return (-3);
+	if (bracket != 0)
+		return (-4);
 	ft_print_dblist(*list);
 	return (1);
 }
