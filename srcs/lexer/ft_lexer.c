@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 11:04:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 18:04:54 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	bracket = 0;
 	while (str[i] != '\0')
 	{
-		j = 0;
 		j = ft_token_size(str + i, str[i], pars, &bracket);
 		if (j < 0)
 			return (j);
@@ -102,6 +101,27 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 		return (-3);
 	if (bracket != 0)
 		return (-4);
-	ft_print_dblist(*list);
 	return (1);
+}
+
+int	ft_lexer(char *str, t_dblist **list)
+{
+	int		error;
+	t_pars	*pars;
+
+	error = 0;
+	*list = (t_dblist *)malloc(sizeof(t_dblist));
+	pars = ft_create_pars(NULL);
+	if ((list) && (pars))
+	{
+		(*list)->first = pars;
+		(*list)->last = pars;
+		error = ft_add_lex(str, &pars, list);
+		ft_print_dblist(list);
+		if (error != 1)
+			printf("Error : %d\n", error);
+//		ft_error(i);
+		return (1);
+	}
+	return (0);
 }

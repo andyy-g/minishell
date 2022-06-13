@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 14:09:05 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 17:57:59 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ typedef	struct	s_minishell
 	int			ret;
 }	t_sh;
 
+int	ft_lexer(char *str, t_dblist **list);
+t_pars	*ft_create_pars(t_pars *prev);
 int		ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 t_pars	*ft_create_pars(t_pars *prev);
 int		ft_quote(char *str, char c, t_pars **pars);
