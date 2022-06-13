@@ -6,13 +6,13 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/06/11 17:14:36 by agranger         ###   ########.fr        #
+#    Updated: 2022/06/13 14:13:01 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			=	minishell
 
-CFLAGS			=	-Wall -Wextra -Werror -g3
+CFLAGS			=	-Wall -Wextra -Werror -g3 -fsanitize=address
 
 CC				=	gcc
 
@@ -33,7 +33,9 @@ CFILES			=	main.c \
 					lexer/ft_token_bis.c \
 					lexer/ft_token.c \
 					parser/ast.c \
-					parser/parser.c
+					parser/parser.c \
+					exit/exit.c \
+					signals/eof.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -56,7 +58,9 @@ $(LIBFT)		:
 $(OBJDIR)		:
 					@mkdir -p $(OBJDIR) \
 						$(OBJDIR)/lexer \
-						$(OBJDIR)/parser
+						$(OBJDIR)/parser \
+						$(OBJDIR)/exit \
+						$(OBJDIR)/signals
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
 					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)

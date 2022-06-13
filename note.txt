@@ -5,9 +5,9 @@ Syntax error :
 
 - missing quote : echo "hello
 - pipe en fin de cmd_line : echo test |
-- redirection en fin de cmd (fin de cmd_line ou suivi d'un pipe) : echo test > ou echo test > | ls
-- rediretion suivi d'une autre redirection : echo test > << EOF
+- token autre qu'un word après une redir : echo test >, echo test > | ls, echo test > << EOF
 - redirection suivi d'une parenthese : echo test > (file), cat << (EOF)
+--> ??
 - parenthese dans le mauvais sens : )echo test) ou (echo test(
 - missing parenthese : (echo test
 

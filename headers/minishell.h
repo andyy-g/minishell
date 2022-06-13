@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 11:05:43 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 14:09:05 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,13 @@ typedef struct s_dblist
 	t_pars	*last;
 }	t_dblist;
 
+typedef	struct	s_minishell
+{
+	t_dblist	*tokens;
+	t_node		*ast;
+	int			ret;
+}	t_sh;
+
 int		ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 t_pars	*ft_create_pars(t_pars *prev);
 int		ft_quote(char *str, char c, t_pars **pars);
@@ -96,5 +103,8 @@ t_node	*cmd2(t_pars **token);
 t_node	*file(t_pars **token);
 int		parser(t_node **ast, t_pars *token);
 void	print_ast(t_node *ast);
+void	is_eof(char *input, t_sh *minishell);
+void	exit_minishell(t_sh *minishell);
+void	ft_free(t_dblist **list);
 
 #endif

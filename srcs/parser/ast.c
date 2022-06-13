@@ -6,23 +6,11 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/13 12:06:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/13 14:17:06 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*
-   typedef struct	s_node
-   {
-   char			*name;
-   t_toktype		type;
-   bool			exp;
-   struct s_node	*parent;
-   struct s_node	*left;
-   struct s_node	*right;
-   }	t_node;
-   */
 
 /* EXPANSION
 
@@ -75,6 +63,7 @@ void	ast_delete_nodes(t_node *node)
 	ast_delete_nodes(node->left);
 	ast_delete_nodes(node->right);
 	free(node);
+	node = NULL;
 }
 
 void	ast_add_arg_cmd(t_node **first, t_node *new)
