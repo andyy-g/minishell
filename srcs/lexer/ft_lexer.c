@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 18:04:54 by charoua          ###   ########.fr       */
+/*   Updated: 2022/06/13 18:44:02 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	ft_lexer(char *str, t_dblist **list)
 		(*list)->first = pars;
 		(*list)->last = pars;
 		error = ft_add_lex(str, &pars, list);
-		ft_print_dblist(list);
+		ft_print_dblist(*list);
 		if (error != 1)
 			printf("Error : %d\n", error);
 //		ft_error(i);
