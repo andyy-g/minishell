@@ -6,7 +6,7 @@
 #    By: agranger <agranger@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/29 09:54:25 by agranger          #+#    #+#              #
-#    Updated: 2022/06/11 16:02:18 by agranger         ###   ########.fr        #
+#    Updated: 2022/06/23 15:39:19 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,9 @@ CFLAGS = -Wall -Wextra -Werror -g
 CC = gcc
 
 SRCS = ft_strlen.c \
-	   ft_strdup.c
+	   ft_strdup.c \
+	   ft_strndup.c \
+	   ft_free.c
 
 OBJS = $(SRCS:.c=.o)
 

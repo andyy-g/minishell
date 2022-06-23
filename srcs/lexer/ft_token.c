@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 10:56:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/22 08:55:03 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,6 @@ int	ft_bracket(char c, t_pars **pars, int *bracket)
 			return (1);
 		}
 		else
-			return (-2);
+			return (-3);
 	}
 }

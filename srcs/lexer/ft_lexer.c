@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 11:04:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/23 17:08:33 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	ft_create_str(char *str, int size, t_pars **pars, t_dblist **list)
 		((*pars)->str)[i] = '\0';
 		(*list)->last = (*pars);
 		(*pars)->next = ft_create_pars(*pars);
+		if (!(*pars)->next)
+			return (0);
 		(*pars) = (*pars)->next;
 		(*pars)->next = NULL;
 	}
@@ -86,22 +88,44 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	bracket = 0;
 	while (str[i] != '\0')
 	{
-		j = 0;
 		j = ft_token_size(str + i, str[i], pars, &bracket);
 		if (j < 0)
 			return (j);
 		else if (j > 0)
 		{
-			ft_create_str(str + i, j, pars, &(*list));
+			if (!ft_create_str(str + i, j, pars, &(*list)))
+				return (0);
 			i = i + j;
 		}
 		else
 			i++;
 	}
-	if (((*list)->last)->token == PIPE)
-		return (-3);
-	if (bracket != 0)
-		return (-4);
-	ft_print_dblist(*list);
+	ft_check_word(&(*list));
+	return (ft_syntax_error(*list, bracket));
+}
+
+int	ft_lexer(char *str, t_dblist **list, int *err)
+{
+	int		error;
+	t_pars	*pars;
+
+	error = 0;
+	*list = create_list();
+	if (!*list)
+		return (0);
+	pars = ft_create_pars(NULL);
+	if (!pars)
+		return (0);
+	(*list)->first = pars;
+	(*list)->last = pars;
+	error = ft_add_lex(str, &pars, list);
+	//ft_print_dblist(*list);
+	if (!error)
+		return (0);
+	if (error != 1)
+	{
+		ft_error(error, list);
+		*err = 1;
+	}
 	return (1);
 }

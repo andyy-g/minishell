@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/17 16:10:11 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/17 16:11:24 by agranger         ###   ########.fr       */
+/*   Created: 2022/06/17 16:11:50 by agranger          #+#    #+#             */
+/*   Updated: 2022/06/17 16:28:24 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s1)
+char	*ft_strndup(const char *s1, size_t n)
 {
 	char	*s2;
-	size_t	i;
+	int		i;
 
-	if (!s1)
+	if (!s1 || !n)
 		return (NULL);
-	s2 = malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	s2 = malloc(sizeof(char) * (n + 1));
 	if (!s2)
 		return (NULL);
 	i = 0;
-	while (s1[i])
+	while (s1[i] && i < (int)n)
 	{
 		s2[i] = s1[i];
 		i++;

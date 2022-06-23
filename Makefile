@@ -6,13 +6,13 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/06/13 14:13:01 by agranger         ###   ########.fr        #
+#    Updated: 2022/06/23 15:21:08 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			=	minishell
 
-CFLAGS			=	-Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS			=	-Wall -Wextra -Werror -g3 #-fsanitize=address
 
 CC				=	gcc
 
@@ -30,12 +30,16 @@ LIBRARY			=	-lreadline -lft -L$(LIBFTDIR)
 
 CFILES			=	main.c \
 					lexer/ft_lexer.c \
+					lexer/ft_manage_struct.c \
 					lexer/ft_token_bis.c \
 					lexer/ft_token.c \
-					parser/ast.c \
+					error/ft_syntax_error.c \
+					parser/node.c \
 					parser/parser.c \
+					parser/cmd.c \
 					exit/exit.c \
-					signals/eof.c
+					signals/eof.c \
+					env/singleton_env.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -60,7 +64,9 @@ $(OBJDIR)		:
 						$(OBJDIR)/lexer \
 						$(OBJDIR)/parser \
 						$(OBJDIR)/exit \
-						$(OBJDIR)/signals
+						$(OBJDIR)/signals \
+						$(OBJDIR)/env \
+						$(OBJDIR)/error
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
 					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)
@@ -76,5 +82,8 @@ fclean			:	clean
 					@echo "$(NAME) and libft.a removed"
 
 re				:	fclean all
+
+malloc_test		:	$(LIBFT) $(OBJDIR) $(OBJS) $(HFILES)
+					$(CC) $(CFLAGS) -fsanitize=undefined -rdynamic -o $@ $(OBJS) $(LIBRARY) -ldl -L. -lmallocator
 
 .PHONY			:	clean fclean re all

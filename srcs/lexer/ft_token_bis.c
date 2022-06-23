@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/13 11:17:04 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:17:21 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ int	ft_quote(char *str, char c, t_pars **pars)
 		return (j + 1);
 	}
 	else
-		return (-1);
+	{
+		if (c == 39)
+			return (-1);
+		else
+			return (-2);
+	}
 }
 
 int	ft_word(char *str, t_pars **pars)
@@ -40,12 +45,32 @@ int	ft_word(char *str, t_pars **pars)
 	while (str[i] != '\0')
 	{
 		if (str[i] == '|' || str[i] == '<' || str[i] == '>' \
-			|| (str[i] == '&' && str[i + 1] && str[i + 1] == '&') \
-			|| str[i] == ' ' || str[i] == '\n' || str[i] == '\t' \
-			|| str[i] == '(' || str[i] == ')')
+				|| (str[i] == '&' && str[i + 1] && str[i + 1] == '&') \
+				|| str[i] == ' ' || str[i] == '\n' || str[i] == '\t' \
+				|| str[i] == '(' || str[i] == ')')
 			break ;
 		i++;
 	}
 	(*pars)->token = WORD;
 	return (i);
+}
+
+void	ft_check_word(t_dblist **list)
+{
+	t_pars	*pars;
+	int		token;
+
+	pars = (*list)->first;
+	while (pars)
+	{
+		if (pars->prev && pars->token == WORD)
+		{
+			token = (pars->prev)->token;
+			if (token == FILE_IN || token == FILE_OUT || token == FILE_OUT_APP)
+				pars->token = FD;
+			else if (token == HEREDOC)
+				pars->token = LIMITOR;
+		}
+		pars = pars->next;
+	}
 }
