@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/23 17:57:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:09:11 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 	node = NULL;
 	while (*token && (*token)->str)
 	{
+		if ((*token)->str && (*token)->token == NONE)
+		{
+			while ((*token)->str && (*token)->token == NONE)
+				*token = (*token)->next;
+			continue ;
+		}
 		if ((*token)->token == PIPE || (*token)->token == OR
 				||(*token)->token == AND)
 		{
@@ -66,7 +72,15 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 				*status = 0;
 				return (NULL);
 			}
-			link_to_tree(&root, node, true);
+			if (!node)
+			{
+				printf("bash: syntax error\n");
+				return (NULL);
+			}
+			if (node->left)
+				link_to_tree(&root, node, true);
+			else
+				link_to_tree(&root, node, false);
 		}
 		else if ((*token)->token == LPAR)
 			*token = (*token)->next;
@@ -77,7 +91,7 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 	return (root);
 }
 
-int	parser(t_node **ast, t_pars *token)
+int	parser(t_node **ast, t_pars *token, int *error)
 {
 	int	status;
 
@@ -85,5 +99,7 @@ int	parser(t_node **ast, t_pars *token)
 	*ast = create_ast(&token, false, &status);
 	if (!status)
 		return (0);
+	if (!*ast)
+		*error = 1;
 	return (1);
 }

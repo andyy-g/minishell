@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/23 19:37:09 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:06:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ typedef	enum	e_toktype
 	AND,
 	OR,
 	LPAR,
-	RPAR
+	RPAR,
+	NONE
 }	t_toktype;
 
 typedef struct s_pars
@@ -101,11 +102,12 @@ void	ast_add_arg_cmd(t_node **first, t_node *new);
 t_node	*cmd_redir1(t_pars **token, int *status);
 t_node	*cmd_redir2(t_pars **token, int *status);
 t_node	*cmd_redir3(t_pars **token, int *status);
+t_node	*cmd_redir4(t_pars **token, int *status);
 t_node	*cmd(t_pars **token, int *status);
 t_node	*cmd1(t_pars **token, int *status);
 t_node	*cmd2(t_pars **token, int *status);
 t_node	*file(t_pars **token, int *status);
-int		parser(t_node **ast, t_pars *token);
+int		parser(t_node **ast, t_pars *token, int *error);
 void	print_ast(t_node *ast);
 void	is_eof(char *input);
 void	exit_minishell(void);
@@ -114,5 +116,6 @@ t_env	*singleton_env(int i, int *status, char **envp);
 t_node	*create_cmd(t_pars **first, int *status);
 t_node	*create_ast(t_pars **first, bool expr_bracket, int *status);
 t_dblist	*create_list(void);
+bool	is_redir_token(t_pars *token);
 
 #endif
