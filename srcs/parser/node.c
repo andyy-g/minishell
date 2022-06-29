@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/24 16:10:59 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/29 17:38:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ bool	is_redir_token(t_pars *token)
 {
 	int	type;
 
+	if (!token || !token->str)
+		return (false);
 	type = token->token;
 	if (type == WORD)
 		return (false);

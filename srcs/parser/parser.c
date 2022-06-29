@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/24 16:09:11 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/29 19:05:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,20 @@ void	link_to_tree(t_node **root, t_node *node, bool is_cmd)
 		}
 	}
 }
+/*
+void	swap_redirs(t_token *start_redir)
 
+void	put_redirs_in_order(t_pars *token)
+{
+	t_token	*end;
+
+	end = token;
+	while (end->next->str && (end->next->token == WORD || is_redir_token(end->next)))
+		end = end->next;
+	
+	swap_redirs(redir, fd, &end);	
+}
+*/
 t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 {
 	t_node	*node;
@@ -96,6 +109,7 @@ int	parser(t_node **ast, t_pars *token, int *error)
 	int	status;
 
 	status = 1;
+	//put_redirs_in_order(token);
 	*ast = create_ast(&token, false, &status);
 	if (!status)
 		return (0);
