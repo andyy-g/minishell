@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 17:21:37 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/24 15:56:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/24 18:12:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	add_word_to_cmd(t_pars *token, t_node *node, int *status)
 	int	i;
 
 	i = 0;
+	if (node->type != WORD)
+		return ;
 	while (node->cmd[i])
 		i++;
 	while (token->str && is_redir_token(token))

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/29 19:05:39 by agranger         ###   ########.fr       */
+/*   Updated: 2022/06/30 17:36:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,20 +33,48 @@ void	link_to_tree(t_node **root, t_node *node, bool is_cmd)
 		}
 	}
 }
-/*
-void	swap_redirs(t_token *start_redir)
+
+void	swap_redirs(t_pars *redir, t_pars *fd, t_pars **last)
+{
+	t_pars	*prev;
+	t_pars	*next;
+	t_pars	*end;
+
+	prev = redir->prev;
+	next = fd->next;
+	prev->next = next;
+	next->prev = prev;
+	end = (*last)->next;
+	(*last)->next = redir;
+	redir->prev = *last;
+	fd->next = end;
+	if (end->str)
+		end->prev = fd;
+	*last = fd;
+}
 
 void	put_redirs_in_order(t_pars *token)
 {
-	t_token	*end;
+	t_pars	*last;
+	t_pars	*tmp;
 
-	end = token;
-	while (end->next->str && (end->next->token == WORD || is_redir_token(end->next)))
-		end = end->next;
-	
-	swap_redirs(redir, fd, &end);	
+	last = token;
+	while (last->next->str && (last->next->token == WORD || is_redir_token(last->next)))
+		last = last->next;
+	while (token->str && (token->token == WORD || is_redir_token(token)))
+	{
+		if (token->token > 3 && token->token < 8)
+		{
+			tmp = token->next->next;
+			if (token->next != last)
+				swap_redirs(token, token->next, &last);
+			token = tmp;
+		}
+		else
+			token = token->next;
+	}
 }
-*/
+
 t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 {
 	t_node	*node;
@@ -90,10 +118,10 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 				printf("bash: syntax error\n");
 				return (NULL);
 			}
-			if (node->left)
-				link_to_tree(&root, node, true);
-			else
+			if (node->type >= 4 && node->type <= 7 && !node->left)
 				link_to_tree(&root, node, false);
+			else
+				link_to_tree(&root, node, true);
 		}
 		else if ((*token)->token == LPAR)
 			*token = (*token)->next;
@@ -104,12 +132,27 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 	return (root);
 }
 
+void	print_tokens(t_pars *print)
+{
+	int i;
+
+	i = 1;
+	while (print->next)
+	{
+		printf("Mot %d = -%s- et token = %d\n", i, print->str, print->token);
+		print = print->next;
+		i++;
+	}
+	printf("\n");
+}
+
 int	parser(t_node **ast, t_pars *token, int *error)
 {
 	int	status;
 
 	status = 1;
 	//put_redirs_in_order(token);
+	//print_tokens(token);
 	*ast = create_ast(&token, false, &status);
 	if (!status)
 		return (0);
