@@ -6,7 +6,7 @@
 #    By: agranger <agranger@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/29 09:54:25 by agranger          #+#    #+#              #
-#    Updated: 2022/06/23 15:39:19 by agranger         ###   ########.fr        #
+#    Updated: 2022/06/30 16:50:27 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ CC = gcc
 SRCS = ft_strlen.c \
 	   ft_strdup.c \
 	   ft_strndup.c \
-	   ft_free.c
+	   ft_free.c \
+	   ft_strcmp.c
 
 OBJS = $(SRCS:.c=.o)
 
