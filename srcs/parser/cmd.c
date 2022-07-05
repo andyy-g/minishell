@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 17:21:37 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/24 18:12:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/05 14:58:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@ t_node	*create_cmd(t_pars **token, int *status)
 		return (ret);
 	*token = save;
 	ret = cmd_redir3(token, status);
-	if (ret || !*status)
-		return (ret);
-	*token = save;
-	ret = cmd_redir4(token, status);
 	if (ret || !*status)
 		return (ret);
 	*token = save;
@@ -121,48 +117,6 @@ t_node	*cmd_redir2(t_pars **token, int *status)
 {
 	t_node	*redir;
 	t_node	*right;
-	t_node	*left;
-	t_pars	*save;
-
-	save = *token;
-	if (!(*token) || !(*token)->str
-			|| ((*token)->token < 4 || (*token)->token > 7))
-	{
-		*token = save;
-		return (NULL);
-	}
-	redir = ast_create_node((*token)->token, NULL);
-	if (!redir)
-	{
-		*token = save;
-		*status = 0;
-		return (NULL);
-	}
-
-	*token = (*token)->next;
-	right = file(token, status);
-	if (!right || !*status)
-	{
-		ast_delete_nodes(redir);
-		*token = save;
-		return (NULL);
-	}
-	left = cmd(token, status);
-	if (!left)
-	{
-		ast_delete_nodes(right);
-		ast_delete_nodes(redir);
-		*token = save;
-		return (NULL);
-	}
-	ast_add_children(redir, left, right);
-	return (redir);
-}
-
-t_node	*cmd_redir3(t_pars **token, int *status)
-{
-	t_node	*redir;
-	t_node	*right;
 	t_pars	*save;
 
 	save = *token;
@@ -193,7 +147,7 @@ t_node	*cmd_redir3(t_pars **token, int *status)
 
 }
 
-t_node	*cmd_redir4(t_pars **token, int *status)
+t_node	*cmd_redir3(t_pars **token, int *status)
 {
 	return (cmd(token, status));
 }

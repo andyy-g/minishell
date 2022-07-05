@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/30 17:36:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/05 15:24:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,16 @@ void	link_to_tree(t_node **root, t_node *node, bool is_cmd)
 	else
 	{
 		if (is_cmd)
+		{
 			(*root)->right = node;
+			node->parent = *root;
+		}
 		else
 		{
 			tmp = *root;
 			*root = node;
 			(*root)->left = tmp;
+			tmp->parent = *root;
 		}
 	}
 }
@@ -42,7 +46,8 @@ void	swap_redirs(t_pars *redir, t_pars *fd, t_pars **last)
 
 	prev = redir->prev;
 	next = fd->next;
-	prev->next = next;
+	if (prev)
+		prev->next = next;
 	next->prev = prev;
 	end = (*last)->next;
 	(*last)->next = redir;
@@ -53,26 +58,39 @@ void	swap_redirs(t_pars *redir, t_pars *fd, t_pars **last)
 	*last = fd;
 }
 
-void	put_redirs_in_order(t_pars *token)
+t_pars	*put_redirs_in_order(t_pars *token)
 {
 	t_pars	*last;
 	t_pars	*tmp;
+	t_pars	*first;
+	bool	is_first;
 
 	last = token;
+	first = NULL;
+	is_first = true;
 	while (last->next->str && (last->next->token == WORD || is_redir_token(last->next)))
 		last = last->next;
-	while (token->str && (token->token == WORD || is_redir_token(token)))
+	while (token->str && (token->token == WORD || is_redir_token(token))
+		&& token != first)
 	{
 		if (token->token > 3 && token->token < 8)
 		{
 			tmp = token->next->next;
 			if (token->next != last)
+			{
+				if (is_first)
+					first = token;
 				swap_redirs(token, token->next, &last);
+				is_first = false;
+			}
 			token = tmp;
 		}
 		else
 			token = token->next;
 	}
+	while (token->prev)
+		token = token->prev;
+	return (token);
 }
 
 t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
@@ -151,7 +169,7 @@ int	parser(t_node **ast, t_pars *token, int *error)
 	int	status;
 
 	status = 1;
-	//put_redirs_in_order(token);
+	token= put_redirs_in_order(token);
 	//print_tokens(token);
 	*ast = create_ast(&token, false, &status);
 	if (!status)
