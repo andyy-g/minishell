@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 17:21:37 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/05 14:58:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:00:41 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ t_node	*cmd_redir1(t_pars **token, int *status)
 		*token = save;
 		return (NULL);
 	}
-	redir = ast_create_node((*token)->token, NULL);
+	redir = ast_create_node((*token)->token, token);
 	if (!redir)
 	{
 		ast_delete_nodes(left);
@@ -91,7 +91,6 @@ t_node	*cmd_redir1(t_pars **token, int *status)
 		*status = 0;
 		return (NULL);
 	}
-	*token = (*token)->next;
 	right = file(token, status);
 	if (!right || !*status)
 	{
@@ -126,15 +125,13 @@ t_node	*cmd_redir2(t_pars **token, int *status)
 		*token = save;
 		return (NULL);
 	}
-	redir = ast_create_node((*token)->token, NULL);
+	redir = ast_create_node((*token)->token, token);
 	if (!redir)
 	{
 		*token = save;
 		*status = 0;
 		return (NULL);
 	}
-
-	*token = (*token)->next;
 	right = file(token, status);
 	if (!right || !*status)
 	{

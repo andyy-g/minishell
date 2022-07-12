@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/06/24 17:31:48 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/12 00:15:13 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -85,5 +85,8 @@ re				:	fclean all
 
 malloc_test		:	$(LIBFT) $(OBJDIR) $(OBJS) $(HFILES)
 					$(CC) $(CFLAGS) -fsanitize=undefined -rdynamic -o $@ $(OBJS) $(LIBRARY) -ldl -L. -lmallocator
+
+vizast			:	$(LIBFT) $(OBJDIR) $(OBJS) $(HFILES)
+					@$(CC) $(CFLAGS) -I./$(HEADERDIR) $(OBJS) $(LIBRARY) -L. -lvizast -o $@
 
 .PHONY			:	clean fclean re all

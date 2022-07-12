@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/05 15:20:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/12 00:35:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,5 +117,6 @@ t_node	*create_cmd(t_pars **first, int *status);
 t_node	*create_ast(t_pars **first, bool expr_bracket, int *status);
 t_dblist	*create_list(void);
 bool	is_redir_token(t_pars *token);
+void	vizAST(t_node *ast);
 
 #endif

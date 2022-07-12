@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/30 16:06:14 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/12 15:37:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	get_size_cmd(t_pars *cmd, t_toktype type)
 {
 	int		i;
 
-	if (type == FD || type == LIMITOR)
+	if (type != WORD)
 		return (1);
 	i = 0;
 	while (cmd->str && cmd->token == WORD)

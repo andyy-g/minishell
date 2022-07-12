@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/05 15:24:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/12 15:59:53 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,13 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 		if ((*token)->token == PIPE || (*token)->token == OR
 				||(*token)->token == AND)
 		{
-			node = ast_create_node((*token)->token, NULL);
+			node = ast_create_node((*token)->token, token);
 			if (!node)
 			{
 				ast_delete_nodes(root);
 				*status = 0;
 				return (NULL);
 			}
-			*token = (*token)->next;
 			link_to_tree(&root, node, false);
 		}
 		else if (((*token)->token != LPAR && (*token)->token != RPAR)
@@ -169,7 +168,7 @@ int	parser(t_node **ast, t_pars *token, int *error)
 	int	status;
 
 	status = 1;
-	token= put_redirs_in_order(token);
+	token = put_redirs_in_order(token);
 	//print_tokens(token);
 	*ast = create_ast(&token, false, &status);
 	if (!status)
