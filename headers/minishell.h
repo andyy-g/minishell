@@ -6,12 +6,12 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/13 18:14:37 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/13 23:28:32 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef __MINISHELL_H__
+# define __MINISHELL_H__
 
 # include <stdio.h>
 # include <readline/readline.h>
@@ -33,7 +33,7 @@ extern int		g_exit_status;
 
 typedef	enum	e_toktype
 {
-	WORD,
+	WORD = 0,
 	FD,
 	LIMITOR,
 	PIPE,
@@ -47,6 +47,13 @@ typedef	enum	e_toktype
 	RPAR,
 	NONE
 }	t_toktype;
+
+typedef	enum	e_redir
+{
+	CMD = 0,
+	REDIR,
+	OUT
+}	t_redir;
 
 typedef struct s_pars
 {
@@ -99,7 +106,7 @@ int		ft_syntax_error(t_dblist *list, int bracket);
 void		ft_error(int err, t_dblist **list);
 void		ft_error_redir(t_dblist **list);
 t_node	*ast_create_node(t_toktype type, t_pars **cmd);
-void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child);
+t_node	*ast_add_children(t_node *parent, t_node *left_child, t_node *right_child);
 void	ast_delete_nodes(t_node *node);
 void	ast_add_arg_cmd(t_node **first, t_node *new);
 t_node	*cmd_redir1(t_pars **token, int *status);
@@ -120,6 +127,7 @@ t_node	*create_cmd(t_pars **first, int *status);
 t_node	*create_ast(t_pars **first, bool expr_bracket, int *status);
 t_dblist	*create_list(void);
 bool	is_redir_token(t_pars *token);
+bool	is_chevron(t_pars *token);
 void	vizAST(t_node *ast);
 
 #endif

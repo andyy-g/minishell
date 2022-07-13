@@ -6,27 +6,11 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/12 15:37:01 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/13 23:04:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	is_redir_token(t_pars *token)
-{
-	int	type;
-
-	if (!token || !token->str)
-		return (false);
-	type = token->token;
-	if (type == WORD)
-		return (false);
-	if (type == PIPE)
-		return (false);
-	if (type > 7)
-		return (false);
-	return (true);
-}
 
 int	get_size_cmd(t_pars *cmd, t_toktype type)
 {
@@ -127,47 +111,12 @@ void	ast_delete_nodes(t_node *node)
 	node = NULL;
 }
 
-void	ast_add_children(t_node *parent, t_node *left_child, t_node *right_child)
+t_node	*ast_add_children(t_node *parent, t_node *left_child, t_node *right_child)
 {
 	parent->left = left_child;
 	parent->right = right_child;
 	if (left_child)
 		left_child->parent = parent;
 	right_child->parent = parent;
-}
-
-void	print_ast(t_node *ast)
-{
-	t_node	*curr;
-	int		i;
-	char	*node_type[12] = { "WORD", "FD", "LIMITOR", "PIPE", "FILE_IN", "HEREDOC", "FILE_OUT", "FILE_OUT_APP", "AND", "OR", "LPAR", "RPAR" };
-
-	curr = ast;
-	i = 0;
-	printf("ROOT = %s\n", node_type[curr->type]);
-	while (curr->cmd && curr->cmd[i])
-	{
-		printf("	%s\n", curr->cmd[i]);
-		i++;
-	}
-	if (curr->left)
-	{
-		i = 0;
-		printf("LEFT = %s\n", node_type[curr->left->type]);
-		while (curr->left->cmd && curr->left->cmd[i])
-		{
-			printf("	%s\n", curr->left->cmd[i]);
-			i++;
-		}
-	}
-	if (curr->right)
-	{
-		i = 0;
-		printf("RIGHT = %s\n", node_type[curr->right->type]);
-		while (curr->right->cmd && curr->right->cmd[i])
-		{
-			printf("	%s\n", curr->right->cmd[i]);
-			i++;
-		}
-	}
+	return (parent);
 }

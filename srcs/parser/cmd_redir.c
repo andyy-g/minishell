@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:40:08 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/13 18:17:45 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/13 23:02:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,37 +42,31 @@ void	*clean_before_backtrack(t_node *redir, t_node *right, t_node *left)
 
 t_node	*cmd_redir1(t_pars **token, int *status)
 {
-	t_node	*redir;
-	t_node	*right;
-	t_node	*left;
+	t_node	*nodes[3];
 	t_pars	*save;
 
 	save = *token;
-	left = cmd(token, status);
+	nodes[CMD] = cmd(token, status);
 	if (!*status)
 		return (NULL);
-	if (!(*token) || !(*token)->str
-		|| ((*token)->token < 4 || (*token)->token > 7))
+	if (!(*token) || !(*token)->str || !is_chevron(*token))
 	{
 		*token = save;
-		return (clean_before_backtrack(NULL, NULL, left));
+		return (clean_before_backtrack(NULL, NULL, nodes[CMD]));
 	}
-	redir = ast_create_node((*token)->token, token);
-	if (!redir)
+	nodes[REDIR] = ast_create_node((*token)->token, token);
+	if (!nodes[REDIR])
 	{
 		*status = 0;
-		return (clean_before_backtrack(NULL, NULL, left));
+		return (clean_before_backtrack(NULL, NULL, nodes[CMD]));
 	}
-	right = file(token, status);
-	if (!right)
+	nodes[OUT] = file(token, status);
+	if (!nodes[OUT] || !*status)
 	{
 		*token = save;
-		return (clean_before_backtrack(redir, right, left));
+		return (clean_before_backtrack(nodes[REDIR], nodes[OUT], nodes[CMD]));
 	}
-	if (!*status)
-		return (clean_before_backtrack(redir, right, left));
-	ast_add_children(redir, left, right);
-	return (redir);
+	return (ast_add_children(nodes[REDIR], nodes[CMD], nodes[OUT]));
 }
 
 t_node	*cmd_redir2(t_pars **token, int *status)

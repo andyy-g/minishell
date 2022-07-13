@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage (add rule astviz in Makefile + prototype vizAST dans header)
+# usage (add rule astviz in Makefile + inc le hfile + ajouter fct dans code et lui envoyer pointeur sur ast)
 
 CURR_DIR=$(pwd)
 
@@ -30,6 +30,7 @@ HFILE="${arrINCL[1]}"
 HDIR="${arrINCL[0]}"
 
 sed -i '12s/^/# include "'"$HFILE"'"\n/' vizast.h
+sed -i '4s/^/void\tvizAST('"$NODE"' *ast);\n/' fct_vizast.h
 
 gcc -o vizast.o -c vizast.c -Wall -Wextra -Werror -Wno-format -g3 -I. -I$PROJECT_PATH/$HDIR -D NODE=$NODE \
 																				-D CONTENT=$CONTENT \
@@ -55,6 +56,7 @@ for dotfile in ast*.dot; do
 done
 cd $CURR_DIR
 sed -i '12d' vizast.h
+sed -i '4d' fct_vizast.h
 rm vizast.o $PROJECT_PATH/libvizast.a $PROJECT_PATH/vizast 
 for dotfile in $PROJECT_PATH/ast*.dot; do
 	rm $dotfile

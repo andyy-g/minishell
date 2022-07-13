@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/07/13 18:10:21 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/13 22:59:27 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME			=	minishell
 
 CFLAGS			=	-Wall -Wextra -Werror -g3 #-fsanitize=address
 
-CC				=	gcc
+CC				=	cc
 
 SRCDIR			=	./srcs
 
@@ -26,7 +26,7 @@ LIBFTDIR		=	./libft
 
 LIBFT			=	$(LIBFTDIR)/libft.a
 
-LIBRARY			=	-lreadline -lft -L$(LIBFTDIR) -lvizast -L.
+LIBRARY			=	-lreadline -lft -L$(LIBFTDIR)
 
 CFILES			=	main.c \
 					lexer/ft_lexer.c \
@@ -38,6 +38,7 @@ CFILES			=	main.c \
 					parser/parser.c \
 					parser/cmd_redir.c \
 					parser/cmd_simple.c \
+					parser/tools.c \
 					exit/exit.c \
 					signals/eof.c \
 					env/singleton_env.c \

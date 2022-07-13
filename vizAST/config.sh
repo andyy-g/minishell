@@ -1,0 +1,8 @@
+PROJECT_PATH=".."
+INCL="headers/minishell.h"
+ARGS=""
+NODE="t_node"
+CONTENT="cmd[0]"
+LEFT="left"
+RIGHT="right"
+TYPE="s"
