@@ -6,13 +6,13 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/07/12 00:15:13 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/13 18:10:21 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			=	minishell
 
-CFLAGS			=	-Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS			=	-Wall -Wextra -Werror -g3 #-fsanitize=address
 
 CC				=	gcc
 
@@ -26,7 +26,7 @@ LIBFTDIR		=	./libft
 
 LIBFT			=	$(LIBFTDIR)/libft.a
 
-LIBRARY			=	-lreadline -lft -L$(LIBFTDIR)
+LIBRARY			=	-lreadline -lft -L$(LIBFTDIR) -lvizast -L.
 
 CFILES			=	main.c \
 					lexer/ft_lexer.c \
@@ -36,10 +36,12 @@ CFILES			=	main.c \
 					error/ft_syntax_error.c \
 					parser/node.c \
 					parser/parser.c \
-					parser/cmd.c \
+					parser/cmd_redir.c \
+					parser/cmd_simple.c \
 					exit/exit.c \
 					signals/eof.c \
-					env/singleton_env.c
+					env/singleton_env.c \
+					env/free_env.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -69,7 +71,7 @@ $(OBJDIR)		:
 						$(OBJDIR)/error
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
-					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)
+					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR) 
 
 clean			: 
 					@$(RM) $(OBJDIR)

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/12 00:35:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/13 18:14:37 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <stddef.h>
 # include <sys/wait.h>
 # include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 # include <errno.h>
 # include <stdbool.h>
 # include "../libft/libft.h"
@@ -92,6 +94,7 @@ int		ft_and(char *str, t_pars **pars);
 int		ft_bracket(char c, t_pars **pars, int *bracket);
 int		ft_word(char *str, t_pars **pars);
 void		ft_check_word(t_dblist **list);
+void	free_env(t_env *env);
 int		ft_syntax_error(t_dblist *list, int bracket);
 void		ft_error(int err, t_dblist **list);
 void		ft_error_redir(t_dblist **list);

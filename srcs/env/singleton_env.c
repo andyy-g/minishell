@@ -6,26 +6,11 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/17 14:34:49 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/23 18:55:59 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:22:28 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_env(t_env *env)
-{
-	t_env	*tmp;
-
-	while (env)
-	{
-		tmp = env->next;
-		ft_free(env->var);
-		ft_free(env->value);
-		ft_free(env->full);
-		ft_free(env);
-		env = tmp;
-	}
-}
 
 void	add_back_env(t_env **first, t_env *new)
 {
@@ -43,6 +28,12 @@ void	add_back_env(t_env **first, t_env *new)
 	new->prev = tmp;
 }
 
+t_env	*error_malloc(t_env *env)
+{
+	free_env(env);
+	return (NULL);
+}
+
 t_env	*new_env(char *str)
 {
 	t_env	*env;
@@ -56,22 +47,13 @@ t_env	*new_env(char *str)
 		return (NULL);
 	env->full = ft_strdup(str);
 	if (!env->full)
-	{
-		free_env(env);
-		return (NULL);
-	}
+		return (error_malloc(env));
 	env->var = ft_strndup(str, equal);
 	if (!env->var)
-	{
-		free_env(env);
-		return (NULL);
-	}
+		return (error_malloc(env));
 	env->value = ft_strdup(&str[equal + 1]);
 	if (!env->value)
-	{
-		free_env(env);
-		return (NULL);
-	}
+		return (error_malloc(env));
 	env->next = NULL;
 	env->prev = NULL;
 	return (env);
