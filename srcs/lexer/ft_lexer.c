@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/24 16:29:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 14:30:01 by charoua          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,20 @@ void	ft_print_dblist(t_dblist *list)
 
 	i = 1;
 	print = list->first;
-	while (print->next)
+	printf("BEGINNING\n");
+	while (print->str)
 	{
 		printf("Mot %d = -%s- et token = %d\n", i, print->str, print->token);
 		print = print->next;
+		i++;
+	}
+	printf("\nEND\n");
+	print = list->last;
+	i = 1;
+	while (print)
+	{
+		printf("Mot %d = -%s- et token = %d\n", i, print->str, print->token);
+		print = print->prev;
 		i++;
 	}
 	printf("\n");
@@ -111,15 +121,12 @@ int	ft_lexer(char *str, t_dblist **list, int *err)
 
 	error = 0;
 	*list = create_list();
-	if (!*list)
-		return (0);
 	pars = ft_create_pars(NULL);
-	if (!pars)
+	if (!*list || !pars)
 		return (0);
 	(*list)->first = pars;
 	(*list)->last = pars;
 	error = ft_add_lex(str, &pars, list);
-	//ft_print_dblist(*list);
 	if (!error)
 		return (0);
 	if (error != 1)

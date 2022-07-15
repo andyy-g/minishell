@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/13 23:08:18 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 20:29:00 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,13 @@ int	main(int argc, char **argv, char **envp)
 	int			status;
 	t_node		*ast;
 	t_dblist	*tokens;
+	t_env		*env;
 	int			error;
 
 	(void)argc;
 	(void)argv;
 	status = 1;
-	singleton_env(0, &status, envp);
+	env = singleton_env(0, &status, envp);
 	if (!status)
 		return (EXIT_FAILURE);
 	ast = NULL;
@@ -67,8 +68,9 @@ int	main(int argc, char **argv, char **envp)
 		if (input && !is_only_spaces(input))
 		{
 			error = 0;
-			if (!ft_lexer(input, &tokens, &error))
+			if (!ft_lexer(input, &tokens, &error) || !ft_expand(&tokens, &env))
 				exit_failure(ast, tokens);
+			//ft_print_dblist(tokens);
 			if (error)
 			{
 				free_tokens_ast(ast, tokens);
@@ -81,7 +83,7 @@ int	main(int argc, char **argv, char **envp)
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
-			vizAST(ast);
+			//vizAST(ast);
 			free_tokens_ast(ast, tokens);
 		}
 		free(input);

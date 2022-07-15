@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:39:00 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/07 15:41:45 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 15:07:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ t_node	*cmd(t_pars **token, int *status)
 	t_pars	*save;
 
 	save = *token;
-	ret = cmd1(token, status);
+	ret = cmd_brackets(token, status);
 	if (ret || !*status)
 		return (ret);
 	*token = save;
-	ret = cmd2(token, status);
+	ret = cmd_simple(token, status);
 	if (ret || !*status)
 		return (ret);
 	*token = save;
 	return (NULL);
 }
 
-t_node	*cmd1(t_pars **token, int *status)
+t_node	*cmd_brackets(t_pars **token, int *status)
 {
 	t_node	*ret;
 	t_pars	*save;
@@ -56,7 +56,7 @@ t_node	*cmd1(t_pars **token, int *status)
 	return (ret);
 }
 
-t_node	*cmd2(t_pars **token, int *status)
+t_node	*cmd_simple(t_pars **token, int *status)
 {
 	t_node	*cmd;
 

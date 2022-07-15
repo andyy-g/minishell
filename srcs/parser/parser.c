@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/12 15:59:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 17:33:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,61 +38,6 @@ void	link_to_tree(t_node **root, t_node *node, bool is_cmd)
 	}
 }
 
-void	swap_redirs(t_pars *redir, t_pars *fd, t_pars **last)
-{
-	t_pars	*prev;
-	t_pars	*next;
-	t_pars	*end;
-
-	prev = redir->prev;
-	next = fd->next;
-	if (prev)
-		prev->next = next;
-	next->prev = prev;
-	end = (*last)->next;
-	(*last)->next = redir;
-	redir->prev = *last;
-	fd->next = end;
-	if (end->str)
-		end->prev = fd;
-	*last = fd;
-}
-
-t_pars	*put_redirs_in_order(t_pars *token)
-{
-	t_pars	*last;
-	t_pars	*tmp;
-	t_pars	*first;
-	bool	is_first;
-
-	last = token;
-	first = NULL;
-	is_first = true;
-	while (last->next->str && (last->next->token == WORD || is_redir_token(last->next)))
-		last = last->next;
-	while (token->str && (token->token == WORD || is_redir_token(token))
-		&& token != first)
-	{
-		if (token->token > 3 && token->token < 8)
-		{
-			tmp = token->next->next;
-			if (token->next != last)
-			{
-				if (is_first)
-					first = token;
-				swap_redirs(token, token->next, &last);
-				is_first = false;
-			}
-			token = tmp;
-		}
-		else
-			token = token->next;
-	}
-	while (token->prev)
-		token = token->prev;
-	return (token);
-}
-
 t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 {
 	t_node	*node;
@@ -100,23 +45,15 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 
 	root = NULL;
 	node = NULL;
-	while (*token && (*token)->str)
+	while ((*token)->str && !((*token)->token == RPAR && expr_bracket))
 	{
-		if ((*token)->str && (*token)->token == NONE)
-		{
-			while ((*token)->str && (*token)->token == NONE)
-				*token = (*token)->next;
-			continue ;
-		}
-		if ((*token)->token == PIPE || (*token)->token == OR
-				||(*token)->token == AND)
+		if ((*token)->token == OR || (*token)->token == AND)
 		{
 			node = ast_create_node((*token)->token, token);
 			if (!node)
 			{
-				ast_delete_nodes(root);
 				*status = 0;
-				return (NULL);
+				return (clean_before_backtrack(root, NULL, NULL));
 			}
 			link_to_tree(&root, node, false);
 		}
@@ -125,42 +62,16 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 		{
 			node = create_cmd(token, status);
 			if (!*status)
-			{
-				ast_delete_nodes(root);
-				*status = 0;
-				return (NULL);
-			}
-			if (!node)
-			{
-				printf("bash: syntax error\n");
-				return (NULL);
-			}
-			if (node->type >= 4 && node->type <= 7 && !node->left)
+				return (clean_before_backtrack(root, NULL, NULL));
+			if ((is_chevron(node->type) || node->type == PIPE) && !node->left)
 				link_to_tree(&root, node, false);
 			else
 				link_to_tree(&root, node, true);
 		}
 		else if ((*token)->token == LPAR)
 			*token = (*token)->next;
-		else if((*token)->token == RPAR && expr_bracket)
-			return (root);
-
 	}
 	return (root);
-}
-
-void	print_tokens(t_pars *print)
-{
-	int i;
-
-	i = 1;
-	while (print->next)
-	{
-		printf("Mot %d = -%s- et token = %d\n", i, print->str, print->token);
-		print = print->next;
-		i++;
-	}
-	printf("\n");
 }
 
 int	parser(t_node **ast, t_pars *token, int *error)
@@ -169,7 +80,6 @@ int	parser(t_node **ast, t_pars *token, int *error)
 
 	status = 1;
 	token = put_redirs_in_order(token);
-	//print_tokens(token);
 	*ast = create_ast(&token, false, &status);
 	if (!status)
 		return (0);

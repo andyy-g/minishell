@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/13 23:04:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 16:07:46 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,13 @@ char	**create_simple_cmd(t_pars **cmd, int *status, t_toktype type)
 	size = get_size_cmd(*cmd, type);
 	ret = malloc(sizeof(char *) * (size + 1));
 	if (!ret)
-	{
-		*status = 0;
-		return (NULL);
-	}
+		return (set_status_error(status, NULL));
 	i = 0;
 	while ((*cmd)->str && (*cmd)->token == (int)type)
 	{
 		ret[i] = ft_strdup((*cmd)->str);
 		if (!ret[i])
-		{
-			*status = 0;
-			return (ret);
-		}
+			return (set_status_error(status, ret));
 		i++;
 		*cmd = (*cmd)->next;
 	}
@@ -111,7 +105,8 @@ void	ast_delete_nodes(t_node *node)
 	node = NULL;
 }
 
-t_node	*ast_add_children(t_node *parent, t_node *left_child, t_node *right_child)
+t_node	*ast_add_children(t_node *parent, t_node *left_child,
+	t_node *right_child)
 {
 	parent->left = left_child;
 	parent->right = right_child;

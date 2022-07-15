@@ -6,15 +6,15 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/07/13 22:59:27 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/14 20:21:26 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			=	minishell
 
-CFLAGS			=	-Wall -Wextra -Werror -g3 #-fsanitize=address
+CFLAGS			=	-Wall -Wextra -Werror -g3 -fsanitize=address
 
-CC				=	cc
+CC				=	gcc
 
 SRCDIR			=	./srcs
 
@@ -34,10 +34,15 @@ CFILES			=	main.c \
 					lexer/ft_token_bis.c \
 					lexer/ft_token.c \
 					error/ft_syntax_error.c \
+					expansion/ft_expand.c \
+					expansion/ft_variable.c \
+					expansion/ft_wildcard.c \
+					expansion/ft_wildcard_cpy.c \
 					parser/node.c \
 					parser/parser.c \
-					parser/cmd_redir.c \
+					parser/cmd_w_operator.c \
 					parser/cmd_simple.c \
+					parser/sort_redir.c \
 					parser/tools.c \
 					exit/exit.c \
 					signals/eof.c \
@@ -67,12 +72,13 @@ $(OBJDIR)		:
 						$(OBJDIR)/lexer \
 						$(OBJDIR)/parser \
 						$(OBJDIR)/exit \
+						$(OBJDIR)/expansion \
 						$(OBJDIR)/signals \
 						$(OBJDIR)/env \
 						$(OBJDIR)/error
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
-					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR) 
+					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)
 
 clean			: 
 					@$(RM) $(OBJDIR)

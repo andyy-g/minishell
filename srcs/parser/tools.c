@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 22:27:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/13 23:05:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/14 17:00:49 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,34 @@ bool	is_redir_token(t_pars *token)
 	return (true);
 }
 
-bool	is_chevron(t_pars *token)
+bool	is_chevron(int type)
 {
-	int	type;
-
-	if (!token || !token->str)
-		return (false);
-	type = token->token;
 	if (type < FILE_IN || type > FILE_OUT_APP)
 		return (false);
 	return (true);
+}
+
+char	**set_status_error(int *status, char **ret)
+{
+	*status = 0;
+	return (ret);
+}
+
+void	*clean_before_backtrack(t_node *redir, t_node *right, t_node *left)
+{
+	if (left)
+		ast_delete_nodes(left);
+	if (right)
+		ast_delete_nodes(right);
+	if (redir)
+		ast_delete_nodes(redir);
+	return (NULL);
+}
+
+bool	is_brackets(int type)
+{
+	if (type == LPAR
+		|| type == RPAR)
+		return (true);
+	return (false);
 }
