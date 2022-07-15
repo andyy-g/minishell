@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:40:08 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/14 16:50:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/15 15:48:06 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,19 @@ t_node	*cmd_pipe(t_pars **token, int *status)
 	if (!(*token) || (*token)->token != PIPE)
 	{
 		*token = save;
-		return (clean_before_backtrack(NULL, NULL, nodes[LCMD]));
+		return (free_nodes(NULL, NULL, nodes[LCMD], NULL));
 	}
 	nodes[OP] = ast_create_node((*token)->token, token);
 	if (!nodes[OP])
 	{
 		*status = 0;
-		return (clean_before_backtrack(NULL, NULL, nodes[LCMD]));
+		return (free_nodes(NULL, NULL, nodes[LCMD], NULL));
 	}
 	nodes[RCMD] = is_cmd_redir(token, status);
 	if (!nodes[RCMD] || !*status)
 	{
 		*token = save;
-		return (clean_before_backtrack(nodes[OP], nodes[RCMD], nodes[LCMD]));
+		return (free_nodes(nodes[OP], nodes[RCMD], nodes[LCMD], NULL));
 	}
 	return (ast_add_children(nodes[OP], nodes[LCMD], nodes[RCMD]));
 }
@@ -87,19 +87,16 @@ t_node	*cmd_redir(t_pars **token, int *status)
 	if (!(*token) || !(*token)->str || !is_chevron((*token)->token))
 	{
 		*token = save;
-		return (clean_before_backtrack(NULL, NULL, nodes[LCMD]));
+		return (free_nodes(NULL, NULL, nodes[LCMD], NULL));
 	}
 	nodes[OP] = ast_create_node((*token)->token, token);
 	if (!nodes[OP])
-	{
-		*status = 0;
-		return (clean_before_backtrack(NULL, NULL, nodes[LCMD]));
-	}
+		return (free_nodes(NULL, NULL, nodes[LCMD], status));
 	nodes[RCMD] = file(token, status);
 	if (!nodes[RCMD] || !*status)
 	{
 		*token = save;
-		return (clean_before_backtrack(nodes[OP], nodes[RCMD], nodes[LCMD]));
+		return (free_nodes(nodes[OP], nodes[RCMD], nodes[LCMD], NULL));
 	}
 	return (ast_add_children(nodes[OP], nodes[LCMD], nodes[RCMD]));
 }

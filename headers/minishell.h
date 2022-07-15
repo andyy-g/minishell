@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/14 20:27:02 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/15 15:46:50 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ t_dblist	*create_list(void);
 void	vizAST(t_node *ast);
 char	**set_status_error(int *status, char **ret);
 t_pars	*put_redirs_in_order(t_pars *token);
-void	*clean_before_backtrack(t_node *redir, t_node *right, t_node *left);
+void	*free_nodes(t_node *redir, t_node *right, t_node *left, int *status);
 bool	is_brackets(int type);
 bool	is_redir_token(t_pars *token);
 bool	is_chevron(int type);
