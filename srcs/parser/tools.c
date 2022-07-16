@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 22:27:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/15 15:45:04 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/16 14:56:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ char	**set_status_error(int *status, char **ret)
 	return (ret);
 }
 
-void	*clean_before_backtrack(t_node *redir, t_node *right,
-	t_node *left, int *status)
+void	*free_nodes(t_node *redir, t_node *right, t_node *left, int *status)
 {
 	if (left)
 		ast_delete_nodes(left);
