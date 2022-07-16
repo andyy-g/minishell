@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/14 14:17:59 by charoua          ###   ########.fr       */
+/*   Updated: 2022/07/16 15:54:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,21 @@ void	ft_home(t_pars **exp, t_env *env)
 	}
 }
 
+int	ft_check_wildcard(t_pars *exp, int *i, t_dblist **list)
+{
+	while (exp->str[*i] != '\0')
+	{
+		if (exp->str[*i] == '*' && exp->sp_quote == 0 && exp->db_quote == 0)
+		{
+			if (!ft_wildcard(list, &exp))
+				return (0);
+			break ;
+		}
+		(*i)++;
+	}
+	return (1);
+}
+
 int	ft_expand(t_dblist **list, t_env **env)
 {
 	int		i;
@@ -42,18 +57,14 @@ int	ft_expand(t_dblist **list, t_env **env)
 		i = 0;
 		tmp = exp->next;
 		if (exp->str[i] == '$' && exp->sp_quote == 0 && *env)
-			ft_variable(&exp, *env);
+		{
+			if (!ft_variable(&exp, *env))
+				return (0);
+		}
 		else if (exp->str[i] == '~' && *env)
 			ft_home(&exp, *env);
-		while (exp->str[i] != '\0')
-		{
-			if (exp->str[i] == '*' && exp->sp_quote == 0 && exp->db_quote == 0)
-			{
-				ft_wildcard(list, &exp);
-				break ;
-			}
-			i++;
-		}
+		if (!ft_check_wildcard(exp, &i, list))
+			return (0);
 		exp = tmp;
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/13 15:54:14 by charoua          ###   ########.fr       */
+/*   Updated: 2022/07/16 15:30:17 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 		}
 		new[i] = '\0';
 	}
-	free (str);
+	free(str);
 	return (new);
 }
 
-void	ft_variable(t_pars **exp, t_env *env)
+int	ft_variable(t_pars **exp, t_env *env)
 {
 	int		i;
 	int		size;
@@ -77,8 +77,11 @@ void	ft_variable(t_pars **exp, t_env *env)
 		{
 			size = ft_strlen(env->value) + ft_strlen(str) - i;
 			(*exp)->str = ft_replacebyvar(str, env->value, size, i);
+			if (!(*exp)->str)
+				return (0);
 			break ;
 		}
 		env = env->next;
 	}
+	return (1);
 }

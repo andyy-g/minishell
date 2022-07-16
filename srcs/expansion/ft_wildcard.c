@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 14:18:28 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/14 15:54:41 by charoua          ###   ########.fr       */
+/*   Updated: 2022/07/16 16:03:04 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ft_compare(char *str, char *dir)
 	return (0);
 }
 
-void	ft_add_wild(t_pars **exp, char *dir, int pos)
+int	ft_add_wild(t_pars **exp, char *dir, int pos)
 {
 	t_pars	*tmp;
 
@@ -51,7 +51,9 @@ void	ft_add_wild(t_pars **exp, char *dir, int pos)
 		tmp = tmp->next;
 		pos--;
 	}
-	ft_copy_pars(&tmp, dir);
+	if (!ft_copy_pars(&tmp, dir))
+		return (0);
+	return (1);
 }
 
 void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
@@ -83,7 +85,7 @@ void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
 		free(*exp);
 }
 
-void	ft_wildcard(t_dblist **list, t_pars **exp)
+int	ft_wildcard(t_dblist **list, t_pars **exp)
 {
 	int				found;
 	DIR				*d;
@@ -98,7 +100,8 @@ void	ft_wildcard(t_dblist **list, t_pars **exp)
 		{
 			if (ft_compare((*exp)->str, dir->d_name))
 			{
-				ft_add_wild(exp, dir->d_name, found);
+				if (!ft_add_wild(exp, dir->d_name, found))
+					return (0);
 				found ++;
 			}
 			dir = readdir(d);
@@ -107,4 +110,5 @@ void	ft_wildcard(t_dblist **list, t_pars **exp)
 	}
 	if (found > 0)
 		ft_clear_exp(list, exp, found);
+	return (1);
 }

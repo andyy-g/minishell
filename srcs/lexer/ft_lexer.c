@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/14 14:30:01 by charoua          ###   ########.fr       */
+/*   Updated: 2022/07/16 16:17:16 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,10 +119,11 @@ int	ft_lexer(char *str, t_dblist **list, int *err)
 	int		error;
 	t_pars	*pars;
 
-	error = 0;
 	*list = create_list();
+	if (!*list)
+		return (0);
 	pars = ft_create_pars(NULL);
-	if (!*list || !pars)
+	if (!pars)
 		return (0);
 	(*list)->first = pars;
 	(*list)->last = pars;

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/17 14:34:49 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/07 15:22:28 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/16 16:09:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ t_env	*new_env(char *str)
 	return (env);
 }
 
-t_env	*create_env(char **envp)
+t_env	*create_env(char **envp, int *status)
 {
 	t_env	*env;
 	t_env	*tmp;
@@ -71,6 +71,7 @@ t_env	*create_env(char **envp)
 		if (!tmp)
 		{
 			free_env(env);
+			*status = 0;
 			return (NULL);
 		}
 		add_back_env(&env, tmp);
@@ -87,9 +88,7 @@ t_env	*singleton_env(int i, int *status, char **envp)
 	{
 		if (envp)
 		{
-			env = create_env(envp);
-			if (!env && *status)
-				*status = 0;
+			env = create_env(envp, status);
 			return (env);
 		}
 		else

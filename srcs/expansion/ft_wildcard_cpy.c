@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 14:26:43 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/14 14:26:45 by charoua          ###   ########.fr       */
+/*   Updated: 2022/07/16 16:04:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_copy_str(char *dir)
 	return (new);
 }
 
-void	ft_copy_pars(t_pars **prev, char *dir)
+int	ft_copy_pars(t_pars **prev, char *dir)
 {
 	t_pars	*new;
 
@@ -58,4 +58,7 @@ void	ft_copy_pars(t_pars **prev, char *dir)
 			new->next = NULL;
 		}
 	}
+	else
+		return (0);
+	return (1);
 }
