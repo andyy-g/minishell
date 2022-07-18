@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 16:30:56 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/18 14:22:23 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ int			ft_wildcard(t_dblist **list, t_pars **exp);
 int			ft_copy_pars(t_pars **prev, char *dir);
 int			ft_ncmp(char *s1, char *s2, int n);
 int			parser(t_node **ast, t_pars *token, int *error);
+int			exec(t_node *ast);
 char		*ft_replacebyvar(char *str, char *var, int size, int pos);
 char		*ft_copy_str(char *dir);
 char		**set_status_error(int *status, char **ret);

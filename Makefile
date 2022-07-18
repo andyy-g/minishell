@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/07/16 16:13:07 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/18 22:11:54 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,9 @@ CFILES			=	main.c \
 					exit/exit.c \
 					signals/eof.c \
 					env/singleton_env.c \
-					env/free_env.c
+					env/free_env.c \
+					exec/exec.c \
+					exec/tools.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -75,7 +77,8 @@ $(OBJDIR)		:
 						$(OBJDIR)/expansion \
 						$(OBJDIR)/signals \
 						$(OBJDIR)/env \
-						$(OBJDIR)/error
+						$(OBJDIR)/error \
+						$(OBJDIR)/exec
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
 					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)
