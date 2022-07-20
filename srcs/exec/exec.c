@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/20 16:06:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/20 16:34:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,32 @@
 
 /********* TOOLS ********/
 
+bool	cmd_is(char *cmd, char *builtin)
+{
+	if (!ft_strcmp(cmd, builtin))
+		return (true);
+	return (false);
+}
+
 bool	is_builtin(char *cmd)
 {
-	(void)cmd;
+	if (cmd_is(cmd, "echo")
+		|| cmd_is(cmd, "pwd")
+		|| cmd_is(cmd, "cd")
+		|| cmd_is(cmd, "export")
+		|| cmd_is(cmd, "unset")
+		|| cmd_is(cmd, "env")
+		|| cmd_is(cmd, "exit"))
+		return (true);
 	return (false);
 }
 
 bool	is_uniq_cmd(t_node *node)
 {
-	(void)node;
+	while (node->parent && is_chevron(node->parent->type))
+		node = node->parent;
+	if (node->type == WORD || is_chevron(node->type))
+		return (true);
 	return (false);
 }
 
@@ -67,11 +84,12 @@ int	look_for_heredocs(t_node *ast)
 	return (1);
 }
 
-int	exec_builtin(t_node *ast, int (*fct)(t_node *node))
+int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 {
-	(void)fct;
-	(void)ast;
-	return (1);
+	int	ret;
+
+	ret = ft_builtin(ast);
+	return (ret);
 }
 
 int	exec_bin(t_node *ast)
@@ -100,34 +118,32 @@ int	init_fd(t_node *node)
 	return (1);
 }
 
-bool	cmd_is(char *cmd, char *builtin)
-{
-	if (!ft_strcmp(cmd, builtin))
-		return (true);
-	return (false);
-}
-
 int	exec_cmd(t_node *node)
 {
+	(void)node;
+	printf("EXEC\n");
+	return (1);
+	/*
 	int	ret;
 
 	if (cmd_is(node->cmd[0], "echo"))
-		ret = exec_builtin(node, ft_echo);
+		ret = exec_builtin(node, &ft_echo);
 	else if (cmd_is(node->cmd[0], "pwd"))
-		ret = exec_builtin(node, ft_pwd);
+		ret = exec_builtin(node, &ft_pwd);
 	else if (cmd_is(node->cmd[0], "cd"))
-		ret = exec_builtin(node, ft_cd);
+		ret = exec_builtin(node, &ft_cd);
 	else if (cmd_is(node->cmd[0], "export"))
-		ret = exec_builtin(node, ft_export);
+		ret = exec_builtin(node, &ft_export);
 	else if (cmd_is(node->cmd[0], "unset"))
-		ret = exec_builtin(node, ft_unset);
+		ret = exec_builtin(node, &ft_unset);
 	else if (cmd_is(node->cmd[0], "env"))
-		ret = exec_builtin(node, ft_env);
+		ret = exec_builtin(node, &ft_env);
 	else if (cmd_is(node->cmd[0], "exit"))
-		ret = exec_builtin(node, ft_exit);
+		ret = exec_builtin(node, &ft_exit);
 	else
 		ret = exec_bin(node);
 	return (ret);
+	*/
 }
 
 int	fork_process(t_node *ast)
@@ -143,12 +159,15 @@ int	fork_process(t_node *ast)
 	if (pid == 0)
 	{
 		if (!exec_cmd(ast))
+			printf("EXECVE FAIL\n");
 			//execve fail, do something
 		else
+			printf("EXIT CHILD PROCESS\n");
 			//builtin, exit child_process
 	}
 	else
 	{
+		printf("CLOSE FDS\n");
 		//close fds
 	}
 	return (1);
@@ -172,6 +191,7 @@ int	tree_traversal(t_node *ast)
 			break ;
 		ast = next_cmd(ast);
 	}
+	return (1);
 }
 
 int	exec(t_node *ast)
@@ -180,12 +200,18 @@ int	exec(t_node *ast)
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	if (is_builtin(ast->cmd[0]) && is_uniq_cmd(ast)) 	//conditions supplémentaires ? 
 	{													//(export ? redir out ? ...)
+		printf("ONE BUILTIN\n");
+		/*
 		if (!exec_cmd(ast))
 			return (0);
+			*/
 		return (1);
 	}
+	printf("ONE BIN || PIPE\n");
+	/*
 	if (!tree_traversal(ast))
 		return (0);
+		*/
 	//wait_exec -> while (wait(&status) > 0);
 	return (1);
 }

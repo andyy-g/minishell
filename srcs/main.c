@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/19 01:54:49 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/20 17:12:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ int	main(int argc, char **argv, char **envp)
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
-			//vizAST(ast);
-			//if (!exec(ast))
-			//	exit_failure(ast, tokens);
+			vizAST(ast);
+			if (!exec(ast))
+				exit_failure(ast, tokens);
 			free_tokens_ast(ast, tokens);
 		}
 		free(input);
