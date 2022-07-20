@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/18 14:22:23 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/20 00:18:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,12 @@ typedef enum e_nodes
 	RCMD
 }	t_nodes;
 
+typedef enum e_pipe
+{
+	READ = 0,
+	WRITE
+}	t_pipe;
+
 typedef struct s_pars
 {
 	char			*str;
@@ -75,6 +81,8 @@ typedef struct s_node
 {
 	t_toktype		type;
 	char			**cmd;
+	int				fd_in;
+	int				fd_out;
 	struct s_node	*parent;
 	struct s_node	*left;
 	struct s_node	*right;
