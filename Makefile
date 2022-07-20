@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/07/18 22:11:54 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/20 22:33:34 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,7 @@ CFILES			=	main.c \
 					signals/eof.c \
 					env/singleton_env.c \
 					env/free_env.c \
+					env/conversion_env.c \
 					exec/exec.c \
 					exec/tools.c
 					

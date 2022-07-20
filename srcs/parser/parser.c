@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/15 15:47:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:37:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	link_to_tree(t_node **root, t_node *node)
 	else
 	{
 		if ((is_chevron(node->type) || node->type == PIPE
-				|| node->type == AND || node->type == OR) && !node->left)
+					|| node->type == AND || node->type == OR) && !node->left)
 		{
 			tmp = *root;
 			*root = node;

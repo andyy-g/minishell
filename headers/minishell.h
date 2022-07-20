@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/20 17:05:11 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/21 01:27:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <stdbool.h>
 # include <dirent.h>
 # include <stdio.h>
+# include <sys/stat.h>
 # include "libft.h"
 
 extern int		g_exit_status;
@@ -130,6 +131,7 @@ int			exec(t_node *ast);
 char		*ft_replacebyvar(char *str, char *var, int size, int pos);
 char		*ft_copy_str(char *dir);
 char		**set_status_error(int *status, char **ret);
+char		**env_to_str_arr(t_env *env);
 bool		is_brackets(int type);
 bool		is_redir_token(t_pars *token);
 bool		is_chevron(int type);
