@@ -6,13 +6,13 @@
 #    By: agranger <agranger@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/29 09:54:25 by agranger          #+#    #+#              #
-#    Updated: 2022/06/30 16:50:27 by agranger         ###   ########.fr        #
+#    Updated: 2022/07/21 23:47:39 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
-CFLAGS = -Wall -Wextra -Werror -g 
+CFLAGS = -Wall -Wextra -Werror -g3 
 
 CC = gcc
 
@@ -20,7 +20,13 @@ SRCS = ft_strlen.c \
 	   ft_strdup.c \
 	   ft_strndup.c \
 	   ft_free.c \
-	   ft_strcmp.c
+	   ft_strcmp.c \
+	   ft_memset.c \
+	   ft_calloc.c \
+	   free_arr_of_str.c \
+	   ft_strcpy.c \
+	   ft_strcat.c \
+	   ft_split.c
 
 OBJS = $(SRCS:.c=.o)
 

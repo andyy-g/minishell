@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   free_arr_of_str.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/25 14:32:12 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/21 23:39:54 by agranger         ###   ########.fr       */
+/*   Created: 2022/07/21 21:12:09 by agranger          #+#    #+#             */
+/*   Updated: 2022/07/21 23:29:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlen(const char *str)
+void	free_arr_of_str(char **arr)
 {
-	size_t	len;
+	int	i;
 
-	len = 0;
-	if (!str)
-		return (len);
-	while (str[len])
-		len++;
-	return (len);
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		ft_free(arr[i]);
+		i++;
+	}
+	if (arr)
+		free(arr);
 }

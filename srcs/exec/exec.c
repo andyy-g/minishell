@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/21 01:54:49 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 00:06:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ char	**get_envpath_value(void)
 	env = singleton_env(1, NULL, NULL);
 	while (env && ft_strcmp(env->var, "PATH"))
 		env = env->next;
+	if (!env)
+		return (NULL);
 	paths = ft_split(env->value, ':');
 	return (paths);
 }
@@ -95,35 +97,44 @@ char	*concat_pathname(char *path, char *cmd)
 	int		size;
 	char	*pathname;
 
-	size = ft_strlen(path) + ft_strlen(cmd);
-	pathname = ft_calloc(sizeof(char) * (size + 1));
+	size = ft_strlen(path) + ft_strlen(cmd) + 1;
+	pathname = ft_calloc((size + 1), sizeof(char));
 	ft_strcpy(pathname, path);
+	ft_strcat(pathname, "/");
 	ft_strcat(pathname, cmd);
 	return (pathname);
 }
 
 int	pathname(t_node *node)
 {
-	char	**paths;
-	char	*pathname;
+	char		**paths;
+	char		*pathname;
+	struct stat	sb;
+	int			i;
 
 	paths = get_envpath_value();
+	if (!paths)
+		return (1);
 	pathname = NULL;
-	while (stat(pathname, NULL) == -1)
+	i = 0;
+	while (paths[i] && stat(pathname, &sb) == -1)
 	{
 		if (pathname)
 			free(pathname);
-		pathname = concat_pathname(*paths, node->cmd[0]);
+		pathname = concat_pathname(paths[i], node->cmd[0]);
 		if (!pathname)
 		{
 			free_arr_of_str(paths);
 			return (0);
 		}
-		paths++;
+		i++;
+	}
+	if (paths[i])
+	{
+		free(node->cmd[0]);
+		node->cmd[0] = pathname;
 	}
 	free_arr_of_str(paths);
-	free(node->cmd[0]);
-	node->cmd[0] = pathname;
 	return (1);
 }
 
@@ -144,6 +155,7 @@ int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 int	exec_bin(t_node *node)
 {
 	char	**env;
+	int		ret;
 
 	env = env_to_str_arr(singleton_env(1, NULL, NULL));
 	if (!env)
