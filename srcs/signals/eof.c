@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 13:47:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/17 11:47:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 20:01:32 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,6 @@ void	is_eof(char *input)
 	if (!input)
 	{
 		printf("exit\n");
-		exit_minishell();
+		exit_minishell(NULL);
 	}
 }

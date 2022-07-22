@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/22 00:06:15 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 22:48:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ bool	is_uniq_cmd(t_node *node)
 
 t_node	*next_cmd(t_node *ast)
 {
+	
 	return (ast->parent);
 }
 
@@ -105,34 +106,27 @@ char	*concat_pathname(char *path, char *cmd)
 	return (pathname);
 }
 
-int	pathname(t_node *node)
+int	find_path_bin(t_node *node, char **pathname)
 {
 	char		**paths;
-	char		*pathname;
 	struct stat	sb;
 	int			i;
 
 	paths = get_envpath_value();
 	if (!paths)
 		return (1);
-	pathname = NULL;
 	i = 0;
-	while (paths[i] && stat(pathname, &sb) == -1)
+	while (paths[i] && (!*pathname || stat(*pathname, &sb) == -1))
 	{
-		if (pathname)
-			free(pathname);
-		pathname = concat_pathname(paths[i], node->cmd[0]);
-		if (!pathname)
+		if (*pathname)
+			free(*pathname);
+		*pathname = concat_pathname(paths[i], node->cmd[0]);
+		if (!*pathname)
 		{
 			free_arr_of_str(paths);
 			return (0);
 		}
 		i++;
-	}
-	if (paths[i])
-	{
-		free(node->cmd[0]);
-		node->cmd[0] = pathname;
 	}
 	free_arr_of_str(paths);
 	return (1);
@@ -155,15 +149,23 @@ int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 int	exec_bin(t_node *node)
 {
 	char	**env;
-	int		ret;
+	char	*path;	
 
+	path = NULL;
 	env = env_to_str_arr(singleton_env(1, NULL, NULL));
 	if (!env)
 		return (0);
-	if (!pathname(node))
+	if (!find_path_bin(node, &path))
 		return (0);
-	execve(node->cmd[0], node->cmd, env);
+	execve(path, node->cmd, env);
+	if (errno == ENOENT)
+		printf("%s: command not found\n", path);
+	//exit_value
 	free(env);
+	ft_free(path);
+	while (node->parent)
+		node = node->parent;
+	exit_minishell(node);
 	return (1);
 }
 
@@ -179,6 +181,7 @@ int	init_fd(t_node *node)
 	//enum READ WRITE
 	if (is_uniq_cmd(node))
 		return (1);
+	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
 	{
 		perror("pipe");
@@ -191,6 +194,7 @@ int	exec_cmd(t_node *node)
 {
 	int	ret;
 
+	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
 		printf("ECHO\n");
 		//ret = exec_builtin(node, &ft_echo);
@@ -229,12 +233,15 @@ int	fork_process(t_node *ast)
 	}
 	if (pid == 0)
 	{
+		//if (ast->is_pipe)
+			//dup
 		if (!exec_cmd(ast))
 			return (0);
 	}
 	else
 	{
-		printf("PARENT PROCESS\n");
+		if (!ast->is_pipe)
+			return (1);
 		//close fds
 	}
 	return (1);

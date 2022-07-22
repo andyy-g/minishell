@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/21 17:19:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 19:59:21 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	exit_failure(t_node *ast, t_dblist *tokens)
 {
 	g_exit_status = 1;
 	free_tokens_ast(ast, tokens);
-	exit_minishell();
+	exit_minishell(NULL);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -84,12 +84,13 @@ int	main(int argc, char **argv, char **envp)
 				continue ;
 			}
 			//vizAST(ast);
+			free_tokens_ast(NULL, tokens);
 			if (!exec(ast))
-				exit_failure(ast, tokens);
-			free_tokens_ast(ast, tokens);
+				exit_failure(ast, NULL);
+			free_tokens_ast(ast, NULL);
 		}
 		free(input);
 	}
-	exit_minishell();
+	exit_minishell(NULL);
 	return (0);
 }

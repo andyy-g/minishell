@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/20 17:05:04 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 20:07:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ t_node	*ast_create_node(t_toktype type, t_pars **simple_cmd)
 	ret->cmd = create_simple_cmd(simple_cmd, &status, type);
 	ret->fd_in = 0;
 	ret->fd_out = 1;
+	ret->is_pipe = false;
 	ret->parent = NULL;
 	ret->left = NULL;
 	ret->right = NULL;

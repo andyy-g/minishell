@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/21 01:27:39 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/22 20:04:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ typedef struct s_node
 	char			**cmd;
 	int				fd_in;
 	int				fd_out;
+	bool			is_pipe;
 	struct s_node	*parent;
 	struct s_node	*left;
 	struct s_node	*right;
@@ -106,9 +107,10 @@ void		ast_delete_nodes(t_node *node);
 void		ast_add_arg_cmd(t_node **first, t_node *new);
 void		print_ast(t_node *ast);
 void		is_eof(char *input);
-void		exit_minishell(void);
+void		exit_minishell(t_node *ast);
 void		ft_free_tokens(t_dblist *list);
 void		free_env(t_env *env);
+void		free_tokens_ast(t_node *ast, t_dblist *tokens);
 void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
 int			ft_lexer(char *str, t_dblist **list, int *error);
