@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/22 22:48:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/23 15:15:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,16 +169,26 @@ int	exec_bin(t_node *node)
 	return (1);
 }
 
-int	init_fd(t_node *node)
+int	manage_file_in_out(t_node *node)
 {
-	int	pipe_fd[2];
-
 	//existence file_in
 	//	if ! return (2);
 	//créer les file_out
-	//init fd_in et fd_out
-	//fct utiles : is_first_cmd / is_last_cmd
-	//enum READ WRITE
+	while (node->type == WORD || is_chevron(node->type))
+	{
+		node = node->parent;
+	}
+	return (1);
+}
+
+int	init_fd(t_node *node)
+{
+	int	pipe_fd[2];
+	int	ret;
+
+	ret = manage_file_in_out(node);
+	if (ret == 0 || ret == 2)
+		return (ret);
 	if (is_uniq_cmd(node))
 		return (1);
 	node->is_pipe = true;
@@ -187,6 +197,9 @@ int	init_fd(t_node *node)
 		perror("pipe");
 		return (0);
 	}
+	//init fd_in et fd_out if pipe
+	//fct utiles : is_first_cmd / is_last_cmd
+	//enum READ WRITE
 	return (1);
 }
 

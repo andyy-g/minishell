@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/20 21:37:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/25 16:11:34 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,7 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 	node = NULL;
 	while ((*token)->str && !((*token)->token == RPAR && expr_bracket))
 	{
-		if ((*token)->token == OR || (*token)->token == AND)
-		{
-			node = ast_create_node((*token)->token, token);
-			if (!node)
-				return (free_nodes(root, NULL, NULL, status));
-			link_to_tree(&root, node);
-		}
-		else if (!is_brackets((*token)->token) || !expr_bracket)
+		if (!is_brackets((*token)->token) || !expr_bracket)
 		{
 			node = create_cmd(token, status);
 			if (!*status)

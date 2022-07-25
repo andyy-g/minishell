@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/22 20:04:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/23 16:37:23 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,9 @@ t_pars		*put_redirs_in_order(t_pars *token);
 t_node		*ast_create_node(t_toktype type, t_pars **cmd);
 t_node		*ast_add_children(t_node *parent, t_node *left_child,
 				t_node *right_child);
+t_node		*cmd_logical_operator(t_pars **token, int *status);
 t_node		*is_cmd_redir(t_pars **token, int *status);
+t_node		*is_cmd_pipe(t_pars **token, int *status);
 t_node		*cmd_pipe(t_pars **token, int *status);
 t_node		*cmd_redir(t_pars **token, int *status);
 t_node		*cmd(t_pars **token, int *status);
