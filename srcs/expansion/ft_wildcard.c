@@ -54,15 +54,40 @@ int	ft_compare(char *str, char *dir)
 	return (0);
 }
 
-int	ft_add_wild(t_pars **exp, char *dir, int pos)
+int	ft_find_pos(t_pars **exp, char *dir, int pos)
 {
+	int i;
+	int	j;
 	t_pars	*tmp;
 
+	i = 0;
+	tmp = (*exp)->next;
+	while (i < pos)
+	{
+		j = 0;
+		while (tmp->str[j] != '\0' && dir[j] != '\0' && tmp->str[j] == dir[j])
+		{
+			j++;
+		}
+		if (dir[j] < tmp->str[j])
+			return (i);
+		tmp = tmp->next;
+		i++;
+	}
+	return (i - 1);
+}
+
+int	ft_add_wild(t_pars **exp, char *dir, int pos)
+{
+	int i;
+	t_pars	*tmp;
+
+	i = 0;
 	tmp = *exp;
-	while (pos > 0)
+	while (i < pos)
 	{
 		tmp = tmp->next;
-		pos--;
+		i++;
 	}
 	if (!ft_copy_pars(&tmp, dir))
 		return (0);
@@ -83,7 +108,7 @@ void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
 	if (prev == NULL)
 	{
 		(*list)->first = next;
-		(*list)->first->prev = NULL;
+		next->prev = NULL;
 	}
 	else
 	{
@@ -103,6 +128,7 @@ int	ft_wildcard(t_dblist **list, t_pars **exp)
 	int				found;
 	DIR				*d;
 	struct dirent	*dir;
+	(void)list;
 
 	found = 0;
 	d = opendir(".");
@@ -113,7 +139,7 @@ int	ft_wildcard(t_dblist **list, t_pars **exp)
 		{
 			if (ft_compare((*exp)->str, dir->d_name) && ft_check_hidden((*exp)->str, dir->d_name))
 			{
-				if (!ft_add_wild(exp, dir->d_name, found))
+				if (!ft_add_wild(exp, dir->d_name, ft_find_pos(exp, dir->d_name, found)))
 					return (0);
 				found ++;
 			}

@@ -38,25 +38,20 @@ char	*ft_copy_str(char *dir)
 int	ft_copy_pars(t_pars **prev, char *dir)
 {
 	t_pars	*new;
+	t_pars	*next;
 
 	new = (t_pars *)malloc(sizeof(t_pars));
+	next = (*prev)->next;
 	if (new)
 	{
 		new->str = ft_copy_str(dir);
 		new->token = (*prev)->token;
 		new->db_quote = (*prev)->db_quote;
 		new->sp_quote = (*prev)->sp_quote;
-		if (prev)
-		{
-			new->next = (*prev)->next;
-			new->prev = (*prev);
-			(*prev)->next = new;
-		}
-		else
-		{
-			new->prev = NULL;
-			new->next = NULL;
-		}
+		new->prev = (*prev);
+		new->next = next;
+		(*prev)->next = new;
+		next->prev = new;
 	}
 	else
 		return (0);
