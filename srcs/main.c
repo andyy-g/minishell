@@ -70,7 +70,7 @@ int	main(int argc, char **argv, char **envp)
 			error = 0;
 			if (!ft_lexer(input, &tokens, &error) || !ft_expand(&tokens, &env))
 				exit_failure(ast, tokens);
-			//ft_print_dblist(tokens);
+			ft_print_dblist(tokens);
 			if (error)
 			{
 				free_tokens_ast(ast, tokens);

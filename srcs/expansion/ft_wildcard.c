@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+int	ft_check_hidden(char *str, char *dir)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] && dir[i])
+	{
+		if (str[i] == '*' && dir[i] == '.')
+			return (0);
+	}
+	return (1);
+}
+
 int	ft_compare(char *str, char *dir)
 {
 	int	i;
@@ -98,7 +111,7 @@ int	ft_wildcard(t_dblist **list, t_pars **exp)
 		dir = readdir(d);
 		while (dir)
 		{
-			if (ft_compare((*exp)->str, dir->d_name))
+			if (ft_compare((*exp)->str, dir->d_name) && ft_check_hidden((*exp)->str, dir->d_name))
 			{
 				if (!ft_add_wild(exp, dir->d_name, found))
 					return (0);
