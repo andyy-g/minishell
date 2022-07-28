@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/23 15:15:55 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/28 18:22:53 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,29 @@ bool	is_uniq_cmd(t_node *node)
 	return (false);
 }
 
-t_node	*next_cmd(t_node *ast)
+t_node	*next_cmd(t_node *node)
 {
-	
-	return (ast->parent);
+	t_node	*prev;
+
+	prev = NULL;
+	while (node && node->type != PIPE 
+		&& node->type != AND && node->type != OR)
+	{
+		prev = node;
+		node = node->parent;
+	}
+	while (node && prev == node->right)
+	{
+		prev = node;
+		node = node->parent;
+	}
+	if (node)
+	{
+		node = node->right;
+		while (node->left)
+			node = node->left;
+	}
+	return (node);
 }
 
 bool	is_first_cmd(t_node *node)
@@ -169,13 +188,45 @@ int	exec_bin(t_node *node)
 	return (1);
 }
 
-int	manage_file_in_out(t_node *node)
+int	manage_file_in_out(t_node *node) // NORME
 {
-	//existence file_in
-	//	if ! return (2);
-	//créer les file_out
-	while (node->type == WORD || is_chevron(node->type))
+	int	fd;
+
+	node = node->parent;
+	while (node && is_chevron(node->type))
 	{
+		if (node->type == FILE_IN)
+		{
+			if (access(node->right->cmd[0], F_OK) == -1)
+			{
+				printf("bash: %s: No such file or directory\n", node->right->cmd[0]);
+				return (2);
+			}
+			fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
+			if (fd == -1)
+				return (0);
+			if (node->fd_in != 0)
+				close(node->fd_in);
+			node->fd_in = fd;
+		}
+		if (node->type == FILE_OUT)
+		{
+			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC);
+			if (fd == -1)
+				return (0);
+			if (node->fd_out != 1)
+				close(node->fd_out);
+			node->fd_out = fd;
+		}
+		if (node->type == FILE_OUT_APP)
+		{
+			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC);
+			if (fd == -1)
+				return (0);
+			if (node->fd_out != 1)
+				close(node->fd_out);
+			node->fd_out = fd;
+		}
 		node = node->parent;
 	}
 	return (1);
@@ -260,23 +311,23 @@ int	fork_process(t_node *ast)
 	return (1);
 }
 
-int	tree_traversal(t_node *ast)
+int	tree_traversal(t_node *cmd)
 {
 	int	ret;
 
-	while (ast)
+	while (cmd)
 	{
-		ret = init_fd(ast);
+		ret = init_fd(cmd);
 		if (ret == 2)
 		{
-			ast = next_cmd(ast);
+			cmd = next_cmd(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(ast))
+		if (!ret || !fork_process(cmd))
 			return (0);
-		if (!check_logical_node(ast->parent))
+		if (!check_logical_node(cmd->parent))
 			break ;
-		ast = next_cmd(ast);
+		cmd = next_cmd(cmd);
 	}
 	return (1);
 }

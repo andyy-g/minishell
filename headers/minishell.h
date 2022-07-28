@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/23 16:37:23 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/28 18:21:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <dirent.h>
 # include <stdio.h>
 # include <sys/stat.h>
+# include <fcntl.h>
 # include "libft.h"
 
 extern int		g_exit_status;
