@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:40:08 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/25 16:27:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/07/28 15:25:05 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,35 @@
 t_node	*create_cmd(t_pars **token, int *status)
 {
 	t_node	*ret;
+	t_node	*tmp;
 	t_pars	*save;
 
 	save = *token;
 	ret = cmd_logical_operator(token, status);
-	if (ret || !*status)
+	if (!*status)
+	{
+		free_nodes(ret, NULL, NULL, NULL);
+		return (NULL);
+	}
+	if (ret)
+	{
+		tmp = ret;
+		while (tmp)
+		{
+			tmp = cmd_logical_operator(token, status);
+			if (!*status)
+			{
+				free_nodes(ret, NULL, NULL, NULL);
+				return (NULL);
+			}
+			if (!tmp)
+				break;
+			tmp->left = ret;
+			ret->parent = tmp;
+			ret = tmp;
+		}
 		return (ret);
+	}
 	*token = save;
 	ret = is_cmd_pipe(token, status);
 	if (ret || !*status)
@@ -62,12 +85,36 @@ t_node	*cmd_logical_operator(t_pars **token, int *status)
 t_node	*is_cmd_pipe(t_pars **token, int *status)
 {
 	t_node	*ret;
+	t_node	*tmp;
 	t_pars	*save;
 
 	save = *token;
 	ret = cmd_pipe(token, status);
-	if (ret || !*status)
+	if (!*status)
+	{
+		free_nodes(ret, NULL, NULL, NULL);
+		return (NULL);
+	}
+	if (ret)
+	{
+		tmp = ret;
+		while (tmp)
+		{
+			tmp = cmd_pipe(token, status);
+			if (!*status)
+			{
+				free_nodes(ret, NULL, NULL, NULL);
+				return (NULL);
+			}
+			if (!tmp)
+				break;
+			tmp->left = ret;
+			ret->parent = tmp;
+			ret = tmp;
+		}
 		return (ret);
+	}
+
 	*token = save;
 	ret = is_cmd_redir(token, status);
 	if (ret || !*status)
