@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/28 18:22:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/19 14:36:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,10 @@ int	exec_bin(t_node *node)
 
 int	manage_file_in_out(t_node *node) // NORME
 {
-	int	fd;
+	int		fd;
+	t_node	*cmd;
 
+	cmd = node;
 	node = node->parent;
 	while (node && is_chevron(node->type))
 	{
@@ -205,27 +207,30 @@ int	manage_file_in_out(t_node *node) // NORME
 			fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
 			if (fd == -1)
 				return (0);
-			if (node->fd_in != 0)
-				close(node->fd_in);
-			node->fd_in = fd;
+			if (cmd->fd_in != 0)
+				close(cmd->fd_in);
+			cmd->fd_in = fd;
 		}
 		if (node->type == FILE_OUT)
 		{
-			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC);
+			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, S_IROTH  | S_IRGRP | S_IRUSR | S_IWUSR);
 			if (fd == -1)
+			{
+				perror("open");
 				return (0);
-			if (node->fd_out != 1)
-				close(node->fd_out);
-			node->fd_out = fd;
+			}
+			if (cmd->fd_out != 1)
+				close(cmd->fd_out);
+			cmd->fd_out = fd;
 		}
 		if (node->type == FILE_OUT_APP)
 		{
-			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC);
+			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, S_IROTH | S_IRGRP | S_IRUSR | S_IWUSR);
 			if (fd == -1)
 				return (0);
-			if (node->fd_out != 1)
-				close(node->fd_out);
-			node->fd_out = fd;
+			if (cmd->fd_out != 1)
+				close(cmd->fd_out);
+			cmd->fd_out = fd;
 		}
 		node = node->parent;
 	}
@@ -258,6 +263,10 @@ int	exec_cmd(t_node *node)
 {
 	int	ret;
 
+	if (node->fd_in != 0)
+		dup2(node->fd_in, 0);
+	if (node->fd_out != 1)
+		dup2(node->fd_out, 1);
 	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
 		printf("ECHO\n");
@@ -304,9 +313,10 @@ int	fork_process(t_node *ast)
 	}
 	else
 	{
-		if (!ast->is_pipe)
-			return (1);
-		//close fds
+		if (ast->fd_in != 0)
+			close(ast->fd_in);
+		if (ast->fd_out != 1)
+			close(ast->fd_out);
 	}
 	return (1);
 }
