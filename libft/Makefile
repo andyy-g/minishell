@@ -16,18 +16,20 @@ CFLAGS = -Wall -Wextra -Werror -g3
 
 CC = gcc
 
-SRCS = ft_itoa.c \
+SRCS =	ft_itoa.c \
 		ft_strlen.c \
-	   ft_strdup.c \
-	   ft_strndup.c \
-	   ft_free.c \
-	   ft_strcmp.c \
-	   ft_memset.c \
-	   ft_calloc.c \
-	   free_arr_of_str.c \
-	   ft_strcpy.c \
-	   ft_strcat.c \
-	   ft_split.c
+		ft_strdup.c \
+		ft_strndup.c \
+		ft_free.c \
+		ft_strcmp.c \
+		ft_memset.c \
+		ft_calloc.c \
+		free_arr_of_str.c \
+		ft_strcpy.c \
+		ft_strcat.c \
+		ft_putchar_fd.c \
+		ft_putstr_fd.c \
+		ft_split.c
 
 OBJS = $(SRCS:.c=.o)
 
