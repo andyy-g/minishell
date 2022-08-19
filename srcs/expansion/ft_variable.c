@@ -77,11 +77,14 @@ int	ft_variable(t_pars **exp, t_env *env)
 		{
 			size = ft_strlen(env->value) + ft_strlen(str) - i;
 			(*exp)->str = ft_replacebyvar(str, env->value, size, i);
-			if (!(*exp)->str)
-				return (0);
 			break ;
 		}
 		env = env->next;
 	}
+	if (i == 1 && str[i] && str[i] == '?')
+		(*exp)->str = ft_replacebyvar(str, ft_itoa(g_exit_status), \
+		ft_strlen(ft_itoa(g_exit_status)) + ft_strlen(str) - i - 1, i + 1);
+	if (!(*exp)->str)
+		return (0);
 	return (1);
 }

@@ -16,7 +16,8 @@ CFLAGS = -Wall -Wextra -Werror -g3
 
 CC = gcc
 
-SRCS = ft_strlen.c \
+SRCS = ft_itoa.c \
+		ft_strlen.c \
 	   ft_strdup.c \
 	   ft_strndup.c \
 	   ft_free.c \
