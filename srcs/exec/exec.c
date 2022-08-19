@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/19 14:36:48 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/19 15:13:18 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,10 @@ int	manage_file_in_out(t_node *node) // NORME
 			}
 			fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
 			if (fd == -1)
+			{
+				perror("open");
 				return (0);
+			}
 			if (cmd->fd_in != 0)
 				close(cmd->fd_in);
 			cmd->fd_in = fd;
@@ -227,7 +230,10 @@ int	manage_file_in_out(t_node *node) // NORME
 		{
 			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, S_IROTH | S_IRGRP | S_IRUSR | S_IWUSR);
 			if (fd == -1)
+			{
+				perror("open");
 				return (0);
+			}
 			if (cmd->fd_out != 1)
 				close(cmd->fd_out);
 			cmd->fd_out = fd;
@@ -245,7 +251,7 @@ int	init_fd(t_node *node)
 	ret = manage_file_in_out(node);
 	if (ret == 0 || ret == 2)
 		return (ret);
-	if (is_uniq_cmd(node))
+	if (is_uniq_cmd(node)) // if lastcmd is_uniq == true
 		return (1);
 	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
