@@ -49,6 +49,7 @@ CFILES			=	main.c \
 					env/singleton_env.c \
 					env/free_env.c \
 					env/conversion_env.c \
+					exec/ft_echo.c \
 					exec/exec.c \
 					exec/tools.c
 					
