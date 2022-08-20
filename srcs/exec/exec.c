@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/19 15:13:18 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/20 13:35:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 	int	ret;
 
 	ret = ft_builtin(ast);
-	return (ret);
+		return (ret);
 }
 
 int	exec_bin(t_node *node)
@@ -268,35 +268,56 @@ int	init_fd(t_node *node)
 int	exec_cmd(t_node *node)
 {
 	int	ret;
+	int	stdin_cpy;
+	int stdout_cpy;
 
-	if (node->fd_in != 0)
-		dup2(node->fd_in, 0);
-	if (node->fd_out != 1)
-		dup2(node->fd_out, 1);
+	stdin_cpy = -1;
+	stdout_cpy = -1;
+	if (node->fd_in != STDIN_FILENO)
+	{
+		stdin_cpy = dup(STDIN_FILENO);
+		dup2(node->fd_in, STDIN_FILENO);
+	}
+	if (node->fd_out != STDOUT_FILENO)
+	{
+		stdout_cpy = dup(STDOUT_FILENO);
+		dup2(node->fd_out, STDOUT_FILENO);
+	}
 	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
-		printf("ECHO\n");
-		//ret = exec_builtin(node, &ft_echo);
+		ret = exec_builtin(node, &ft_echo);
 	else if (cmd_is(node->cmd[0], "pwd"))
 		printf("PWD\n");
-		//ret = exec_builtin(node, &ft_pwd);
+	//ret = exec_builtin(node, &ft_pwd);
 	else if (cmd_is(node->cmd[0], "cd"))
 		printf("CD\n");
-		//ret = exec_builtin(node, &ft_cd);
+	//ret = exec_builtin(node, &ft_cd);
 	else if (cmd_is(node->cmd[0], "export"))
 		printf("EXPORT\n");
-		//ret = exec_builtin(node, &ft_export);
+	//ret = exec_builtin(node, &ft_export);
 	else if (cmd_is(node->cmd[0], "unset"))
 		printf("UNSET\n");
-		//ret = exec_builtin(node, &ft_unset);
+	//ret = exec_builtin(node, &ft_unset);
 	else if (cmd_is(node->cmd[0], "env"))
 		printf("ENV\n");
-		//ret = exec_builtin(node, &ft_env);
+	//ret = exec_builtin(node, &ft_env);
 	else if (cmd_is(node->cmd[0], "exit"))
 		printf("EXIT\n");
-		//ret = exec_builtin(node, &ft_exit);
+	//ret = exec_builtin(node, &ft_exit);
 	else
 		ret = exec_bin(node);
+	if (node->fd_in != STDIN_FILENO)
+	{
+		close(node->fd_in);
+		dup2(stdin_cpy, STDIN_FILENO);
+		close(stdin_cpy);
+	}
+	if (node->fd_out != STDOUT_FILENO)
+	{
+		close(node->fd_out);
+		dup2(stdout_cpy, STDOUT_FILENO);
+		close(stdout_cpy);
+	}
 	return (ret);
 }
 
@@ -313,7 +334,7 @@ int	fork_process(t_node *ast)
 	if (pid == 0)
 	{
 		//if (ast->is_pipe)
-			//dup
+		//dup
 		if (!exec_cmd(ast))
 			return (0);
 	}
@@ -357,13 +378,17 @@ void	move_to_first_cmd(t_node **ast)
 int	exec(t_node *ast)
 {
 	int	status;
+	int	ret;
 
 	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	move_to_first_cmd(&ast);
 	if (is_builtin(ast->cmd[0]) && is_uniq_cmd(ast)) 	//conditions supplémentaires ? 
 	{													//(export ? redir out ? ...)
-		if (!exec_cmd(ast))
+		ret = init_fd(ast);
+		if (ret == 2)
+			return (1);
+		if (!ret || !exec_cmd(ast))
 			return (0);
 		return (1);
 	}

@@ -35,13 +35,13 @@ int    ft_echo(t_node *node)
         }
     	while (node->cmd[i])
     	{
-	    	ft_putstr_fd(node->cmd[i], node->fd_out);
+	    	printf("%s", node->cmd[i]);
     		if (node->cmd[i + 1])
-			    ft_putchar_fd(' ', node->fd_out);
+			    printf(" ");
 		    i++;
 	    }
         if (nl == 0)
-            ft_putchar_fd('\n', node->fd_out);
+            printf("\n");
     }
     return (1);
 }
