@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/21 13:46:46 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/21 17:41:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,6 @@ bool	is_builtin_no_fork(char *cmd)
 
 bool	is_uniq_cmd(t_node *node)
 {
-	bool	ret;
-
-	(void)ret;
-	ret = false;
 	while (node->parent)
 		node = node->parent;
 	if (is_chevron(node->type) || node->type == WORD)
@@ -72,14 +68,30 @@ t_node	*next_cmd(t_node *node)
 
 bool	is_first_cmd(t_node *node)
 {
-	(void)node;
-	return (false);
+	t_node	*prev;
+	
+	while (node->parent)
+	{
+		prev = node;
+		node = node->parent;
+		if (prev != node->left)
+			return (false);
+	}
+	return (true);
 }
 
 bool	is_last_cmd(t_node *node)
 {
-	(void)node;
-	return (false);
+	t_node	*prev;
+	
+	while (node->parent)
+	{
+		prev = node;
+		node = node->parent;
+		if (prev != node->right)
+			return (false);
+	}
+	return (true);
 }
 
 /************************/
@@ -264,7 +276,7 @@ int	check_file_in_out(t_node *node)
 	return (1);
 }
 
-int	init_fd(t_node *node)
+int	init_fd(t_node *node, int *prev_fd)
 {
 	int	pipe_fd[2];
 	int	ret;
@@ -272,7 +284,7 @@ int	init_fd(t_node *node)
 	ret = check_file_in_out(node);
 	if (ret == 0 || ret == 2)
 		return (ret);
-	if (is_uniq_cmd(node)) // if lastcmd is_uniq == true
+	if (is_uniq_cmd(node))		
 		return (1);
 	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
@@ -280,9 +292,15 @@ int	init_fd(t_node *node)
 		perror("pipe");
 		return (0);
 	}
-	//init fd_in et fd_out if pipe
-	//fct utiles : is_first_cmd / is_last_cmd
-	//enum READ WRITE
+	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
+		node->fd_in = *prev_fd;
+	else
+		close(*prev_fd);
+	if (!is_last_cmd(node) && node->fd_out == STDOUT_FILENO)
+		node->fd_out = pipe_fd[WRITE];
+	else
+		close(pipe_fd[WRITE]);
+	*prev_fd = pipe_fd[READ];
 	return (1);
 }
 
@@ -381,10 +399,12 @@ int	fork_process(t_node *ast)
 int	tree_traversal(t_node *cmd)
 {
 	int	ret;
+	int	fd;
 
+	fd = -1;
 	while (cmd)
 	{
-		ret = init_fd(cmd);
+		ret = init_fd(cmd, &fd);
 		if (ret == 2)
 		{
 			cmd = next_cmd(cmd);
@@ -396,6 +416,7 @@ int	tree_traversal(t_node *cmd)
 			break ;
 		cmd = next_cmd(cmd);
 	}
+	close(fd);
 	return (1);
 }
 
@@ -409,13 +430,15 @@ int	exec(t_node *ast)
 {
 	int	status;
 	int	ret;
+	int	fd;
 
 	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	move_to_first_cmd(&ast);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
-	{													
-		ret = init_fd(ast);
+	{	
+		fd = -1;
+		ret = init_fd(ast, &fd);
 		if (ret == 2)
 			return (1);
 		if (!ret || !exec_cmd_wo_fork(ast))
