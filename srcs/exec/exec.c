@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/20 23:11:37 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/21 13:46:46 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ bool	is_builtin_no_fork(char *cmd)
 
 bool	is_uniq_cmd(t_node *node)
 {
+	bool	ret;
+
+	(void)ret;
+	ret = false;
 	while (node->parent)
 		node = node->parent;
 	if (is_chevron(node->type) || node->type == WORD)
@@ -219,6 +223,7 @@ int	create_file_out(t_node *node, t_node *cmd)
 	if (cmd->fd_out != 1)
 		close(cmd->fd_out);
 	cmd->fd_out = fd;
+	return (1);
 }
 
 int	create_file_out_app(t_node *node, t_node *cmd)
@@ -234,11 +239,11 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 	if (cmd->fd_out != 1)
 		close(cmd->fd_out);
 	cmd->fd_out = fd;
+	return (1);
 }
 
 int	check_file_in_out(t_node *node)
 {
-	int		fd;
 	t_node	*cmd;
 
 	cmd = node;
@@ -252,7 +257,7 @@ int	check_file_in_out(t_node *node)
 			if (!create_file_out(node, cmd))
 				return (0);
 		if (node->type == FILE_OUT_APP)
-			if (!create_file_out_app)
+			if (!create_file_out_app(node, cmd))
 				return (0);
 		node = node->parent;
 	}
