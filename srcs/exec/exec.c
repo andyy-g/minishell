@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/20 13:35:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/20 23:11:37 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,13 @@ bool	cmd_is(char *cmd, char *builtin)
 	return (false);
 }
 
-bool	is_builtin(char *cmd)
+bool	is_builtin_no_fork(char *cmd)
 {
-	if (cmd_is(cmd, "echo")
-		|| cmd_is(cmd, "pwd")
-		|| cmd_is(cmd, "cd")
-		|| cmd_is(cmd, "export")
-		|| cmd_is(cmd, "unset")
-		|| cmd_is(cmd, "env")
-		|| cmd_is(cmd, "exit"))
+	if (cmd_is(cmd, "cd")
+			|| cmd_is(cmd, "unset")
+			|| cmd_is(cmd, "exit"))
+		return (true);
+	if (cmd_is(cmd, "export") && !cmd[1])
 		return (true);
 	return (false);
 }
@@ -49,7 +47,7 @@ t_node	*next_cmd(t_node *node)
 
 	prev = NULL;
 	while (node && node->type != PIPE 
-		&& node->type != AND && node->type != OR)
+			&& node->type != AND && node->type != OR)
 	{
 		prev = node;
 		node = node->parent;
@@ -162,7 +160,7 @@ int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 	int	ret;
 
 	ret = ft_builtin(ast);
-		return (ret);
+	return (ret);
 }
 
 int	exec_bin(t_node *node)
@@ -188,7 +186,57 @@ int	exec_bin(t_node *node)
 	return (1);
 }
 
-int	manage_file_in_out(t_node *node) // NORME
+int	file_in_exist(t_node *node, t_node *cmd)
+{
+	int	fd;
+	if (access(node->right->cmd[0], F_OK) == -1)
+	{
+		printf("bash: %s: No such file or directory\n", node->right->cmd[0]);
+		return (2);
+	}
+	fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
+	if (fd == -1)
+	{
+		perror("open");
+		return (0);
+	}
+	if (cmd->fd_in != 0)
+		close(cmd->fd_in);
+	cmd->fd_in = fd;
+	return (1);
+}
+
+int	create_file_out(t_node *node, t_node *cmd)
+{
+	int fd;
+
+	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+	if (fd == -1)
+	{
+		perror("open");
+		return (0);
+	}
+	if (cmd->fd_out != 1)
+		close(cmd->fd_out);
+	cmd->fd_out = fd;
+}
+
+int	create_file_out_app(t_node *node, t_node *cmd)
+{
+	int	fd;
+
+	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0644);
+	if (fd == -1)
+	{
+		perror("open");
+		return (0);
+	}
+	if (cmd->fd_out != 1)
+		close(cmd->fd_out);
+	cmd->fd_out = fd;
+}
+
+int	check_file_in_out(t_node *node)
 {
 	int		fd;
 	t_node	*cmd;
@@ -198,46 +246,14 @@ int	manage_file_in_out(t_node *node) // NORME
 	while (node && is_chevron(node->type))
 	{
 		if (node->type == FILE_IN)
-		{
-			if (access(node->right->cmd[0], F_OK) == -1)
-			{
-				printf("bash: %s: No such file or directory\n", node->right->cmd[0]);
-				return (2);
-			}
-			fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
-			if (fd == -1)
-			{
-				perror("open");
+			if (!file_in_exist(node, cmd))
 				return (0);
-			}
-			if (cmd->fd_in != 0)
-				close(cmd->fd_in);
-			cmd->fd_in = fd;
-		}
 		if (node->type == FILE_OUT)
-		{
-			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, S_IROTH  | S_IRGRP | S_IRUSR | S_IWUSR);
-			if (fd == -1)
-			{
-				perror("open");
+			if (!create_file_out(node, cmd))
 				return (0);
-			}
-			if (cmd->fd_out != 1)
-				close(cmd->fd_out);
-			cmd->fd_out = fd;
-		}
 		if (node->type == FILE_OUT_APP)
-		{
-			fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, S_IROTH | S_IRGRP | S_IRUSR | S_IWUSR);
-			if (fd == -1)
-			{
-				perror("open");
+			if (!create_file_out_app)
 				return (0);
-			}
-			if (cmd->fd_out != 1)
-				close(cmd->fd_out);
-			cmd->fd_out = fd;
-		}
 		node = node->parent;
 	}
 	return (1);
@@ -248,7 +264,7 @@ int	init_fd(t_node *node)
 	int	pipe_fd[2];
 	int	ret;
 
-	ret = manage_file_in_out(node);
+	ret = check_file_in_out(node);
 	if (ret == 0 || ret == 2)
 		return (ret);
 	if (is_uniq_cmd(node)) // if lastcmd is_uniq == true
@@ -265,59 +281,70 @@ int	init_fd(t_node *node)
 	return (1);
 }
 
-int	exec_cmd(t_node *node)
+int	exec_cmd_wo_fork(t_node *node)
 {
-	int	ret;
-	int	stdin_cpy;
-	int stdout_cpy;
+	int ret;
 
-	stdin_cpy = -1;
-	stdout_cpy = -1;
+	ret = 1;
+	if (cmd_is(node->cmd[0], "cd"))
+		printf("CD\n");
+	//ret = ft_cd;
+	else if (cmd_is(node->cmd[0], "export"))
+		printf("EXPORT\n");
+	//ret = ft_export;
+	else if (cmd_is(node->cmd[0], "unset"))
+		printf("UNSET\n");
+	//ret = ft_unset;
+	else if (cmd_is(node->cmd[0], "exit"))
+		printf("EXIT\n");
+	//ret = ft_exit;
+	if (node->fd_in != STDIN_FILENO)
+		close(node->fd_in);
+	if (node->fd_out != STDOUT_FILENO)
+		close(node->fd_out);
+	return (ret);
+}
+
+void	exit_child_builtin(t_node *node)
+{
 	if (node->fd_in != STDIN_FILENO)
 	{
-		stdin_cpy = dup(STDIN_FILENO);
-		dup2(node->fd_in, STDIN_FILENO);
+		close(node->fd_in);
+		close(STDIN_FILENO);
 	}
 	if (node->fd_out != STDOUT_FILENO)
 	{
-		stdout_cpy = dup(STDOUT_FILENO);
-		dup2(node->fd_out, STDOUT_FILENO);
+		close(node->fd_out);
+		close(STDOUT_FILENO);
 	}
+	while (node->parent)
+		node = node->parent;
+	exit_minishell(node);
+}
+
+int	exec_cmd_fork(t_node *node, pid_t pid)
+{
+	int	ret;
+	if (node->fd_in != STDIN_FILENO)
+		dup2(node->fd_in, STDIN_FILENO);
+	if (node->fd_out != STDOUT_FILENO)
+		dup2(node->fd_out, STDOUT_FILENO);
 	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
 		ret = exec_builtin(node, &ft_echo);
 	else if (cmd_is(node->cmd[0], "pwd"))
 		printf("PWD\n");
-	//ret = exec_builtin(node, &ft_pwd);
-	else if (cmd_is(node->cmd[0], "cd"))
-		printf("CD\n");
-	//ret = exec_builtin(node, &ft_cd);
+	//ret = exec_builtin(node, &ft_pwd, pid);
 	else if (cmd_is(node->cmd[0], "export"))
 		printf("EXPORT\n");
-	//ret = exec_builtin(node, &ft_export);
-	else if (cmd_is(node->cmd[0], "unset"))
-		printf("UNSET\n");
-	//ret = exec_builtin(node, &ft_unset);
+	//ret = exec_builtin(node, &ft_export, pid);
 	else if (cmd_is(node->cmd[0], "env"))
 		printf("ENV\n");
 	//ret = exec_builtin(node, &ft_env);
-	else if (cmd_is(node->cmd[0], "exit"))
-		printf("EXIT\n");
-	//ret = exec_builtin(node, &ft_exit);
 	else
 		ret = exec_bin(node);
-	if (node->fd_in != STDIN_FILENO)
-	{
-		close(node->fd_in);
-		dup2(stdin_cpy, STDIN_FILENO);
-		close(stdin_cpy);
-	}
-	if (node->fd_out != STDOUT_FILENO)
-	{
-		close(node->fd_out);
-		dup2(stdout_cpy, STDOUT_FILENO);
-		close(stdout_cpy);
-	}
+	if (pid == 0)
+		exit_child_builtin(node);
 	return (ret);
 }
 
@@ -333,9 +360,7 @@ int	fork_process(t_node *ast)
 	}
 	if (pid == 0)
 	{
-		//if (ast->is_pipe)
-		//dup
-		if (!exec_cmd(ast))
+		if (!exec_cmd_fork(ast, pid))
 			return (0);
 	}
 	else
@@ -383,12 +408,12 @@ int	exec(t_node *ast)
 	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	move_to_first_cmd(&ast);
-	if (is_builtin(ast->cmd[0]) && is_uniq_cmd(ast)) 	//conditions supplémentaires ? 
-	{													//(export ? redir out ? ...)
+	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
+	{													
 		ret = init_fd(ast);
 		if (ret == 2)
 			return (1);
-		if (!ret || !exec_cmd(ast))
+		if (!ret || !exec_cmd_wo_fork(ast))
 			return (0);
 		return (1);
 	}
