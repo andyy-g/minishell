@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/22 10:42:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/22 12:02:00 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ bool	is_uniq_cmd(t_node *node)
 {
 	while (node->parent)
 		node = node->parent;
-	if (is_chevron(node->type) || node->type == WORD)
+	if (node->type != PIPE)
 		return (true);
 	return (false);
 }
@@ -69,7 +69,7 @@ t_node	*next_cmd(t_node *node)
 bool	is_first_cmd(t_node *node)
 {
 	t_node	*prev;
-	
+
 	while (node->parent)
 	{
 		prev = node;
@@ -83,7 +83,7 @@ bool	is_first_cmd(t_node *node)
 bool	is_last_cmd(t_node *node)
 {
 	t_node	*prev;
-	
+
 	while (node->parent)
 	{
 		prev = node;
@@ -96,20 +96,50 @@ bool	is_last_cmd(t_node *node)
 
 /************************/
 
-bool	check_logical_node(t_node *node)
+void	next_logical_node(t_node **node)
 {
-	//if redir -> up
-	//if !parent
-	//if pipe -> true
-	//if and || or -> fct wait + check exit status :
-	//if and 
-	//	if g_exit_status == 0 -> true
-	//else
-	//	-> false
-	//if or
-	//	if g_exit_status == 0 -> false
-	(void)node;
+	if (((*node)->type != WORD))
+		*node = (*node)->parent;
+	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
+		*node = (*node)->parent;
+}
+
+bool	check_status(t_node **node, int status)
+{
+	while (*node)
+	{
+		if ((*node)->type == AND)
+		{
+			if (status == 0)
+			{
+				*node = (*node)->right;
+				return (true);
+			}
+			next_logical_node(node);
+		}
+		if ((*node)->type == OR)
+		{
+			if (status != 0)
+			{
+				*node = (*node)->right;
+				return (true);
+			}
+			next_logical_node(node);
+		}
+	}
 	return (true);
+}
+
+bool	check_logical_node(t_node **node)
+{
+	int		status;
+
+	next_logical_node(node);
+	if (!*node || (*node)->type == PIPE)
+		return (false);
+	while (wait(&status) > 0)
+		;
+	return (check_status(node, status));
 }
 
 char	**get_envpath_value(void)
@@ -403,6 +433,7 @@ int	fork_process(t_node *ast, int *pipe_fd)
 int	tree_traversal(t_node *cmd)
 {
 	int	ret;
+	int	status;
 	int	pipe_fd[2];
 
 	pipe_fd[READ] = -1;
@@ -417,11 +448,12 @@ int	tree_traversal(t_node *cmd)
 		}
 		if (!ret || !fork_process(cmd, pipe_fd))
 			return (0);
-		if (!check_logical_node(cmd->parent))
-			break ;
-		cmd = next_cmd(cmd);
+		if (is_last_cmd(cmd) || !check_logical_node(&cmd))
+			cmd = next_cmd(cmd);
 	}
 	close(pipe_fd[READ]);
+	while (wait(&status) > 0)
+		;
 	return (1);
 }
 
@@ -433,7 +465,6 @@ void	move_to_first_cmd(t_node **ast)
 
 int	exec(t_node *ast)
 {
-	int	status;
 	int	ret;
 
 	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
@@ -450,7 +481,5 @@ int	exec(t_node *ast)
 	}
 	if (!tree_traversal(ast))
 		return (0);
-	while (wait(&status) > 0)
-		;
 	return (1);
 }
