@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/21 17:41:54 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/22 10:42:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,34 +276,6 @@ int	check_file_in_out(t_node *node)
 	return (1);
 }
 
-int	init_fd(t_node *node, int *prev_fd)
-{
-	int	pipe_fd[2];
-	int	ret;
-
-	ret = check_file_in_out(node);
-	if (ret == 0 || ret == 2)
-		return (ret);
-	if (is_uniq_cmd(node))		
-		return (1);
-	node->is_pipe = true;
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
-		return (0);
-	}
-	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
-		node->fd_in = *prev_fd;
-	else
-		close(*prev_fd);
-	if (!is_last_cmd(node) && node->fd_out == STDOUT_FILENO)
-		node->fd_out = pipe_fd[WRITE];
-	else
-		close(pipe_fd[WRITE]);
-	*prev_fd = pipe_fd[READ];
-	return (1);
-}
-
 int	exec_cmd_wo_fork(t_node *node)
 {
 	int ret;
@@ -371,7 +343,35 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	return (ret);
 }
 
-int	fork_process(t_node *ast)
+int	init_fd(t_node *node, int *pipe_fd)
+{
+	int	ret;
+	int	prev_fd;
+
+	ret = check_file_in_out(node);
+	prev_fd = pipe_fd[READ];
+	if (ret == 0 || ret == 2)
+		return (ret);
+	if (is_uniq_cmd(node))		
+		return (1);
+	node->is_pipe = true;
+	if (pipe(pipe_fd) == -1)
+	{
+		perror("pipe");
+		return (0);
+	}
+	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
+		node->fd_in = prev_fd;
+	else if (prev_fd != -1)
+		close(prev_fd);
+	if (!is_last_cmd(node) && node->fd_out == STDOUT_FILENO)
+		node->fd_out = pipe_fd[WRITE];
+	else
+		close(pipe_fd[WRITE]);
+	return (1);
+}
+
+int	fork_process(t_node *ast, int *pipe_fd)
 {
 	pid_t	pid;
 
@@ -383,11 +383,15 @@ int	fork_process(t_node *ast)
 	}
 	if (pid == 0)
 	{
+		if (ast->is_pipe)
+			close(pipe_fd[READ]);
 		if (!exec_cmd_fork(ast, pid))
 			return (0);
 	}
 	else
 	{
+		if (ast->is_pipe)
+			close(pipe_fd[WRITE]);
 		if (ast->fd_in != 0)
 			close(ast->fd_in);
 		if (ast->fd_out != 1)
@@ -399,24 +403,25 @@ int	fork_process(t_node *ast)
 int	tree_traversal(t_node *cmd)
 {
 	int	ret;
-	int	fd;
+	int	pipe_fd[2];
 
-	fd = -1;
+	pipe_fd[READ] = -1;
+	pipe_fd[WRITE] = -1;
 	while (cmd)
 	{
-		ret = init_fd(cmd, &fd);
+		ret = init_fd(cmd, pipe_fd);
 		if (ret == 2)
 		{
 			cmd = next_cmd(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(cmd))
+		if (!ret || !fork_process(cmd, pipe_fd))
 			return (0);
 		if (!check_logical_node(cmd->parent))
 			break ;
 		cmd = next_cmd(cmd);
 	}
-	close(fd);
+	close(pipe_fd[READ]);
 	return (1);
 }
 
@@ -430,15 +435,13 @@ int	exec(t_node *ast)
 {
 	int	status;
 	int	ret;
-	int	fd;
 
 	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	move_to_first_cmd(&ast);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 	{	
-		fd = -1;
-		ret = init_fd(ast, &fd);
+		ret = init_fd(ast, NULL);
 		if (ret == 2)
 			return (1);
 		if (!ret || !exec_cmd_wo_fork(ast))
