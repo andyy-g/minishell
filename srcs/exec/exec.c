@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/22 12:02:00 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/22 12:24:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,23 @@ void	next_logical_node(t_node **node)
 {
 	if (((*node)->type != WORD))
 		*node = (*node)->parent;
+	else
+	{
+		if ((*node)->parent->right == *node)
+			*node = (*node)->parent->parent;
+
+	}
 	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
 		*node = (*node)->parent;
+}
+
+t_node	*next_cmd_logical_node(t_node *node)
+{
+
+	node = node->right;
+	while (node->left)
+		node = node->left;
+	return (node);
 }
 
 bool	check_status(t_node **node, int status)
@@ -112,7 +127,7 @@ bool	check_status(t_node **node, int status)
 		{
 			if (status == 0)
 			{
-				*node = (*node)->right;
+				*node = next_cmd_logical_node(*node);
 				return (true);
 			}
 			next_logical_node(node);
@@ -121,7 +136,7 @@ bool	check_status(t_node **node, int status)
 		{
 			if (status != 0)
 			{
-				*node = (*node)->right;
+				*node = next_cmd_logical_node(*node);
 				return (true);
 			}
 			next_logical_node(node);
