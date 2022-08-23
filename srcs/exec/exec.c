@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/22 12:24:58 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/23 17:58:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,19 @@ bool	is_uniq_cmd(t_node *node)
 {
 	while (node->parent)
 		node = node->parent;
-	if (node->type != PIPE)
+	if (is_chevron(node->type) || node->type == WORD)
 		return (true);
+	return (false);
+}
+
+bool	is_pipe_cmd(t_node *node)
+{
+	while (node->parent)
+	{
+		node = node->parent;
+		if (node->type == PIPE)
+			return (true);
+	}
 	return (false);
 }
 
@@ -57,6 +68,8 @@ t_node	*next_cmd(t_node *node)
 		prev = node;
 		node = node->parent;
 	}
+	if (node && node->type != PIPE)
+		return (NULL);
 	if (node)
 	{
 		node = node->right;
@@ -70,7 +83,7 @@ bool	is_first_cmd(t_node *node)
 {
 	t_node	*prev;
 
-	while (node->parent)
+	while (node->parent && node->parent->type == PIPE)
 	{
 		prev = node;
 		node = node->parent;
@@ -84,7 +97,7 @@ bool	is_last_cmd(t_node *node)
 {
 	t_node	*prev;
 
-	while (node->parent)
+	while (node->parent && node->parent->type == PIPE)
 	{
 		prev = node;
 		node = node->parent;
@@ -102,7 +115,7 @@ void	next_logical_node(t_node **node)
 		*node = (*node)->parent;
 	else
 	{
-		if ((*node)->parent->right == *node)
+		if ((*node)->parent && (*node)->parent->right == *node)
 			*node = (*node)->parent->parent;
 
 	}
@@ -132,7 +145,7 @@ bool	check_status(t_node **node, int status)
 			}
 			next_logical_node(node);
 		}
-		if ((*node)->type == OR)
+		else if ((*node)->type == OR)
 		{
 			if (status != 0)
 			{
@@ -145,15 +158,20 @@ bool	check_status(t_node **node, int status)
 	return (true);
 }
 
-bool	check_logical_node(t_node **node)
+bool	check_logical_node(t_node **node, pid_t *pids)
 {
 	int		status;
+	int		i;
 
 	next_logical_node(node);
 	if (!*node || (*node)->type == PIPE)
 		return (false);
-	while (wait(&status) > 0)
-		;
+	i = 0;
+	while (pids[i] != -1)
+	{
+		waitpid(pids[i], &status, 0);
+		i++;
+	}
 	return (check_status(node, status));
 }
 
@@ -397,7 +415,7 @@ int	init_fd(t_node *node, int *pipe_fd)
 	prev_fd = pipe_fd[READ];
 	if (ret == 0 || ret == 2)
 		return (ret);
-	if (is_uniq_cmd(node))		
+	if (!is_pipe_cmd(node))		
 		return (1);
 	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
@@ -416,7 +434,7 @@ int	init_fd(t_node *node, int *pipe_fd)
 	return (1);
 }
 
-int	fork_process(t_node *ast, int *pipe_fd)
+int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 {
 	pid_t	pid;
 
@@ -435,24 +453,48 @@ int	fork_process(t_node *ast, int *pipe_fd)
 	}
 	else
 	{
-		if (ast->is_pipe)
-			close(pipe_fd[WRITE]);
+		//if (ast->is_pipe)
+		//	close(pipe_fd[WRITE]);
 		if (ast->fd_in != 0)
 			close(ast->fd_in);
 		if (ast->fd_out != 1)
 			close(ast->fd_out);
+		(*pids)[index_cmd] = pid;
 	}
 	return (1);
 }
 
+pid_t	*init_pid_arr(t_node *cmd)
+{
+	int		nb_cmd;
+	pid_t	*pids;
+
+	nb_cmd = 0;
+	while (cmd)
+	{
+		nb_cmd++;
+		cmd = next_cmd(cmd);
+	}
+	pids = malloc(sizeof(*pids) * (nb_cmd + 1));
+	pids[nb_cmd] = -1;
+	return (pids);
+}
+
 int	tree_traversal(t_node *cmd)
 {
-	int	ret;
-	int	status;
-	int	pipe_fd[2];
+	int		ret;
+	int		status;
+	int		pipe_fd[2];
+	pid_t	*pids;
+	int		index_cmd;
+	int		i;
 
 	pipe_fd[READ] = -1;
 	pipe_fd[WRITE] = -1;
+	pids = init_pid_arr(cmd);
+	if (!pids)
+		return (0);
+	index_cmd = 0;
 	while (cmd)
 	{
 		ret = init_fd(cmd, pipe_fd);
@@ -461,14 +503,25 @@ int	tree_traversal(t_node *cmd)
 			cmd = next_cmd(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(cmd, pipe_fd))
+		if (!ret || !fork_process(cmd, pipe_fd, &pids, index_cmd))
 			return (0);
-		if (is_last_cmd(cmd) || !check_logical_node(&cmd))
+		if (!check_logical_node(&cmd, pids))
+		{
 			cmd = next_cmd(cmd);
+			index_cmd++;
+		}
+		else
+			index_cmd = 0;
 	}
 	close(pipe_fd[READ]);
-	while (wait(&status) > 0)
 		;
+	i = 0;
+	while (pids[i] != -1)
+	{
+		waitpid(pids[i], &status, 0);
+		i++;
+	}
+	free(pids);
 	return (1);
 }
 
