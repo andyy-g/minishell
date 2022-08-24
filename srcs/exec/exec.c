@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/24 15:41:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/24 16:26:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ bool	cmd_is(char *cmd, char *builtin)
 bool	is_builtin_no_fork(char *cmd)
 {
 	if (cmd_is(cmd, "cd")
-			|| cmd_is(cmd, "unset")
-			|| cmd_is(cmd, "exit"))
+		|| cmd_is(cmd, "unset")
+		|| cmd_is(cmd, "exit"))
 		return (true);
 	if (cmd_is(cmd, "export") && !cmd[1])
 		return (true);
@@ -57,8 +57,8 @@ t_node	*next_cmd(t_node *node)
 	t_node	*prev;
 
 	prev = NULL;
-	while (node && node->type != PIPE 
-			&& node->type != AND && node->type != OR)
+	while (node && node->type != PIPE
+		&& node->type != AND && node->type != OR)
 	{
 		prev = node;
 		node = node->parent;
@@ -109,9 +109,24 @@ bool	is_last_cmd(t_node *node)
 
 /************************/
 
+int	get_status_last_process(pid_t *pids)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (pids[i] != -1)
+	{
+		waitpid(pids[i], &status, 0);
+		i++;
+	}
+	return (status);
+}
+
 void	next_logical_node(t_node **node)
 {
 	t_node	*prev;
+
 	if (((*node)->type == AND || (*node)->type == OR))
 	{
 		*node = (*node)->parent;
@@ -132,7 +147,6 @@ void	next_logical_node(t_node **node)
 
 t_node	*next_cmd_logical_node(t_node *node)
 {
-
 	node = node->right;
 	while (node->left)
 		node = node->left;
@@ -168,17 +182,11 @@ bool	check_status(t_node **node, int status)
 bool	check_logical_node(t_node **node, pid_t *pids)
 {
 	int		status;
-	int		i;
 
 	next_logical_node(node);
 	if (!*node || (*node)->type == PIPE)
 		return (false);
-	i = 0;
-	while (pids[i] != -1)
-	{
-		waitpid(pids[i], &status, 0);
-		i++;
-	}
+	status = get_status_last_process(pids);
 	return (check_status(node, status));
 }
 
@@ -263,7 +271,6 @@ int	exec_bin(t_node *node)
 	execve(path, node->cmd, env);
 	if (errno == ENOENT)
 		printf("%s: command not found\n", path);
-	//exit_value
 	free(env);
 	ft_free(path);
 	while (node->parent)
@@ -275,6 +282,7 @@ int	exec_bin(t_node *node)
 int	file_in_exist(t_node *node, t_node *cmd)
 {
 	int	fd;
+
 	if (access(node->right->cmd[0], F_OK) == -1)
 	{
 		printf("bash: %s: No such file or directory\n", node->right->cmd[0]);
@@ -294,9 +302,10 @@ int	file_in_exist(t_node *node, t_node *cmd)
 
 int	create_file_out(t_node *node, t_node *cmd)
 {
-	int fd;
+	int	fd;
 
-	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
+			| O_TRUNC | O_CLOEXEC, 0644);
 	if (fd == -1)
 	{
 		perror("open");
@@ -312,7 +321,8 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 {
 	int	fd;
 
-	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0644);
+	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
+			| O_APPEND | O_CLOEXEC, 0644);
 	if (fd == -1)
 	{
 		perror("open");
@@ -348,7 +358,7 @@ int	check_file_in_out(t_node *node)
 
 int	exec_cmd_wo_fork(t_node *node)
 {
-	int ret;
+	int	ret;
 
 	ret = 1;
 	if (cmd_is(node->cmd[0], "cd"))
@@ -390,6 +400,7 @@ void	exit_child_builtin(t_node *node)
 int	exec_cmd_fork(t_node *node, pid_t pid)
 {
 	int	ret;
+
 	if (node->fd_in != STDIN_FILENO)
 		dup2(node->fd_in, STDIN_FILENO);
 	if (node->fd_out != STDOUT_FILENO)
@@ -422,7 +433,7 @@ int	init_fd(t_node *node, int *pipe_fd)
 	prev_fd = pipe_fd[READ];
 	if (ret == 0 || ret == 2)
 		return (ret);
-	if (!is_pipe_cmd(node))		
+	if (!is_pipe_cmd(node))
 		return (1);
 	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
@@ -459,20 +470,17 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 		if (!exec_cmd_fork(ast, pid))
 			return (0);
 	}
-	else
-	{
-		if (ast->is_pipe)
-			close(pipe_fd[WRITE]);
-		if (ast->fd_in != 0)
-			close(ast->fd_in);
-		if (ast->fd_out != 1)
-			close(ast->fd_out);
-		(*pids)[index_cmd] = pid;
-	}
+	if (ast->is_pipe)
+		close(pipe_fd[WRITE]);
+	if (ast->fd_in != 0)
+		close(ast->fd_in);
+	if (ast->fd_out != 1)
+		close(ast->fd_out);
+	(*pids)[index_cmd] = pid;
 	return (1);
 }
 
-pid_t	*init_pid_arr(t_node *cmd)
+pid_t	*init_pid_arr(t_node *cmd, int *index_cmd)
 {
 	int		nb_cmd;
 	pid_t	*pids;
@@ -485,24 +493,14 @@ pid_t	*init_pid_arr(t_node *cmd)
 	}
 	pids = malloc(sizeof(*pids) * (nb_cmd + 1));
 	pids[nb_cmd] = -1;
+	*index_cmd = 0;
 	return (pids);
 }
 
-int	tree_traversal(t_node *cmd)
+int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 {
-	int		ret;
-	int		status;
-	int		pipe_fd[2];
-	pid_t	*pids;
-	int		index_cmd;
-	int		i;
+	int	ret;
 
-	pipe_fd[READ] = -1;
-	pipe_fd[WRITE] = -1;
-	pids = init_pid_arr(cmd);
-	if (!pids)
-		return (0);
-	index_cmd = 0;
 	while (cmd)
 	{
 		ret = init_fd(cmd, pipe_fd);
@@ -511,30 +509,40 @@ int	tree_traversal(t_node *cmd)
 			cmd = next_cmd(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(cmd, pipe_fd, &pids, index_cmd))
+		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))
 			return (0);
-		if (!check_logical_node(&cmd, pids))
+		if (!check_logical_node(&cmd, *pids))
 		{
 			cmd = next_cmd(cmd);
 			index_cmd++;
 		}
 		else
 		{
-			index_cmd = 0;
-			free(pids);
-			pids = NULL;
-			pids = init_pid_arr(cmd);
+			ft_free(*pids);
+			*pids = init_pid_arr(cmd, &index_cmd);
 		}
 	}
 	close(pipe_fd[READ]);
-	i = 0;
-	while (pids[i] != -1)
-	{
-		waitpid(pids[i], &status, 0);
-		i++;
-	}
-	free(pids);
-	pids = NULL;
+	return (1);
+}
+
+int	launch_exec_fork(t_node *cmd)
+{
+	int		status;
+	int		index_cmd;
+	int		pipe_fd[2];
+	pid_t	*pids;
+
+	pipe_fd[READ] = -1;
+	pipe_fd[WRITE] = -1;
+	pids = init_pid_arr(&index_cmd);
+	if (!pids)
+		return (0);
+	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd))
+		return (0);
+	status = get_status_last_process(pids);
+	(void)status;
+	ft_free(pids);
 	return (1);
 }
 
@@ -548,7 +556,7 @@ int	exec(t_node *ast)
 {
 	int	ret;
 
-	if (!look_for_heredocs(ast)) 	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
+	if (!look_for_heredocs(ast))	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
 	move_to_first_cmd(&ast);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
@@ -560,7 +568,7 @@ int	exec(t_node *ast)
 			return (0);
 		return (1);
 	}
-	if (!tree_traversal(ast))
+	if (!launch_exec_fork(ast))
 		return (0);
 	return (1);
 }
