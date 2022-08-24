@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/23 17:58:54 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/24 15:41:35 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,16 +111,23 @@ bool	is_last_cmd(t_node *node)
 
 void	next_logical_node(t_node **node)
 {
-	if (((*node)->type != WORD))
-		*node = (*node)->parent;
-	else
+	t_node	*prev;
+	if (((*node)->type == AND || (*node)->type == OR))
 	{
-		if ((*node)->parent && (*node)->parent->right == *node)
-			*node = (*node)->parent->parent;
-
-	}
-	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
 		*node = (*node)->parent;
+		return ;
+	}
+	prev = NULL;
+	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
+	{
+		prev = *node;
+		*node = (*node)->parent;
+	}
+	if (prev == (*node)->left)
+		return ;
+	while ((*node)->parent && (*node)->parent->right == *node)
+		*node = (*node)->parent;
+	*node = (*node)->parent;
 }
 
 t_node	*next_cmd_logical_node(t_node *node)
@@ -446,6 +453,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 	}
 	if (pid == 0)
 	{
+		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
 		if (!exec_cmd_fork(ast, pid))
@@ -453,8 +461,8 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 	}
 	else
 	{
-		//if (ast->is_pipe)
-		//	close(pipe_fd[WRITE]);
+		if (ast->is_pipe)
+			close(pipe_fd[WRITE]);
 		if (ast->fd_in != 0)
 			close(ast->fd_in);
 		if (ast->fd_out != 1)
@@ -511,10 +519,14 @@ int	tree_traversal(t_node *cmd)
 			index_cmd++;
 		}
 		else
+		{
 			index_cmd = 0;
+			free(pids);
+			pids = NULL;
+			pids = init_pid_arr(cmd);
+		}
 	}
 	close(pipe_fd[READ]);
-		;
 	i = 0;
 	while (pids[i] != -1)
 	{
@@ -522,6 +534,7 @@ int	tree_traversal(t_node *cmd)
 		i++;
 	}
 	free(pids);
+	pids = NULL;
 	return (1);
 }
 
