@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/24 16:26:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/25 16:48:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,9 +243,27 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
-int	look_for_heredocs(t_node *ast)
+void	check_heredocs(t_node *node)
 {
-	(void)ast;
+	if (node && node->type == HEREDOC)
+		printf("HEREDOC\n");
+	return ;
+}
+
+int	look_for_heredocs(t_node *node)
+{ 
+	/*
+	while (node)
+	{
+		while (node->left)
+			node = node->left;
+		check_heredocs(node);
+		node = node->parent;
+		check_heredocs(node);
+		node = node->right;
+	}
+	*/
+	(void)node;
 	return (1);
 }
 
@@ -535,7 +553,7 @@ int	launch_exec_fork(t_node *cmd)
 
 	pipe_fd[READ] = -1;
 	pipe_fd[WRITE] = -1;
-	pids = init_pid_arr(&index_cmd);
+	pids = init_pid_arr(cmd, &index_cmd);
 	if (!pids)
 		return (0);
 	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd))
@@ -556,9 +574,9 @@ int	exec(t_node *ast)
 {
 	int	ret;
 
+	move_to_first_cmd(&ast);
 	if (!look_for_heredocs(ast))	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
 		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
-	move_to_first_cmd(&ast);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 	{	
 		ret = init_fd(ast, NULL);
