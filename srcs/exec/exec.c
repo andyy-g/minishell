@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/25 16:48:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 01:28:50 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ bool	cmd_is(char *cmd, char *builtin)
 bool	is_builtin_no_fork(char *cmd)
 {
 	if (cmd_is(cmd, "cd")
-		|| cmd_is(cmd, "unset")
-		|| cmd_is(cmd, "exit"))
+			|| cmd_is(cmd, "unset")
+			|| cmd_is(cmd, "exit"))
 		return (true);
 	if (cmd_is(cmd, "export") && !cmd[1])
 		return (true);
@@ -58,7 +58,7 @@ t_node	*next_cmd(t_node *node)
 
 	prev = NULL;
 	while (node && node->type != PIPE
-		&& node->type != AND && node->type != OR)
+			&& node->type != AND && node->type != OR)
 	{
 		prev = node;
 		node = node->parent;
@@ -83,6 +83,8 @@ bool	is_first_cmd(t_node *node)
 {
 	t_node	*prev;
 
+	while (node->parent && is_chevron(node->parent->type))
+		node = node->parent;
 	while (node->parent && node->parent->type == PIPE)
 	{
 		prev = node;
@@ -97,6 +99,8 @@ bool	is_last_cmd(t_node *node)
 {
 	t_node	*prev;
 
+	while (node->parent && is_chevron(node->parent->type))
+		node = node->parent;
 	while (node->parent && node->parent->type == PIPE)
 	{
 		prev = node;
@@ -138,7 +142,7 @@ void	next_logical_node(t_node **node)
 		prev = *node;
 		*node = (*node)->parent;
 	}
-	if (prev == (*node)->left)
+	if (!*node || prev == (*node)->left)
 		return ;
 	while ((*node)->parent && (*node)->parent->right == *node)
 		*node = (*node)->parent;
@@ -243,27 +247,64 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
-void	check_heredocs(t_node *node)
+void	launch_heredoc(t_node *node, int *pipe_heredoc)
 {
-	if (node && node->type == HEREDOC)
-		printf("HEREDOC\n");
+	char	*input;
+	char	*lim;
+
+	lim = node->right->cmd[0];
+	input = NULL;
+	while (1)
+	{
+		input = readline("> ");
+		if (!ft_strcmp(lim, input))
+			break ;
+		write(pipe_heredoc[WRITE], input, ft_strlen(input));
+		write(pipe_heredoc[WRITE], "\n", 1);
+	}
+	node->left->heredoc = pipe_heredoc;
+	close(pipe_heredoc[WRITE]);
 	return ;
+}
+
+int	check_is_heredoc(t_node *node)
+{
+	int	*pipe_heredoc;
+
+	pipe_heredoc = malloc(sizeof(int) * 2);
+	if (node && node->type == HEREDOC)
+	{
+		if (pipe(pipe_heredoc) == -1)
+		{
+			perror("pipe");
+			return (0);
+		}
+		launch_heredoc(node, pipe_heredoc);
+	}
+	return (1);
 }
 
 int	look_for_heredocs(t_node *node)
 { 
-	/*
+	t_node	*prev;
+
 	while (node)
 	{
-		while (node->left)
-			node = node->left;
-		check_heredocs(node);
-		node = node->parent;
-		check_heredocs(node);
-		node = node->right;
+		prev = NULL;
+		while (node && prev == node->right)
+		{
+			prev = node;
+			node = node->parent;
+		}
+		if (!check_is_heredoc(node))
+			return (0);
+		if (node && node->right)
+		{
+			node = node->right;
+			while (node->left)
+				node = node->left;
+		}
 	}
-	*/
-	(void)node;
 	return (1);
 }
 
@@ -352,6 +393,13 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 	return (1);
 }
 
+int	fd_heredoc(t_node *node, t_node *cmd)
+{
+	(void)node;
+	cmd->fd_in = cmd->heredoc[READ];
+	return (1);
+}
+
 int	check_file_in_out(t_node *node)
 {
 	t_node	*cmd;
@@ -368,6 +416,9 @@ int	check_file_in_out(t_node *node)
 				return (0);
 		if (node->type == FILE_OUT_APP)
 			if (!create_file_out_app(node, cmd))
+				return (0);
+		if (node->type == HEREDOC)
+			if (!fd_heredoc(node, cmd))
 				return (0);
 		node = node->parent;
 	}

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/22 20:07:20 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 01:30:45 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ t_node	*ast_create_node(t_toktype type, t_pars **simple_cmd)
 	ret->parent = NULL;
 	ret->left = NULL;
 	ret->right = NULL;
+	ret->heredoc = NULL;
 	if (!status)
 	{
 		ast_delete_nodes(ret);
@@ -102,6 +103,7 @@ void	ast_delete_nodes(t_node *node)
 		free(node->cmd);
 		node->cmd = NULL;
 	}
+	ft_free(node->heredoc);
 	ast_delete_nodes(node->left);
 	ast_delete_nodes(node->right);
 	free(node);

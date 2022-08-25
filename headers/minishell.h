@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/20 11:02:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 00:20:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ typedef struct s_node
 	int				fd_in;
 	int				fd_out;
 	bool			is_pipe;
+	int				*heredoc;
 	struct s_node	*parent;
 	struct s_node	*left;
 	struct s_node	*right;
