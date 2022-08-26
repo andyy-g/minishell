@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/26 01:28:50 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 16:43:00 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,12 +247,12 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
-void	launch_heredoc(t_node *node, int *pipe_heredoc)
+void	launch_heredoc(t_pars *token, int *pipe_heredoc)
 {
 	char	*input;
 	char	*lim;
 
-	lim = node->right->cmd[0];
+	lim = token->next->str;
 	input = NULL;
 	while (1)
 	{
@@ -262,48 +262,41 @@ void	launch_heredoc(t_node *node, int *pipe_heredoc)
 		write(pipe_heredoc[WRITE], input, ft_strlen(input));
 		write(pipe_heredoc[WRITE], "\n", 1);
 	}
-	node->left->heredoc = pipe_heredoc;
+	if (token->heredoc)
+	{
+		close(token->heredoc[READ]);
+		ft_free(token->heredoc);
+	}
+	token->heredoc = pipe_heredoc;
 	close(pipe_heredoc[WRITE]);
 	return ;
 }
 
-int	check_is_heredoc(t_node *node)
+int	check_is_heredoc(t_pars *token)
 {
 	int	*pipe_heredoc;
 
-	pipe_heredoc = malloc(sizeof(int) * 2);
-	if (node && node->type == HEREDOC)
+	if (token->str && token->token == HEREDOC)
 	{
+		pipe_heredoc = malloc(sizeof(int) * 2);
 		if (pipe(pipe_heredoc) == -1)
 		{
 			perror("pipe");
 			return (0);
 		}
-		launch_heredoc(node, pipe_heredoc);
+		launch_heredoc(token, pipe_heredoc);
 	}
 	return (1);
 }
 
-int	look_for_heredocs(t_node *node)
+int	look_for_heredocs(t_pars *token)
 { 
-	t_node	*prev;
 
-	while (node)
+	while (token && token->str)
 	{
-		prev = NULL;
-		while (node && prev == node->right)
-		{
-			prev = node;
-			node = node->parent;
-		}
-		if (!check_is_heredoc(node))
+		if (!check_is_heredoc(token))
 			return (0);
-		if (node && node->right)
-		{
-			node = node->right;
-			while (node->left)
-				node = node->left;
-		}
+		token = token->next;
 	}
 	return (1);
 }
@@ -396,7 +389,7 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 int	fd_heredoc(t_node *node, t_node *cmd)
 {
 	(void)node;
-	cmd->fd_in = cmd->heredoc[READ];
+	cmd->fd_in = node->heredoc[READ];
 	return (1);
 }
 
@@ -580,6 +573,11 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 		}
 		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))
 			return (0);
+		if (cmd->parent && cmd->parent->heredoc)
+      	{   
+          close(cmd->parent->heredoc[0]);
+          ft_free(cmd->parent->heredoc);
+      	}   
 		if (!check_logical_node(&cmd, *pids))
 		{
 			cmd = next_cmd(cmd);
@@ -626,8 +624,8 @@ int	exec(t_node *ast)
 	int	ret;
 
 	move_to_first_cmd(&ast);
-	if (!look_for_heredocs(ast))	//chercher heredocs dans tout l'arbre (même derrière || et &&) et les lancer
-		return (0);					//lancer look_for_heredocs à l'exit des syntax errors (<< lim cat < >)
+	//if (!look_for_heredocs(ast))
+	//	return (0);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 	{	
 		ret = init_fd(ast, NULL);

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 16:17:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 16:32:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 			i++;
 	}
 	ft_check_word(&(*list));
+	if (!look_for_heredocs((*list)->first))
+          return (0);	
 	return (ft_syntax_error(*list, bracket));
 }
 

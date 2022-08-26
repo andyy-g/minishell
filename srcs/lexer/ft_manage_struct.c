@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 17:56:07 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 15:16:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 16:19:16 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ t_pars	*ft_create_pars(t_pars *prev)
 		pars->token = -1;
 		pars->db_quote = 0;
 		pars->sp_quote = 0;
+		pars->heredoc = NULL;
 		if (prev)
 			pars->prev = prev;
 		else

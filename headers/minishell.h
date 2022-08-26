@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/26 00:20:57 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 14:58:17 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_pars
 	int				token;
 	int				db_quote;
 	int				sp_quote;
+	int				*heredoc;
 	struct s_pars	*prev;
 	struct s_pars	*next;
 }	t_pars;
@@ -133,6 +134,7 @@ int			ft_ncmp(char *s1, char *s2, int n);
 int			parser(t_node **ast, t_pars *token, int *error);
 int			exec(t_node *ast);
 int			ft_echo(t_node *node);
+int			look_for_heredocs(t_pars *token);
 char		*ft_replacebyvar(char *str, char *var, int size, int pos);
 char		*ft_copy_str(char *dir);
 char		**set_status_error(int *status, char **ret);

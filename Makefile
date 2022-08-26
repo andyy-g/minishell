@@ -6,13 +6,13 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/08/25 23:01:39 by agranger         ###   ########.fr        #
+#    Updated: 2022/08/26 16:06:20 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			=	minishell
 
-CFLAGS			=	-Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS			=	-Wall -Wextra -Werror -g3 #-fsanitize=address
 
 CC				=	gcc
 

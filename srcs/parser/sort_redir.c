@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 16:28:46 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/14 20:48:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/26 15:13:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,22 @@ t_pars	*push_back_redir(t_pars *token, t_pars *last)
 		else
 			token = token->next;
 	}
+	while (token->str && (token->token == WORD || is_redir_token(token)))
+		token = token->next;
 	return (token);
+}
+
+bool	redir_in_order(t_pars *token)
+{
+	if (token->token != WORD)
+		return (false);
+	while (token->str && token->token == WORD)
+		token = token->next;
+	while (token->str && is_redir_token(token))
+		token = token->next;
+	if (token->str && token->token == WORD)
+		return (false);
+	return (true);
 }
 
 t_pars	*put_redirs_in_order(t_pars *token)
@@ -66,20 +81,26 @@ t_pars	*put_redirs_in_order(t_pars *token)
 	t_pars	*last;
 	bool	contain_redir;
 
-	last = token;
-	contain_redir = false;
-	while (last->next->str && (last->next->token == WORD
-			|| is_redir_token(last->next)))
+	while (token && token->str)
 	{
-		if (is_chevron(last->token))
-			contain_redir = true;
-		last = last->next;
+		if (token->token == PIPE || token->token == AND
+				|| token->token == OR)
+			token = token->next;
+		last = token;
+		contain_redir = false;
+		while (last->next->str && (last->next->token == WORD
+				|| is_redir_token(last->next)))
+		{
+			if (is_chevron(last->token))
+				contain_redir = true;
+			last = last->next;
+		}
+		if (contain_redir && !redir_in_order(token))
+			token = push_back_redir(token, last);
+		else
+			token = last->next;
 	}
-	if (contain_redir)
-	{
-		token = push_back_redir(token, last);
-		while (token->prev)
-			token = token->prev;
-	}
+	while (token->prev)
+		token = token->prev;
 	return (token);
 }
