@@ -30,40 +30,40 @@ void	ft_home(t_pars **exp, t_env *env)
 	}
 }
 
-int	ft_check_wildcard(t_pars *exp, int *i, t_dblist **list)
+int	ft_check_wildcard(t_pars *exp, t_dblist **list)
 {
-	while (exp->str[*i] != '\0')
+	int i = 0;
+
+	while (exp->str[i] != '\0')
 	{
-		if (exp->str[*i] == '*' && exp->sp_quote == 0 && exp->db_quote == 0)
+		if (exp->str[i] == '*' && exp->sp_quote == 0 && exp->db_quote == 0)
 		{
 			if (!ft_wildcard(list, &exp))
 				return (0);
 			break ;
 		}
-		(*i)++;
+		i++;
 	}
 	return (1);
 }
 
 int	ft_expand(t_dblist **list, t_env **env)
 {
-	int		i;
 	t_pars	*exp;
 	t_pars	*tmp;
 
 	exp = (*list)->first;
 	while (exp->next)
 	{
-		i = 0;
 		tmp = exp->next;
-		if (exp->str[i] == '$' && exp->sp_quote == 0 && *env)
+		if (exp->str[0] == '$' && exp->sp_quote == 0 && *env)
 		{
 			if (!ft_variable(&exp, *env))
 				return (0);
 		}
-		else if (exp->str[i] == '~' && *env)
+		else if (exp->str[0] == '~' && *env)
 			ft_home(&exp, *env);
-		if (!ft_check_wildcard(exp, &i, list))
+		if (!ft_check_wildcard(exp, list))
 			return (0);
 		exp = tmp;
 	}
