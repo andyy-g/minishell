@@ -57,3 +57,32 @@ int	ft_copy_pars(t_pars **prev, char *dir)
 		return (0);
 	return (1);
 }
+
+void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
+{
+	t_pars	*tmp;
+	t_pars	*prev;
+	t_pars	*next;
+
+	tmp = *exp;
+	prev = (*exp)->prev;
+	next = (*exp)->next;
+	while (pos-- > 0)
+		tmp = tmp->next;
+	if (prev == NULL)
+	{
+		(*list)->first = next;
+		next->prev = NULL;
+	}
+	else
+	{
+		prev->next = next;
+		next->prev = prev;
+	}
+	if ((*list)->last == *exp)
+		(*list)->last = tmp;
+	if (*exp && (*exp)->str)
+		free((*exp)->str);
+	if (*exp)
+		free(*exp);
+}

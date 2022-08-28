@@ -54,10 +54,10 @@ int	ft_compare(char *str, char *dir)
 	return (0);
 }
 
-int	ft_find_pos(t_pars **exp, char *dir, int pos)
+int	ft_pos(t_pars **exp, char *dir, int pos)
 {
-	int i;
-	int	j;
+	int		i;
+	int		j;
 	t_pars	*tmp;
 
 	i = 0;
@@ -65,21 +65,22 @@ int	ft_find_pos(t_pars **exp, char *dir, int pos)
 	while (i < pos)
 	{
 		j = 0;
-		while (tmp->str[j] != '\0' && dir[j] != '\0' && tmp->str[j] == dir[j])
+		while (tmp->str[j] != '\0' && dir[j] != '\0' && \
+		ft_tolower((int)(tmp->str[j])) == ft_tolower((int)(dir[j])))
 		{
 			j++;
 		}
-		if (dir[j] < tmp->str[j])
+		if (ft_tolower((int)(dir[j])) < ft_tolower((int)(tmp->str[j])))
 			return (i);
 		tmp = tmp->next;
 		i++;
 	}
-	return (i - 1);
+	return (i);
 }
 
 int	ft_add_wild(t_pars **exp, char *dir, int pos)
 {
-	int i;
+	int		i;
 	t_pars	*tmp;
 
 	i = 0;
@@ -94,60 +95,31 @@ int	ft_add_wild(t_pars **exp, char *dir, int pos)
 	return (1);
 }
 
-void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
-{
-	t_pars	*tmp;
-	t_pars	*prev;
-	t_pars	*next;
-
-	tmp = *exp;
-	prev = (*exp)->prev;
-	next = (*exp)->next;
-	while (pos-- > 0)
-		tmp = tmp->next;
-	if (prev == NULL)
-	{
-		(*list)->first = next;
-		next->prev = NULL;
-	}
-	else
-	{
-		prev->next = next;
-		next->prev = prev;
-	}
-	if ((*list)->last == *exp)
-		(*list)->last = tmp;
-	if (*exp && (*exp)->str)
-		free((*exp)->str);
-	if (*exp)
-		free(*exp);
-}
-
 int	ft_wildcard(t_dblist **list, t_pars **exp)
 {
-	int				found;
+	int				nb;
 	DIR				*d;
 	struct dirent	*dir;
-	(void)list;
 
-	found = 0;
+	nb = 0;
 	d = opendir(".");
 	if (d)
 	{
 		dir = readdir(d);
 		while (dir)
 		{
-			if (ft_compare((*exp)->str, dir->d_name) && ft_check_hidden((*exp)->str, dir->d_name))
+			if (ft_compare((*exp)->str, dir->d_name) \
+			&& ft_check_hidden((*exp)->str, dir->d_name))
 			{
-				if (!ft_add_wild(exp, dir->d_name, ft_find_pos(exp, dir->d_name, found)))
+				if (!ft_add_wild(exp, dir->d_name, ft_pos(exp, dir->d_name, nb)))
 					return (0);
-				found ++;
+				nb++;
 			}
 			dir = readdir(d);
 		}
 		closedir(d);
 	}
-	if (found > 0)
-		ft_clear_exp(list, exp, found);
+	if (nb > 0)
+		ft_clear_exp(list, exp, nb);
 	return (1);
 }
