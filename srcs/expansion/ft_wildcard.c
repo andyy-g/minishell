@@ -78,7 +78,7 @@ int	ft_pos(t_pars **exp, char *dir, int pos)
 	return (i);
 }
 
-int	ft_add_wild(t_pars **exp, char *dir, int pos)
+int	ft_add_w(t_pars **exp, char *dir, int pos)
 {
 	int		i;
 	t_pars	*tmp;
@@ -111,7 +111,7 @@ int	ft_wildcard(t_dblist **list, t_pars **exp)
 			if (ft_compare((*exp)->str, dir->d_name) \
 			&& ft_check_hidden((*exp)->str, dir->d_name))
 			{
-				if (!ft_add_wild(exp, dir->d_name, ft_pos(exp, dir->d_name, nb)))
+				if (!ft_add_w(exp, dir->d_name, ft_pos(exp, dir->d_name, nb)))
 					return (0);
 				nb++;
 			}
