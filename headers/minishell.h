@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/26 14:58:17 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/27 22:31:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ void		free_env(t_env *env);
 void		free_tokens_ast(t_node *ast, t_dblist *tokens);
 void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
+int			check_is_heredoc(t_pars *token);
 int			ft_lexer(char *str, t_dblist **list, int *error);
 int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 int			ft_quote(char *str, char c, t_pars **pars);

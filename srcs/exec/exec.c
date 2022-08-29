@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/26 16:43:00 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/27 21:48:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,8 @@ int	exec_bin(t_node *node)
 	char	**env;
 	char	*path;	
 
+	if (node->type != WORD)
+			return (1);
 	path = NULL;
 	env = env_to_str_arr(singleton_env(1, NULL, NULL));
 	if (!env)
@@ -322,9 +324,24 @@ int	exec_bin(t_node *node)
 		return (0);
 	execve(path, node->cmd, env);
 	if (errno == ENOENT)
-		printf("%s: command not found\n", path);
+		printf("%s: command not found\n", node->cmd[0]);
 	free(env);
 	ft_free(path);
+	if (node->parent && node->parent->heredoc)
+	{   
+		close(node->parent->heredoc[0]);
+		ft_free(node->parent->heredoc);
+	} 
+	if (node->fd_in != STDIN_FILENO)
+	{
+		close(node->fd_in);
+		close(STDIN_FILENO);
+	}
+	if (node->fd_out != STDOUT_FILENO)
+	{
+		close(node->fd_out);
+		close(STDOUT_FILENO);
+	}
 	while (node->parent)
 		node = node->parent;
 	exit_minishell(node);
@@ -346,9 +363,10 @@ int	file_in_exist(t_node *node, t_node *cmd)
 		perror("open");
 		return (0);
 	}
-	if (cmd->fd_in != 0)
+	if (cmd && cmd->fd_in != 0)
 		close(cmd->fd_in);
-	cmd->fd_in = fd;
+	if (cmd)
+		cmd->fd_in = fd;
 	return (1);
 }
 
@@ -363,9 +381,10 @@ int	create_file_out(t_node *node, t_node *cmd)
 		perror("open");
 		return (0);
 	}
-	if (cmd->fd_out != 1)
+	if (cmd && cmd->fd_out != 1)
 		close(cmd->fd_out);
-	cmd->fd_out = fd;
+	if (cmd)
+		cmd->fd_out = fd;
 	return (1);
 }
 
@@ -380,16 +399,18 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 		perror("open");
 		return (0);
 	}
-	if (cmd->fd_out != 1)
+	if (cmd && cmd->fd_out != 1)
 		close(cmd->fd_out);
-	cmd->fd_out = fd;
+	if (cmd)
+		cmd->fd_out = fd;
 	return (1);
 }
 
 int	fd_heredoc(t_node *node, t_node *cmd)
 {
 	(void)node;
-	cmd->fd_in = node->heredoc[READ];
+	if (cmd)
+		cmd->fd_in = node->heredoc[READ];
 	return (1);
 }
 
@@ -398,7 +419,8 @@ int	check_file_in_out(t_node *node)
 	t_node	*cmd;
 
 	cmd = node;
-	node = node->parent;
+	if (!is_chevron(node->type))
+		node = node->parent;
 	while (node && is_chevron(node->type))
 	{
 		if (node->type == FILE_IN)
@@ -529,7 +551,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
-		if (!exec_cmd_fork(ast, pid))
+		if (exec_cmd_fork(ast, pid))
 			return (0);
 	}
 	if (ast->is_pipe)
@@ -574,10 +596,10 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))
 			return (0);
 		if (cmd->parent && cmd->parent->heredoc)
-      	{   
-          close(cmd->parent->heredoc[0]);
-          ft_free(cmd->parent->heredoc);
-      	}   
+		{   
+			close(cmd->parent->heredoc[0]);
+			ft_free(cmd->parent->heredoc);
+		}   
 		if (!check_logical_node(&cmd, *pids))
 		{
 			cmd = next_cmd(cmd);
@@ -624,8 +646,6 @@ int	exec(t_node *ast)
 	int	ret;
 
 	move_to_first_cmd(&ast);
-	//if (!look_for_heredocs(ast))
-	//	return (0);
 	if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 	{	
 		ret = init_fd(ast, NULL);
