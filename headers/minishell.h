@@ -114,6 +114,7 @@ void		free_env(t_env *env);
 void		free_tokens_ast(t_node *ast, t_dblist *tokens);
 void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
+void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
 int			ft_lexer(char *str, t_dblist **list, int *error);
 int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 int			ft_quote(char *str, char c, t_pars **pars);

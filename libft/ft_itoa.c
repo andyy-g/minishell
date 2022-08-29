@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/28 12:51:03 by charoua           #+#    #+#             */
+/*   Updated: 2022/08/28 12:51:06 by charoua          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 static long	ft_length_nb(long n)
 {
-	long size;
+	long	size;
 
 	if (n == 0)
 		return (1);
@@ -20,17 +32,18 @@ static long	ft_length_nb(long n)
 	return (size);
 }
 
-char		*ft_itoa(int n)
+char	*ft_itoa(int n)
 {
-	long i;
-	long n_long;
-	long length;
-	char *new;
+	long	i;
+	long	n_long;
+	long	length;
+	char	*new;
 
 	i = 0;
 	n_long = n;
 	length = ft_length_nb(n_long);
-	if ((new = (char *)malloc(sizeof(char) * length + 1)) == NULL)
+	new = (char *)malloc(sizeof(char) * length + 1);
+	if (new == NULL)
 		return (NULL);
 	if (n_long < 0)
 	{
