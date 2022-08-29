@@ -85,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 		//	vizAST(ast);
 			free_tokens_ast(NULL, tokens);
-			if (!exec(ast))
+			if (!error && !exec(ast))
 				exit_failure(ast, NULL);
 			free_tokens_ast(ast, NULL);
 		}
