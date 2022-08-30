@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/23 18:52:06 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/30 11:18:42 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ int	ft_syntax_error(t_dblist *list, int bracket)
 		return (-4);
 	else if (bracket != 0)
 		return (-5);
-	if ((list->first)->token == PIPE || (list->last)->token == PIPE)
-		return (-6);
 	while (tmp)
 	{
 		if (tmp->token == FILE_IN || tmp->token == FILE_OUT \
@@ -62,7 +60,7 @@ void	ft_error(int err, t_dblist **list)
 {
 	if (err == -1)
 		printf("> bash: unexpected EOF while looking for matching `''\n");
-	else if (err == -2)
+	else if (err == -6)
 		printf("> bash: unexpected EOF while looking for matching `\"'\n");
 	else if (err == -3)
 		printf("bash: syntax error near unexpected token `)'\n");
@@ -70,8 +68,6 @@ void	ft_error(int err, t_dblist **list)
 		printf("bash: syntax error the closing bracket `)' is missing\n");
 	else if (err == -5)
 		printf("bash: syntax error near unexpected token `('\n");
-	else if (err == -6)
-		printf("bash: syntax error near unexpected pipe `|'\n");
 	else if (err == -7)
 		ft_error_redir(list);
 }

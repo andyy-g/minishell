@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/11 19:29:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/06/30 16:49:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/30 10:17:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ char	*ft_strcpy(char *dst, char *src);
 char	*ft_strcat(char *dst, char *src);
 char	**ft_split(char *str, char c);
 char	*ft_itoa(int n);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 void	ft_free(void *elem);
 void	free_arr_of_str(char **arr);
 void	*ft_memset(void *s, int c, size_t n);

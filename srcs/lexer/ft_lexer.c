@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/27 22:33:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/30 11:09:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,9 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	while (str[i] != '\0')
 	{
 		j = ft_token_size(str + i, str[i], pars, &bracket);
-		if (j < 0)
+		if (j == -1)
+			return (0);
+		if (j == -2)
 			return (j);
 		else if (j > 0)
 		{
@@ -111,8 +113,6 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 			i++;
 	}
 	ft_check_word(&(*list));
-	if (!look_for_heredocs((*list)->first))
-          return (0);	
 	return (ft_syntax_error(*list, bracket));
 }
 
@@ -132,7 +132,7 @@ int	ft_lexer(char *str, t_dblist **list, int *err)
 	error = ft_add_lex(str, &pars, list);
 	if (!error)
 		return (0);
-	if (error != 1)
+	if (error < 0)
 	{
 		ft_error(error, list);
 		*err = 1;

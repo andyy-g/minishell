@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/06/22 08:55:03 by charoua          ###   ########.fr       */
+/*   Updated: 2022/08/30 11:08:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,15 @@ int	ft_line(char *str, t_pars **pars)
 		(*pars)->token = OR;
 		return (2);
 	}
-	else
+	(*pars)->token = PIPE;
+	while (str[i + 1] == ' ' || str[i + 1] == '\t')
+		i++;
+	if (!(*pars)->prev || !str[i + 1])
 	{
-		(*pars)->token = PIPE;
-		return (1);
+		printf("minishell: syntax error near unexpected token `|'\n");
+		return (-2);
 	}
+	return (1);
 }
 
 int	ft_input(char *str, t_pars **pars)

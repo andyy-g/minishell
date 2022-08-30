@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/27 21:48:57 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/30 10:14:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,12 +247,10 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
-void	launch_heredoc(t_pars *token, int *pipe_heredoc)
+void	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 {
 	char	*input;
-	char	*lim;
 
-	lim = token->next->str;
 	input = NULL;
 	while (1)
 	{
@@ -272,11 +270,13 @@ void	launch_heredoc(t_pars *token, int *pipe_heredoc)
 	return ;
 }
 
-int	check_is_heredoc(t_pars *token)
+int	check_is_heredoc(t_pars *token, char *lim)
 {
 	int	*pipe_heredoc;
 
-	if (token->str && token->token == HEREDOC)
+	if (!lim)
+		return (0);
+	if (token && token->str && token->token == HEREDOC)
 	{
 		pipe_heredoc = malloc(sizeof(int) * 2);
 		if (pipe(pipe_heredoc) == -1)
@@ -284,11 +284,12 @@ int	check_is_heredoc(t_pars *token)
 			perror("pipe");
 			return (0);
 		}
-		launch_heredoc(token, pipe_heredoc);
+		launch_heredoc(token, pipe_heredoc, lim);
 	}
+	ft_free(lim);
 	return (1);
 }
-
+/*
 int	look_for_heredocs(t_pars *token)
 { 
 
@@ -300,7 +301,7 @@ int	look_for_heredocs(t_pars *token)
 	}
 	return (1);
 }
-
+*/
 int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 {
 	int	ret;
