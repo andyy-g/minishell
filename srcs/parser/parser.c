@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 10:13:02 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/26 16:40:21 by agranger         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:22:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	link_to_tree(t_node **root, t_node *node)
 {
 	t_node	*tmp;
 
+	if (!node)
+		return ;
 	if (!*root)
 	{
 		*root = node;
@@ -54,6 +56,8 @@ t_node	*create_ast(t_pars **token, bool expr_bracket, int *status)
 			if (!*status)
 				return (free_nodes(root, NULL, NULL, NULL));
 			link_to_tree(&root, node);
+			while (!expr_bracket && (*token)->str && (*token)->token == RPAR)
+				*token = (*token)->next;
 		}
 		else if ((*token)->token == LPAR)
 			*token = (*token)->next;

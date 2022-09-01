@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/30 10:48:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:26:10 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,11 @@ int	ft_quote(char *str, char c, t_pars **pars)
 	else
 	{
 		if (c == 39)
-			return (-1);
+			display_error(ERR_MATCHING_TOK, "'");
+		
 		else
-			return (-6);
+			display_error(ERR_MATCHING_TOK, "\"");
+		return (-2);
 	}
 }
 
@@ -52,7 +54,8 @@ int	ft_word(char *str, t_pars **pars)
 		i++;
 	}
 	(*pars)->token = WORD;
-	check_is_heredoc((*pars)->prev, ft_substr(str, 0, i));
+	if (!check_is_heredoc((*pars)->prev, ft_substr(str, 0, i)))
+		return (-1);
 	return (i);
 }
 

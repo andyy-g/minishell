@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/30 11:09:07 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:24:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,12 @@ typedef enum e_pipe
 	WRITE
 }	t_pipe;
 
+typedef enum e_err
+{
+	ERR_UNEXPECTED_TOK = 0,
+	ERR_MATCHING_TOK
+}	t_err;
+
 typedef struct s_pars
 {
 	char			*str;
@@ -118,6 +124,7 @@ void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
 void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
 void		launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim);
+void		display_error(t_err err, char *arg);
 int			check_is_heredoc(t_pars *token, char *lim);
 int			ft_lexer(char *str, t_dblist **list, int *error);
 int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);
@@ -138,6 +145,7 @@ int			parser(t_node **ast, t_pars *token, int *error);
 int			exec(t_node *ast);
 int			ft_echo(t_node *node);
 int			look_for_heredocs(t_pars *token);
+int			check_syntax(t_pars *token, char *str, int index, int bracket);
 char		*ft_replacebyvar(char *str, char *var, int size, int pos);
 char		*ft_copy_str(char *dir);
 char		**set_status_error(int *status, char **ret);

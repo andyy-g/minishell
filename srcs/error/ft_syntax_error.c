@@ -6,68 +6,119 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/30 11:18:42 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:25:44 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_syntax_error(t_dblist *list, int bracket)
+bool	is_op(int toktype)
 {
-	t_pars	*tmp;
+	if (toktype == PIPE
+		|| toktype == AND
+		|| toktype == OR)
+		return (true);
+	return (false);
+}
 
-	tmp = list->first;
-	if (bracket == 1)
-		return (-4);
-	else if (bracket != 0)
-		return (-5);
-	while (tmp)
+int	check_redir_syntax(t_pars *curr, t_pars *prev, char *str)
+{
+	if (prev && is_chevron(prev->token))
 	{
-		if (tmp->token == FILE_IN || tmp->token == FILE_OUT \
-			|| tmp->token == FILE_OUT_APP)
+		if (curr->token != WORD)
 		{
-			if ((tmp->next && (tmp->next->token != WORD \
-				&& tmp->next->token != FD)) || !(tmp->next))
-				return (-7);
+			display_error(ERR_UNEXPECTED_TOK, curr->str);
+			return (0);
 		}
-		tmp = tmp->next;
+	}
+	if (is_chevron(curr->token) && !*str)
+	{
+		display_error(ERR_UNEXPECTED_TOK, "newline");
+		return (0);
 	}
 	return (1);
 }
 
-void	ft_error_redir(t_dblist **list)
+int	check_op_syntax(t_pars *curr, t_pars *prev, char *str)
 {
-	t_pars	*tmp;
-
-	tmp = (*list)->first;
-	while (tmp)
+	if (!prev && is_op(curr->token))
 	{
-		if (tmp->token == FILE_IN || tmp->token == FILE_OUT \
-			|| tmp->token == FILE_OUT_APP)
-		{
-			if (tmp->next->str && (tmp->next->token != WORD \
-				&& tmp->next->token != FD))
-				printf("bash: syntax error near unexpected token `%s'\n", \
-				tmp->next->str);
-			else
-				printf("bash: syntax error near unexpected token `newline'\n");
-		}
-		tmp = tmp->next;
+		display_error(ERR_UNEXPECTED_TOK, curr->str);
+		return (0);
 	}
+	if (prev && is_op(prev->token))
+	{
+		if (curr->token != WORD && !is_chevron(curr->token))
+		{
+			display_error(ERR_UNEXPECTED_TOK, curr->str);
+			return (0);
+		}
+	}
+	if (is_op(curr->token) && !*str)
+	{
+		display_error(ERR_UNEXPECTED_TOK, "newline");
+		return (0);
+	}
+	return (1);
 }
 
-void	ft_error(int err, t_dblist **list)
+int	check_bracket_syntax(t_pars *curr, t_pars *prev, int bracket, char *str)
 {
-	if (err == -1)
-		printf("> bash: unexpected EOF while looking for matching `''\n");
-	else if (err == -6)
-		printf("> bash: unexpected EOF while looking for matching `\"'\n");
-	else if (err == -3)
-		printf("bash: syntax error near unexpected token `)'\n");
-	else if (err == -4)
-		printf("bash: syntax error the closing bracket `)' is missing\n");
-	else if (err == -5)
-		printf("bash: syntax error near unexpected token `('\n");
-	else if (err == -7)
-		ft_error_redir(list);
+	(void)bracket;
+	if (curr->token == RPAR && prev && prev->token == LPAR)
+	{
+		display_error(ERR_UNEXPECTED_TOK, curr->str);
+		return (0);
+	}
+	if (curr->token == LPAR && prev && prev->token == WORD)
+	{
+		display_error(ERR_UNEXPECTED_TOK, curr->str);
+		return (0);
+	}
+	if (bracket < 0)
+	{
+		display_error(ERR_UNEXPECTED_TOK, curr->str);
+		return (0);
+	}	
+	if (!*str && bracket == 1)
+	{
+		display_error(ERR_MATCHING_TOK, ")");
+		return (0);
+	}	
+
+	return (1);
+}
+
+int	check_syntax(t_pars *curr, char *str, int i, int bracket)
+{
+	t_pars	*prev;
+
+	prev = curr->prev;
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n')
+		i++;
+	if (!check_redir_syntax(curr, prev, &str[i]))
+		return (0);
+	if (!check_op_syntax(curr, prev, &str[i]))
+		return (0);
+	if (!check_bracket_syntax(curr, prev, bracket, &str[i]))
+		return (0);
+	return (1);	
+}
+
+void	display_error(t_err err, char *arg)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (err == ERR_UNEXPECTED_TOK)
+	{
+		ft_putstr_fd("syntax error near unexpected token `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("'", 2);
+	}
+	if (err == ERR_MATCHING_TOK)
+	{
+		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("'", 2);
+	}
+	ft_putstr_fd("\n", 2);
 }
