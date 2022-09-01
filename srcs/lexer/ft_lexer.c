@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/01 16:04:54 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/01 18:01:22 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,20 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	return (1);
 }
 
+void	free_heredoc(t_pars *curr)
+{
+	while (curr)
+	{
+		if (curr->token == HEREDOC)
+		{
+			close(curr->heredoc[READ]);
+			ft_free(curr->heredoc);
+		}
+		curr = curr->prev;
+	}
+	return ;
+}
+
 int	ft_lexer(char *str, t_dblist **list, int *err)
 {
 	int		error;
@@ -135,6 +149,9 @@ int	ft_lexer(char *str, t_dblist **list, int *err)
 	if (!error)
 		return (0);
 	if (error == -1)
+	{
 		*err = 1;
+		free_heredoc(pars);
+	}
 	return (1);
 }
