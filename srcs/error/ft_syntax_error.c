@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/01 17:25:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/02 10:41:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int	check_op_syntax(t_pars *curr, t_pars *prev, char *str)
 	}
 	if (prev && is_op(prev->token))
 	{
-		if (curr->token != WORD && !is_chevron(curr->token))
+		if (curr->token != WORD && !is_chevron(curr->token)
+			&& curr->token != LPAR)
 		{
 			display_error(ERR_UNEXPECTED_TOK, curr->str);
 			return (0);

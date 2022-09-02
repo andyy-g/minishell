@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/30 10:14:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/02 14:03:09 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,8 @@ void	next_logical_node(t_node **node)
 	}
 	if (!*node || prev == (*node)->left)
 		return ;
-	while ((*node)->parent && (*node)->parent->right == *node)
+	while ((*node)->parent &&
+			((*node)->parent->right == *node || is_chevron((*node)->parent->type)))
 		*node = (*node)->parent;
 	*node = (*node)->parent;
 }
@@ -290,18 +291,18 @@ int	check_is_heredoc(t_pars *token, char *lim)
 	return (1);
 }
 /*
-int	look_for_heredocs(t_pars *token)
-{ 
+   int	look_for_heredocs(t_pars *token)
+   { 
 
-	while (token && token->str)
-	{
-		if (!check_is_heredoc(token))
-			return (0);
-		token = token->next;
-	}
-	return (1);
-}
-*/
+   while (token && token->str)
+   {
+   if (!check_is_heredoc(token))
+   return (0);
+   token = token->next;
+   }
+   return (1);
+   }
+   */
 int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 {
 	int	ret;
@@ -316,7 +317,7 @@ int	exec_bin(t_node *node)
 	char	*path;	
 
 	if (node->type != WORD)
-			return (1);
+		return (1);
 	path = NULL;
 	env = env_to_str_arr(singleton_env(1, NULL, NULL));
 	if (!env)
@@ -375,7 +376,12 @@ int	create_file_out(t_node *node, t_node *cmd)
 {
 	int	fd;
 
-	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
+	if ((cmd->parent->type == AND || cmd->parent->type == OR)
+		&& cmd->parent->right == cmd) 
+		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
+			| O_APPEND | O_CLOEXEC, 0644);
+	else
+		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
 			| O_TRUNC | O_CLOEXEC, 0644);
 	if (fd == -1)
 	{
@@ -409,7 +415,6 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 
 int	fd_heredoc(t_node *node, t_node *cmd)
 {
-	(void)node;
 	if (cmd)
 		cmd->fd_in = node->heredoc[READ];
 	return (1);
@@ -420,8 +425,12 @@ int	check_file_in_out(t_node *node)
 	t_node	*cmd;
 
 	cmd = node;
-	if (!is_chevron(node->type))
+	while (node && !is_chevron(node->type))
+	{
+		if (node->type == PIPE && cmd == node->left)
+			break ;
 		node = node->parent;
+	}
 	while (node && is_chevron(node->type))
 	{
 		if (node->type == FILE_IN)
