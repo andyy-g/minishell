@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 16:28:46 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/31 10:01:06 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/04 18:07:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	swap_redirs(t_pars *redir, t_pars *fd, t_pars **last)
 	*last = fd;
 }
 
-t_pars	*push_back_redir(t_pars *token, t_pars *last)
+void	push_back_redir(t_pars *token, t_pars *last)
 {
 	t_pars	*tmp;
 	t_pars	*first;
@@ -58,54 +58,54 @@ t_pars	*push_back_redir(t_pars *token, t_pars *last)
 		else
 			token = token->next;
 	}
-	while (token->str && (token->token == WORD || is_redir_token(token)))
-		token = token->next;
-	return (token);
 }
 
-bool	redir_in_order(t_pars *token)
+void	go_to_rpar(t_pars **token)
 {
-	if (token->token != WORD)
-		return (false);
-	while (token->str && token->token == WORD)
-		token = token->next;
-	while (token->str && is_redir_token(token))
-		token = token->next;
-	if (token->str && token->token == WORD)
-		return (false);
-	return (true);
+	int	bracket;
+
+	bracket = 1;
+	*token = (*token)->next;
+	while ((*token)->str && bracket)
+	{
+		if ((*token)->token == RPAR)
+			bracket--;
+		else if ((*token)->token == LPAR)
+			bracket++;
+		*token = (*token)->next;
+	}
+}
+
+bool	redir_in_order(t_pars **token)
+{
+	if ((*token)->token == LPAR)
+		go_to_rpar(token);
+	else if ((*token)->token == WORD)
+	{
+		while ((*token)->token == WORD)
+			*token = (*token)->next;
+	}
+	while ((*token)->str && is_redir_token(*token))
+		*token = (*token)->next;
+	if (!(*token)->str || (*token)->token != WORD)
+		return (true);
+	return (false);
 }
 
 t_pars	*put_redirs_in_order(t_pars *token)
 {
-	t_pars	*last;
-	bool	contain_redir;
+	t_pars	*first;
 
-	while (token && token->str)
+	while (token->str)
 	{
-		if (token->token == PIPE || token->token == AND
-				|| token->token == OR)
-			token = token->next;
-		if (token->token == LPAR)
+		first = token;
+		if (redir_in_order(&token))
 		{
-			while (token->str && token->token != RPAR)
+			if (token->str)
 				token = token->next;
-			if (token->token == RPAR)
-				token = token->next;
+			continue ;
 		}
-		last = token;
-		contain_redir = false;
-		while (last->next->str && (last->next->token == WORD
-				|| is_redir_token(last->next)))
-		{
-			if (is_chevron(last->token))
-				contain_redir = true;
-			last = last->next;
-		}
-		if (contain_redir && !redir_in_order(token))
-			token = push_back_redir(token, last);
-		else
-			token = last->next;
+		push_back_redir(first, token);
 	}
 	while (token->prev)
 		token = token->prev;

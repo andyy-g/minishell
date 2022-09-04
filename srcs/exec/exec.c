@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/02 14:03:09 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/04 18:54:30 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,8 @@ void	next_logical_node(t_node **node)
 	if (((*node)->type == AND || (*node)->type == OR))
 	{
 		*node = (*node)->parent;
-		return ;
+		if (((*node)->type == AND || (*node)->type == OR))
+			return ;
 	}
 	prev = NULL;
 	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
@@ -372,12 +373,19 @@ int	file_in_exist(t_node *node, t_node *cmd)
 	return (1);
 }
 
+bool	must_be_appended(t_node *cmd)
+{
+	if (cmd->parent && (cmd->parent->type == AND || cmd->parent->type == OR)
+		&& cmd->parent->right == cmd)
+		return (true);
+	return (false);
+}
+
 int	create_file_out(t_node *node, t_node *cmd)
 {
 	int	fd;
 
-	if ((cmd->parent->type == AND || cmd->parent->type == OR)
-		&& cmd->parent->right == cmd) 
+	if (must_be_appended(cmd)) 
 		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
 			| O_APPEND | O_CLOEXEC, 0644);
 	else
