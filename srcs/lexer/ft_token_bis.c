@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/01 17:26:10 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/05 16:45:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int	ft_quote(char *str, char c, t_pars **pars)
 		else
 			(*pars)->db_quote = 1;
 		(*pars)->token = WORD;
+		if (!check_is_heredoc((*pars)->prev, ft_strdup(str)))
+			return (-1);
 		return (j + 1);
 	}
 	else

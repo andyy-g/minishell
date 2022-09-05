@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/04 18:54:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/05 18:43:35 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,17 +249,103 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
+bool	must_be_expanded(char *lim)
+{
+	int		i;
+	char	quote;
+
+	quote = lim[0];
+	if (quote == '\'' || quote == '"')
+	{
+		i = 0;
+		while (lim[i + 1] != quote)
+		{
+			lim[i] = lim[i + 1];
+			i++;
+		}
+		lim[i] = '\0';
+		return (false);
+	}
+	return (true);
+}
+
+char	*get_env_var_heredoc(char *var)
+{
+	t_env	*env;
+
+	env = singleton_env(1, NULL, NULL);
+	while (env && ft_strcmp(env->var, var))
+		env = env->next;
+	if (!env)
+		return (NULL);
+	return (env->value);
+}
+
+char	*replace_exp_heredoc(char *str, int start, int len, char *var)
+{
+	char	*ret;
+	int		size;
+	int		i;
+
+	size = ft_strlen(str) - len + ft_strlen(var);
+	ret = malloc(sizeof(char) * (size + 1));
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (str[i] && i < start)
+	{
+		ret[i] = str[i];
+		i++;
+	}
+	ret[i] = '\0';
+	ft_strcat(ret, var);
+	ft_strcat(ret, &str[i + len]);
+	return (ret);
+}
+
+char	*heredoc_expansion(char *str)
+{
+	int		pos;
+	int		size;
+	char	*ret;
+	char	*var;
+
+	pos = 0;
+	while (str[pos] && str[pos] != '$')
+		pos++;
+	if (!str[pos])
+		return (ft_strdup(str));
+	size = 0;
+	pos++;
+	while (str[pos + size] && (ft_isalnum(str[pos + size]) || str[pos + size] == '_'))
+		size++;
+	var = get_env_var_heredoc(ft_substr(str, pos, size));
+	if (!var)
+		return (ft_strdup(str));
+	ret = replace_exp_heredoc(str, pos - 1, size + 1, var);
+	return (ret);
+}
+
 void	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 {
 	char	*input;
+	bool	expansion;
 
 	input = NULL;
+	expansion = must_be_expanded(lim);
 	while (1)
 	{
 		input = readline("> ");
 		if (!ft_strcmp(lim, input))
 			break ;
-		write(pipe_heredoc[WRITE], input, ft_strlen(input));
+		if (expansion)
+		{
+			input = heredoc_expansion(input);
+			write(pipe_heredoc[WRITE], input, ft_strlen(input));
+			ft_free(input);
+		}
+		else
+			write(pipe_heredoc[WRITE], input, ft_strlen(input));
 		write(pipe_heredoc[WRITE], "\n", 1);
 	}
 	if (token->heredoc)
@@ -291,19 +377,7 @@ int	check_is_heredoc(t_pars *token, char *lim)
 	ft_free(lim);
 	return (1);
 }
-/*
-   int	look_for_heredocs(t_pars *token)
-   { 
 
-   while (token && token->str)
-   {
-   if (!check_is_heredoc(token))
-   return (0);
-   token = token->next;
-   }
-   return (1);
-   }
-   */
 int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 {
 	int	ret;
@@ -373,10 +447,17 @@ int	file_in_exist(t_node *node, t_node *cmd)
 	return (1);
 }
 
-bool	must_be_appended(t_node *cmd)
+bool	must_be_appended(t_node *node)
 {
-	if (cmd->parent && (cmd->parent->type == AND || cmd->parent->type == OR)
-		&& cmd->parent->right == cmd)
+	t_node	*prev;
+
+	prev = NULL;
+	while (node && node->type != AND && node->type != OR)
+	{
+		prev = node;
+		node = node->parent;
+	}
+	if (node && node->right == prev)
 		return (true);
 	return (false);
 }
@@ -423,7 +504,7 @@ int	create_file_out_app(t_node *node, t_node *cmd)
 
 int	fd_heredoc(t_node *node, t_node *cmd)
 {
-	if (cmd)
+	if (cmd && node->heredoc)
 		cmd->fd_in = node->heredoc[READ];
 	return (1);
 }
@@ -431,12 +512,15 @@ int	fd_heredoc(t_node *node, t_node *cmd)
 int	check_file_in_out(t_node *node)
 {
 	t_node	*cmd;
+	t_node	*prev;
 
 	cmd = node;
+	prev = NULL;
 	while (node && !is_chevron(node->type))
 	{
-		if (node->type == PIPE && cmd == node->left)
+		if (node->type == PIPE && prev == node->left)
 			break ;
+		prev = node;
 		node = node->parent;
 	}
 	while (node && is_chevron(node->type))
