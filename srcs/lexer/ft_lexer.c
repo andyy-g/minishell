@@ -70,10 +70,8 @@ int	ft_token_size(char *str, char c, t_pars **pars, int *bracket)
 {
 	int	i;
 
-	i = 0;
-	if (c == 34 || c == 39)
-		i = ft_quote(str, c, &(*pars));
-	else if (c == '|')
+	i = ft_quote(str);
+	if (c == '|')
 		i = ft_line(str, &(*pars));
 	else if (c == '<')
 		i = ft_input(str, &(*pars));
@@ -99,10 +97,8 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	while (str[i] != '\0')
 	{
 		j = ft_token_size(str + i, str[i], pars, &bracket);
-		if (j == -1)
-			return (0);
-		if (j == -2)
-			return (-1);
+		if (j == -1 || j == -2)
+			return (j + 1);
 		else if (j > 0)
 		{
 			if (!ft_create_str(str + i, j, pars, &(*list)))

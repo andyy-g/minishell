@@ -12,27 +12,52 @@
 
 #include "minishell.h"
 
-int	ft_quote(char *str, char c, t_pars **pars)
+int	ft_check_end(char *str, int i)
+{
+	if (str[i] == '|' || str[i] == '<' || str[i] == '>' \
+	|| (str[i] == '&' && str[i + 1] && str[i + 1] == '&') \
+	|| str[i] == ' ' || str[i] == '\n' || str[i] == '\t' \
+	|| str[i] == '(' || str[i] == ')')
+		return (0);
+	return (1);
+}
+
+int	ft_close_quote(char *str, char c, int i)
 {
 	int	j;
 
 	j = 1;
-	while (str[j] != '\0' && str[j] != c)
-		j++;
-	if (str[j] == c)
+	while (str[i + j] != '\0')
 	{
-		if (c == 39)
-			(*pars)->sp_quote = 1;
-		else
-			(*pars)->db_quote = 1;
-		(*pars)->token = WORD;
-		return (j + 1);
+		if (str[i + j] == c)
+			return (j);
+		j++;
 	}
+	return (-1);
+}
+
+int	ft_quote(char *str)
+{
+	int	j;
+	int	check;
+
+	j = 0;
+	while (str[j] != '\0')
+	{
+		check = 0;
+		if (str[j] == 34 || str[j] == 39)
+			check = ft_close_quote(str, str[j], j);
+		if (check == -1)
+			break ;
+		else
+			j = j + check + 1;
+	}
+	if (check >= 0)
+		return (0);
 	else
 	{
-		if (c == 39)
+		if (str[j] == 39)
 			display_error(ERR_MATCHING_TOK, "'");
-		
 		else
 			display_error(ERR_MATCHING_TOK, "\"");
 		return (-2);
@@ -46,10 +71,7 @@ int	ft_word(char *str, t_pars **pars)
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == '|' || str[i] == '<' || str[i] == '>' \
-				|| (str[i] == '&' && str[i + 1] && str[i + 1] == '&') \
-				|| str[i] == ' ' || str[i] == '\n' || str[i] == '\t' \
-				|| str[i] == '(' || str[i] == ')')
+		if (!ft_check_end(str, i))
 			break ;
 		i++;
 	}
