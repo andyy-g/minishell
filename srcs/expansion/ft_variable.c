@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 15:30:17 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 15:18:12 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ int	ft_variable(t_pars **exp, t_env *env)
 	int		i;
 	int		size;
 	char	*str;
+	char	*exit_status;
 
 	i = 1;
 	str = (*exp)->str;
@@ -82,8 +83,12 @@ int	ft_variable(t_pars **exp, t_env *env)
 		env = env->next;
 	}
 	if (i == 1 && str[i] && str[i] == '?')
-		(*exp)->str = ft_replacebyvar(str, ft_itoa(g_exit_status), \
-		ft_strlen(ft_itoa(g_exit_status)) + ft_strlen(str) - i - 1, i + 1);
+	{
+		exit_status = ft_itoa(g_exit_status);
+		(*exp)->str = ft_replacebyvar(str, exit_status,
+			ft_strlen(exit_status) + ft_strlen(str) - i - 1, i + 1);
+		ft_free(exit_status);
+	}
 	if (!(*exp)->str)
 		return (0);
 	return (1);
