@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/01 17:24:15 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/06 16:35:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,8 @@ void		free_tokens_ast(t_node *ast, t_dblist *tokens);
 void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
 void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
-void		launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim);
 void		display_error(t_err err, char *arg);
+int			launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim);
 int			check_is_heredoc(t_pars *token, char *lim);
 int			ft_lexer(char *str, t_dblist **list, int *error);
 int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);

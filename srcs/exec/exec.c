@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/05 18:43:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/07 15:43:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ void	next_logical_node(t_node **node)
 	if (((*node)->type == AND || (*node)->type == OR))
 	{
 		*node = (*node)->parent;
-		if (((*node)->type == AND || (*node)->type == OR))
+		if (*node && ((*node)->type == AND || (*node)->type == OR))
 			return ;
 	}
 	prev = NULL;
@@ -229,6 +229,11 @@ int	find_path_bin(t_node *node, char **pathname)
 	struct stat	sb;
 	int			i;
 
+	if (!node->cmd[0][0])
+	{
+		*pathname = ft_strdup(node->cmd[0]);
+		return (1);
+	}
 	paths = get_envpath_value();
 	if (!paths)
 		return (1);
@@ -249,23 +254,48 @@ int	find_path_bin(t_node *node, char **pathname)
 	return (1);
 }
 
+void	trim_quotes(char *lim, int *i, char quote, int *len)
+{
+	int	add;
+	*len -= 2;
+	add = 1;
+	if (*i > 0 && lim[*i - 1] == '$')
+	{
+		add++;
+		(*i)--;
+	}
+	while (*i < *len && lim[*i + add])
+	{
+		while (lim[*i + add] && (lim[*i + add] == quote || lim[*i + add] == '$'))
+			add++;
+		lim[*i] = lim[*i + add];
+		if (lim[*i + add])
+			(*i)++;
+	}
+	lim[*i] = '\0';
+}
+
 bool	must_be_expanded(char *lim)
 {
 	int		i;
 	char	quote;
+	int		len;
 
-	quote = lim[0];
-	if (quote == '\'' || quote == '"')
+	i = 0;
+	quote = 0;
+	len = ft_strlen(lim);
+	while (lim[i])
 	{
-		i = 0;
-		while (lim[i + 1] != quote)
+		if (lim[i] == '\'' || lim[i] == '"')
 		{
-			lim[i] = lim[i + 1];
-			i++;
+			quote = lim[i];
+			trim_quotes(lim, &i, quote, &len);
+			break ;
 		}
-		lim[i] = '\0';
-		return (false);
+		i++;
 	}
+	if (quote)
+		return (false);
 	return (true);
 }
 
@@ -309,6 +339,7 @@ char	*heredoc_expansion(char *str)
 	int		size;
 	char	*ret;
 	char	*var;
+	char	*value;
 
 	pos = 0;
 	while (str[pos] && str[pos] != '$')
@@ -319,14 +350,17 @@ char	*heredoc_expansion(char *str)
 	pos++;
 	while (str[pos + size] && (ft_isalnum(str[pos + size]) || str[pos + size] == '_'))
 		size++;
-	var = get_env_var_heredoc(ft_substr(str, pos, size));
+	var = ft_substr(str, pos, size);
 	if (!var)
+		return (NULL);
+	value = get_env_var_heredoc(var);
+	if (!value)
 		return (ft_strdup(str));
-	ret = replace_exp_heredoc(str, pos - 1, size + 1, var);
+	ret = replace_exp_heredoc(str, pos - 1, size + 1, value);
 	return (ret);
 }
 
-void	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
+int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 {
 	char	*input;
 	bool	expansion;
@@ -341,6 +375,8 @@ void	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 		if (expansion)
 		{
 			input = heredoc_expansion(input);
+			if (!input)
+				return (0);
 			write(pipe_heredoc[WRITE], input, ft_strlen(input));
 			ft_free(input);
 		}
@@ -355,13 +391,15 @@ void	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 	}
 	token->heredoc = pipe_heredoc;
 	close(pipe_heredoc[WRITE]);
-	return ;
+	return (1);
 }
 
 int	check_is_heredoc(t_pars *token, char *lim)
 {
 	int	*pipe_heredoc;
+	int	ret;
 
+	ret = 1;
 	if (!lim)
 		return (0);
 	if (token && token->str && token->token == HEREDOC)
@@ -370,12 +408,14 @@ int	check_is_heredoc(t_pars *token, char *lim)
 		if (pipe(pipe_heredoc) == -1)
 		{
 			perror("pipe");
+			ft_free(lim);
 			return (0);
 		}
-		launch_heredoc(token, pipe_heredoc, lim);
+		if (!launch_heredoc(token, pipe_heredoc, lim))
+			ret = 0;
 	}
 	ft_free(lim);
-	return (1);
+	return (ret);
 }
 
 int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
@@ -468,10 +508,10 @@ int	create_file_out(t_node *node, t_node *cmd)
 
 	if (must_be_appended(cmd)) 
 		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
-			| O_APPEND | O_CLOEXEC, 0644);
+				| O_APPEND | O_CLOEXEC, 0644);
 	else
 		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
-			| O_TRUNC | O_CLOEXEC, 0644);
+				| O_TRUNC | O_CLOEXEC, 0644);
 	if (fd == -1)
 	{
 		perror("open");
@@ -588,9 +628,17 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	int	ret;
 
 	if (node->fd_in != STDIN_FILENO)
-		dup2(node->fd_in, STDIN_FILENO);
+		if (dup2(node->fd_in, STDIN_FILENO) == -1)
+		{
+			perror("dup2");
+			return (0);
+		}
 	if (node->fd_out != STDOUT_FILENO)
-		dup2(node->fd_out, STDOUT_FILENO);
+		if (dup2(node->fd_out, STDOUT_FILENO) == -1)
+		{
+			perror("dup2");
+			return(0);
+		}
 	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
 		ret = exec_builtin(node, &ft_echo);
