@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/08 15:18:12 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 23:14:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,32 +61,32 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 	return (new);
 }
 
-int	ft_variable(t_pars **exp, t_env *env)
+int	ft_variable(t_pars **exp, t_env *env, int j)
 {
 	int		i;
 	int		size;
 	char	*str;
 	char	*exit_status;
 
-	i = 1;
+	i = j + 1;
 	str = (*exp)->str;
 	while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 		i++;
-	while (i - 1 > 0 && env)
+	while (i - 1 > j && env)
 	{
-		if (env->var && ft_ncmp(str + 1, env->var, i - 1))
+		if (env->var && ft_ncmp(str + j + 1, env->var, i - j - 1))
 		{
-			size = ft_strlen(env->value) + ft_strlen(str) - i;
+			size = ft_strlen(env->value) + ft_strlen(str) - i + j;
 			(*exp)->str = ft_replacebyvar(str, env->value, size, i);
 			break ;
 		}
 		env = env->next;
 	}
-	if (i == 1 && str[i] && str[i] == '?')
+	if (i == j + 1 && str[i] && str[i] == '?')
 	{
 		exit_status = ft_itoa(g_exit_status);
-		(*exp)->str = ft_replacebyvar(str, exit_status,
-			ft_strlen(exit_status) + ft_strlen(str) - i - 1, i + 1);
+		(*exp)->str = ft_replacebyvar(str, ft_itoa(g_exit_status), \
+		ft_strlen(ft_itoa(g_exit_status)) + ft_strlen(str) - i - 1, i + 1);
 		ft_free(exit_status);
 	}
 	if (!(*exp)->str)
