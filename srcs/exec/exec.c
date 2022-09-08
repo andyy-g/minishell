@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/07 15:43:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 23:07:06 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,35 @@ t_node	*next_cmd(t_node *node)
 	t_node	*prev;
 
 	prev = NULL;
+	while (node && node->type != PIPE
+			&& node->type != AND && node->type != OR)
+	{
+		prev = node;
+		node = node->parent;
+	}
+	while (node && prev == node->right)
+	{
+		prev = node;
+		node = node->parent;
+	}
+	if (node && node->type != PIPE)
+		return (NULL);
+	if (node)
+	{
+		node = node->right;
+		while (node->left)
+			node = node->left;
+	}
+	return (node);
+}
+
+t_node	*next_cmd_after_redir(t_node *node)
+{
+	t_node	*prev;
+
+	prev = NULL;
+	while (node && node->type != FILE_IN)
+		node = node->parent;
 	while (node && node->type != PIPE
 			&& node->type != AND && node->type != OR)
 	{
@@ -223,7 +252,7 @@ char	*concat_pathname(char *path, char *cmd)
 	return (pathname);
 }
 
-int	find_path_bin(t_node *node, char **pathname)
+int	find_path_bin(t_node *node, char **pathname, int *is_dir)
 {
 	char		**paths;
 	struct stat	sb;
@@ -234,6 +263,8 @@ int	find_path_bin(t_node *node, char **pathname)
 		*pathname = ft_strdup(node->cmd[0]);
 		return (1);
 	}
+	if (stat(node->cmd[0], &sb) == 0)
+		*pathname = ft_strdup(node->cmd[0]);
 	paths = get_envpath_value();
 	if (!paths)
 		return (1);
@@ -250,6 +281,7 @@ int	find_path_bin(t_node *node, char **pathname)
 		}
 		i++;
 	}
+	*is_dir = S_ISDIR(sb.st_mode);
 	free_arr_of_str(paths);
 	return (1);
 }
@@ -430,6 +462,7 @@ int	exec_bin(t_node *node)
 {
 	char	**env;
 	char	*path;	
+	int		is_dir;
 
 	if (node->type != WORD)
 		return (1);
@@ -437,11 +470,16 @@ int	exec_bin(t_node *node)
 	env = env_to_str_arr(singleton_env(1, NULL, NULL));
 	if (!env)
 		return (0);
-	if (!find_path_bin(node, &path))
+	if (!find_path_bin(node, &path, &is_dir))
 		return (0);
-	execve(path, node->cmd, env);
+	if (!is_dir)
+		execve(path, node->cmd, env);
+	else
+		display_error(ERR_IS_DIR, node->cmd[0]);
 	if (errno == ENOENT)
-		printf("%s: command not found\n", node->cmd[0]);
+		display_error(ERR_CMD_NOT_FOUND, node->cmd[0]);
+	if (errno == EACCES)
+		display_error(ERR_PERM_DENIED, node->cmd[0]);
 	free(env);
 	ft_free(path);
 	if (node->parent && node->parent->heredoc)
@@ -471,7 +509,7 @@ int	file_in_exist(t_node *node, t_node *cmd)
 
 	if (access(node->right->cmd[0], F_OK) == -1)
 	{
-		printf("bash: %s: No such file or directory\n", node->right->cmd[0]);
+		display_error(ERR_NO_FILE, node->right->cmd[0]);
 		return (2);
 	}
 	fd = open(node->right->cmd[0], O_RDONLY | O_CLOEXEC);
@@ -549,7 +587,7 @@ int	fd_heredoc(t_node *node, t_node *cmd)
 	return (1);
 }
 
-int	check_file_in_out(t_node *node)
+int	check_file_out(t_node *node)
 {
 	t_node	*cmd;
 	t_node	*prev;
@@ -565,15 +603,39 @@ int	check_file_in_out(t_node *node)
 	}
 	while (node && is_chevron(node->type))
 	{
-		if (node->type == FILE_IN)
-			if (!file_in_exist(node, cmd))
-				return (0);
 		if (node->type == FILE_OUT)
 			if (!create_file_out(node, cmd))
 				return (0);
 		if (node->type == FILE_OUT_APP)
 			if (!create_file_out_app(node, cmd))
 				return (0);
+		node = node->parent;
+	}
+	return (1);
+}
+int	check_file_in(t_node *node)
+{
+	t_node	*cmd;
+	t_node	*prev;
+	int		ret;
+
+	cmd = node;
+	prev = NULL;
+	while (node && !is_chevron(node->type))
+	{
+		if (node->type == PIPE && prev == node->right)
+			break ;
+		prev = node;
+		node = node->parent;
+	}
+	while (node && is_chevron(node->type))
+	{
+		if (node->type == FILE_IN)
+		{
+			ret = file_in_exist(node, cmd);
+			if (!ret || ret == 2)
+				return (ret);
+		}
 		if (node->type == HEREDOC)
 			if (!fd_heredoc(node, cmd))
 				return (0);
@@ -651,6 +713,16 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	else if (cmd_is(node->cmd[0], "env"))
 		printf("ENV\n");
 	//ret = exec_builtin(node, &ft_env);
+	else if (cmd_is(node->cmd[0], "cd"))
+		printf("CD\n");
+	//ret = ft_cd;
+	else if (cmd_is(node->cmd[0], "unset"))
+		printf("UNSET\n");
+	//ret = ft_unset;
+	else if (cmd_is(node->cmd[0], "exit"))
+		printf("EXIT\n");
+	//ret = ft_exit;
+
 	else
 		ret = exec_bin(node);
 	if (pid == 0)
@@ -660,21 +732,30 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 
 int	init_fd(t_node *node, int *pipe_fd)
 {
-	int	ret;
+	int	in;
+	int	out;
 	int	prev_fd;
 
-	ret = check_file_in_out(node);
-	prev_fd = pipe_fd[READ];
-	if (ret == 0 || ret == 2)
-		return (ret);
+	if (pipe_fd)
+		prev_fd = pipe_fd[READ];
+	in = check_file_in(node);
+	out = check_file_out(node);
+	if (!in || !out)
+		return (0);
 	if (!is_pipe_cmd(node))
+	{
+		if (in == 2 || out == 2)
+			return (2);
 		return (1);
+	}
 	node->is_pipe = true;
 	if (pipe(pipe_fd) == -1)
 	{
 		perror("pipe");
 		return (0);
 	}
+	if (in == 2 || out == 2)
+		return (2);
 	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
 		node->fd_in = prev_fd;
 	else if (prev_fd != -1)
@@ -725,7 +806,7 @@ pid_t	*init_pid_arr(t_node *cmd, int *index_cmd)
 		nb_cmd++;
 		cmd = next_cmd(cmd);
 	}
-	pids = malloc(sizeof(*pids) * (nb_cmd + 1));
+	pids = calloc(nb_cmd + 1, sizeof(*pids));
 	pids[nb_cmd] = -1;
 	*index_cmd = 0;
 	return (pids);
@@ -740,7 +821,9 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 		ret = init_fd(cmd, pipe_fd);
 		if (ret == 2)
 		{
-			cmd = next_cmd(cmd);
+			if (cmd->is_pipe)
+				close(pipe_fd[WRITE]);
+			cmd = next_cmd_after_redir(cmd);
 			continue ;
 		}
 		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))

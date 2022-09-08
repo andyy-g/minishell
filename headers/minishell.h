@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/06 16:35:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 22:08:42 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,11 @@ typedef enum e_pipe
 typedef enum e_err
 {
 	ERR_UNEXPECTED_TOK = 0,
-	ERR_MATCHING_TOK
+	ERR_MATCHING_TOK,
+	ERR_PERM_DENIED,
+	ERR_CMD_NOT_FOUND,
+	ERR_IS_DIR,
+	ERR_NO_FILE
 }	t_err;
 
 typedef struct s_pars

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/04 14:10:12 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 22:11:33 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,26 @@ void	display_error(t_err err, char *arg)
 		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd("'", 2);
+	}
+	if (err == ERR_PERM_DENIED)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": Permission denied", 2);
+	}
+	if (err == ERR_CMD_NOT_FOUND)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": command not found", 2);
+	}
+	if (err == ERR_IS_DIR)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": Is a directory", 2);
+	}
+	if (err == ERR_NO_FILE)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": No such file or directory", 2);
 	}
 	ft_putstr_fd("\n", 2);
 }
