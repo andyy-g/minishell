@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/08 23:13:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/08 23:17:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,6 @@ int	ft_quote(char *str)
 			break ;
 		else
 		j = j + check + 1;
-		if (!check_is_heredoc((*pars)->prev, ft_strdup(str)))
-			return (-1);
 	}
 	if (check >= 0)
 		return (0);
