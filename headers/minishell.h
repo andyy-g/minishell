@@ -150,6 +150,7 @@ int			exec(t_node *ast);
 int			ft_echo(t_node *node);
 int			look_for_heredocs(t_pars *token);
 int			check_syntax(t_pars *token, char *str, int index, int bracket);
+void		display_error(t_err err, char *arg);
 char		*ft_replacebyvar(char *str, char *var, int size, int pos);
 char		*ft_copy_str(char *dir);
 char		**set_status_error(int *status, char **ret);

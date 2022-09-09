@@ -34,6 +34,7 @@ CFILES			=	main.c \
 					lexer/ft_token_bis.c \
 					lexer/ft_token.c \
 					error/ft_syntax_error.c \
+					error/ft_display_error.c \
 					expansion/ft_expand.c \
 					expansion/ft_variable.c \
 					expansion/ft_wildcard.c \
