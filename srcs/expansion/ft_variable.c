@@ -44,17 +44,16 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 	new = (char *)malloc(sizeof(char) * size + 1);
 	if (new)
 	{
-		while (var[i])
+		while (str[i] != '$')
 		{
-			new[i] = var[i];
+			new[i] = str[i];
 			i++;
 		}
+		while (var[j])
+			new[i++] = var[j++];
+		j = 0;
 		while (str[pos + j])
-		{
-			new[i] = str[pos + j];
-			j++;
-			i++;
-		}
+			new[i++] = str[pos + j++];
 		new[i] = '\0';
 	}
 	free(str);
@@ -65,10 +64,12 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 {
 	int		i;
 	int		size;
+	int		found;
 	char	*str;
 	char	*exit_status;
 
 	i = j + 1;
+	found = 0;
 	str = (*exp)->str;
 	while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 		i++;
@@ -78,6 +79,7 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 		{
 			size = ft_strlen(env->value) + ft_strlen(str) - i + j;
 			(*exp)->str = ft_replacebyvar(str, env->value, size, i);
+			found = 1;
 			break ;
 		}
 		env = env->next;
@@ -88,6 +90,12 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 		(*exp)->str = ft_replacebyvar(str, ft_itoa(g_exit_status), \
 		ft_strlen(ft_itoa(g_exit_status)) + ft_strlen(str) - i - 1, i + 1);
 		ft_free(exit_status);
+	}
+	else if (found == 0)
+	{
+		while (j < i && (*exp)->str[i])
+			(*exp)->str[j++] = (*exp)->str[i++];
+		(*exp)->str[j] = '\0';
 	}
 	if (!(*exp)->str)
 		return (0);
