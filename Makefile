@@ -51,6 +51,7 @@ CFILES			=	main.c \
 					env/free_env.c \
 					env/conversion_env.c \
 					exec/ft_echo.c \
+					exec/ft_pwd.c \
 					exec/exec.c \
 					exec/tools.c
 					

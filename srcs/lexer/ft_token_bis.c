@@ -49,7 +49,6 @@ int	ft_quote(char *str)
 			check = ft_close_quote(str, str[j], j);
 		if (check == -1)
 			break ;
-		else
 		j = j + check + 1;
 	}
 	if (check >= 0)
@@ -66,11 +65,19 @@ int	ft_quote(char *str)
 
 int	ft_word(char *str, t_pars **pars)
 {
-	int	i;
+	int		i;
+	char	c;
 
 	i = 0;
 	while (str[i] != '\0')
 	{
+		if (str[i] == 34 || str[i] == 39)
+		{
+			c = str[i];
+			i++;
+			while (str[i] != c)
+				i++;
+		}
 		if (!ft_check_end(str, i))
 			break ;
 		i++;

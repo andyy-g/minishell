@@ -90,7 +90,7 @@ int	ft_expand(t_dblist **list, t_env **env)
 			ft_home(&exp, *env);
 		while (exp->str[i] != '\0')
 		{
-			if (exp->str[i] == 39 || exp->str[i] == 34)
+			while (exp->str[i] == 39 || exp->str[i] == 34)
 				i = ft_exp_quote(&exp, &(*env), i, exp->str[i]);
 			if (i == -1 || (exp->str[i] == '$' && \
 			*env && !ft_variable(&exp, *env, i)))
