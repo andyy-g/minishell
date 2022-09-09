@@ -59,6 +59,9 @@ void	ft_clear(char *str, int i)
 
 int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 {
+	int	j;
+
+	j = 0;
 	ft_clear((*exp)->str, i);
 	while ((*exp)->str[i] && (*exp)->str[i] != c)
 	{
@@ -66,8 +69,10 @@ int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 			(*exp)->sp_quote = 1;
 		if ((*exp)->str[i] == '$' && *env && c == 34)
 		{
+			j = i - 1;
 			if (!ft_variable(&(*exp), *env, i))
 				return (-1);
+			i = j;
 		}
 		i++;
 	}
