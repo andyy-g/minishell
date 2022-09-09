@@ -60,38 +60,46 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 	return (new);
 }
 
+int	ft_check_variable(char **str, t_env *env, int i, int j)
+{
+	int		size;
+	char	*exit_status;
+
+	size = 0;
+	while (i - 1 > j && env)
+	{
+		if (env->var && ft_ncmp((*str) + j + 1, env->var, i - j - 1))
+		{
+			size = ft_strlen(env->value) + ft_strlen(*str) - i + j;
+			*str = ft_replacebyvar(*str, env->value, size, i);
+			return (1);
+		}
+		env = env->next;
+	}
+	if (i == j + 1 && (*str)[i] && (*str)[i] == '?')
+	{
+		exit_status = ft_itoa(g_exit_status);
+		size = ft_strlen(exit_status) + ft_strlen(*str) - i - 1;
+		*str = ft_replacebyvar(*str, exit_status, size, i + 1);
+		ft_free(exit_status);
+		return (1);
+	}
+	return (0);
+}
+
 int	ft_variable(t_pars **exp, t_env *env, int j)
 {
 	int		i;
-	int		size;
 	int		found;
 	char	*str;
-	char	*exit_status;
 
 	i = j + 1;
 	found = 0;
 	str = (*exp)->str;
 	while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 		i++;
-	while (i - 1 > j && env)
-	{
-		if (env->var && ft_ncmp(str + j + 1, env->var, i - j - 1))
-		{
-			size = ft_strlen(env->value) + ft_strlen(str) - i + j;
-			(*exp)->str = ft_replacebyvar(str, env->value, size, i);
-			found = 1;
-			break ;
-		}
-		env = env->next;
-	}
-	if (i == j + 1 && str[i] && str[i] == '?')
-	{
-		exit_status = ft_itoa(g_exit_status);
-		(*exp)->str = ft_replacebyvar(str, ft_itoa(g_exit_status), \
-		ft_strlen(ft_itoa(g_exit_status)) + ft_strlen(str) - i - 1, i + 1);
-		ft_free(exit_status);
-	}
-	else if (found == 0)
+	found = ft_check_variable(&((*exp)->str), env, i, j);
+	if (found == 0)
 	{
 		while (j < i && (*exp)->str[i])
 			(*exp)->str[j++] = (*exp)->str[i++];
