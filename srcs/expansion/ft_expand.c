@@ -57,62 +57,49 @@ void	ft_clear(char *str, int i)
 	}
 }
 
+int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
+{
+	ft_clear((*exp)->str, i);
+	while ((*exp)->str[i] && (*exp)->str[i] != c)
+	{
+		if ((*exp)->str[i] == '*')
+			(*exp)->sp_quote = 1;
+		if ((*exp)->str[i] == '$' && *env && c == 34)
+		{
+			if (!ft_variable(&(*exp), *env, i))
+				return (-1);
+		}
+		i++;
+	}
+	ft_clear((*exp)->str, i);
+	if (i >= 1)
+		i--;
+	return (i);
+}
+
 int	ft_expand(t_dblist **list, t_env **env)
 {
 	t_pars	*exp;
-	t_pars	*tmp;
 	int		i;
 
 	exp = (*list)->first;
 	while (exp->next)
 	{
 		i = 0;
-		tmp = exp->next;
 		if (exp->str[i] == '~' && !(exp->str[i + 1]) && *env)
 			ft_home(&exp, *env);
 		while (exp->str[i] != '\0')
 		{
-			if (exp->str[i] == 39)
-			{
-				ft_clear(exp->str, i);
-				i++;
-				while (exp->str[i] && exp->str[i] != 39)
-				{
-					if (exp->str[i] == '*')
-						exp->sp_quote = 1;
-					i++;
-				}
-				ft_clear(exp->str, i);
-				if (i >= 1)
-					i--;
-			}
-			if (exp->str[i] == 34)
-			{
-				ft_clear(exp->str, i);
-				i++;
-				while (exp->str[i] && exp->str[i] != 34)
-				{
-					if (exp->str[i] == '$' && *env)
-					{
-						if (!ft_variable(&exp, *env, i))
-							return (0);
-					}
-					i++;
-				}
-				ft_clear(exp->str, i);
-				if (i >= 1)
-					i--;
-			}
-			if (exp->str[i] == '$' && *env)
-			{
-				if (!ft_variable(&exp, *env, i))
-					return (0);
-			}
+			if (exp->str[i] == 39 || exp->str[i] == 34)
+				i = ft_exp_quote(&exp, &(*env), i, exp->str[i]);
+			if (i == -1 || (exp->str[i] == '$' && \
+			*env && !ft_variable(&exp, *env, i)))
+				return (0);
 			i++;
 		}
 		if (!ft_check_wildcard(exp, list))
 			return (0);
-		exp = tmp;
+		exp = exp->next;
 	}
 	return (1);
 }
