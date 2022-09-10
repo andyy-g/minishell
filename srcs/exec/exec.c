@@ -459,30 +459,8 @@ int	exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node))
 	return (ret);
 }
 
-int	exec_bin(t_node *node)
+void	close_fds_exec_fail(t_node *node)
 {
-	char	**env;
-	char	*path;	
-	int		is_dir;
-
-	if (node->type != WORD)
-		return (1);
-	path = NULL;
-	env = env_to_str_arr(singleton_env(1, NULL, NULL));
-	if (!env)
-		return (0);
-	if (!find_path_bin(node, &path, &is_dir))
-		return (0);
-	if (!is_dir)
-		execve(path, node->cmd, env);
-	else
-		display_error(ERR_IS_DIR, node->cmd[0]);
-	if (errno == ENOENT)
-		display_error(ERR_CMD_NOT_FOUND, node->cmd[0]);
-	if (errno == EACCES)
-		display_error(ERR_PERM_DENIED, node->cmd[0]);
-	free(env);
-	ft_free(path);
 	if (node->parent && node->parent->heredoc)
 	{   
 		close(node->parent->heredoc[0]);
@@ -498,6 +476,36 @@ int	exec_bin(t_node *node)
 		close(node->fd_out);
 		close(STDOUT_FILENO);
 	}
+}
+
+int	exec_bin(t_node *node)
+{
+	char	**env;
+	char	*path;	
+	int		is_dir;
+
+	if (node->type != WORD)
+		return (1);
+	path = NULL;
+	env = env_to_str_arr(singleton_env(1, NULL, NULL));
+	if (!env)
+		return (0);
+	is_dir = 0;
+	if (!find_path_bin(node, &path, &is_dir))
+		return (0);
+	if (is_dir)
+		display_error(ERR_IS_DIR, node->cmd[0]);
+	else
+	{
+		execve(path, node->cmd, env);
+		if (errno == ENOENT)
+			display_error(ERR_CMD_NOT_FOUND, node->cmd[0]);
+		if (errno == EACCES)
+			display_error(ERR_PERM_DENIED, node->cmd[0]);
+	}
+	free(env);
+	ft_free(path);
+	close_fds_exec_fail(node);
 	while (node->parent)
 		node = node->parent;
 	exit_minishell(node);
