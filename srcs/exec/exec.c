@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/08 23:07:06 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/10 17:20:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ int	find_path_bin(t_node *node, char **pathname, int *is_dir)
 	struct stat	sb;
 	int			i;
 
+	sb.st_mode = 0;
 	if (!node->cmd[0][0])
 	{
 		*pathname = ft_strdup(node->cmd[0]);
