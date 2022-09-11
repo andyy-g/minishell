@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/10 17:20:48 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/11 17:35:36 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ char	*concat_pathname(char *path, char *cmd)
 	ft_strcat(pathname, cmd);
 	return (pathname);
 }
-
+/*
 int	find_path_bin(t_node *node, char **pathname, int *is_dir)
 {
 	char		**paths;
@@ -264,11 +264,14 @@ int	find_path_bin(t_node *node, char **pathname, int *is_dir)
 		*pathname = ft_strdup(node->cmd[0]);
 		return (1);
 	}
-	if (stat(node->cmd[0], &sb) == 0)
-		*pathname = ft_strdup(node->cmd[0]);
+	//if (stat(node->cmd[0], &sb) == 0)
+	//	*pathname = ft_strdup(node->cmd[0]);
 	paths = get_envpath_value();
 	if (!paths)
+	{
+		*pathname = ft_strdup(node->cmd[0]);
 		return (1);
+	}
 	i = 0;
 	while (paths[i] && (!*pathname || stat(*pathname, &sb) == -1))
 	{
@@ -282,9 +285,80 @@ int	find_path_bin(t_node *node, char **pathname, int *is_dir)
 		}
 		i++;
 	}
-	*is_dir = S_ISDIR(sb.st_mode);
+	if (!paths[i])
+		*pathname = ft_strdup(node->cmd[0]);
+	else
+		*is_dir = S_ISDIR(sb.st_mode);
 	free_arr_of_str(paths);
 	return (1);
+}
+*/
+int	find_path_bin(t_node *node, char **pathname, int *cmd_not_found)
+{
+	char		**paths;
+	struct stat	sb;
+	int			i;
+
+	sb.st_mode = 0;
+	paths = get_envpath_value();
+	if (!paths || !node->cmd[0][0])
+	{
+		*cmd_not_found = 1;
+		return (1);
+	}
+	i = 0;
+	while (paths[i])
+	{
+		*pathname = concat_pathname(paths[i], node->cmd[0]);
+		if (!*pathname)
+		{
+			free_arr_of_str(paths);
+			return (0);
+		}
+		if ((stat(*pathname, &sb) == 0 && S_ISDIR(sb.st_mode) == 0))
+			break ;
+		ft_free(*pathname);
+		i++;
+	}
+	if (!paths[i])
+		*cmd_not_found = 1;
+	free_arr_of_str(paths);
+	return (1);
+}
+
+bool	is_path(char *cmd)
+{
+	if (cmd[0] == '/')
+		return (true);
+	if (cmd[0] != '.')
+		return (false);
+	if (cmd[1] && cmd[1] != '/' && (cmd[1] != '.' && cmd[2] != '/'))
+		return (false);
+	return (true);
+}
+
+void	check_relative_absolute_path(t_node *node, char **pathname, int *is_dir, int *cmd_not_found)
+{
+	struct stat	sb;
+
+	sb.st_mode = 0;
+	if (stat(node->cmd[0], &sb) == -1)
+	{
+		*cmd_not_found = 1;
+		return ;
+	}
+	if (S_ISDIR(sb.st_mode))
+	{
+		*is_dir = 1;
+		return ;
+	}
+	if (!is_path(node->cmd[0]))
+	{
+		*cmd_not_found = 1;
+		return ;
+	}
+	*cmd_not_found = 0;
+	*pathname = ft_strdup(node->cmd[0]);
 }
 
 void	trim_quotes(char *lim, int *i, char quote, int *len)
@@ -478,36 +552,47 @@ void	close_fds_exec_fail(t_node *node)
 	}
 }
 
+bool	check_error(t_node *node, int is_dir, int cmd_not_found)
+{
+	if (is_dir)
+	{
+		display_error(ERR_IS_DIR, node->cmd[0]);
+		return (false);
+	}
+	if (cmd_not_found)
+	{
+		display_error(ERR_CMD_NOT_FOUND, node->cmd[0]);
+		return (false);
+	}
+	return (true);
+}
+
 int	exec_bin(t_node *node)
 {
-	char	**env;
+	char	**envp;
 	char	*path;	
 	int		is_dir;
+	int		cmd_not_found;
 
-	if (node->type != WORD)
+	is_dir = 0;
+	cmd_not_found = 0;
+	if (is_chevron(node->type))
 		return (1);
 	path = NULL;
-	env = env_to_str_arr(singleton_env(1, NULL, NULL));
-	if (!env)
+	envp = env_to_str_arr(singleton_env(1, NULL, NULL));
+	if (!envp || !find_path_bin(node, &path, &cmd_not_found))
 		return (0);
-	is_dir = 0;
-	if (!find_path_bin(node, &path, &is_dir))
-		return (0);
-	if (is_dir)
-		display_error(ERR_IS_DIR, node->cmd[0]);
-	else
+	if (cmd_not_found)
+		check_relative_absolute_path(node, &path, &is_dir, &cmd_not_found);
+	if (check_error(node, is_dir, cmd_not_found))
 	{
-		execve(path, node->cmd, env);
-		if (errno == ENOENT)
-			display_error(ERR_CMD_NOT_FOUND, node->cmd[0]);
+		execve(path, node->cmd, envp);
 		if (errno == EACCES)
 			display_error(ERR_PERM_DENIED, node->cmd[0]);
+		ft_free(path);
 	}
-	free(env);
-	ft_free(path);
+	ft_free(envp);
 	close_fds_exec_fail(node);
-	while (node->parent)
-		node = node->parent;
 	exit_minishell(node);
 	return (1);
 }
