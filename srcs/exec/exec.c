@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/11 17:35:36 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/12 14:37:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,48 +251,7 @@ char	*concat_pathname(char *path, char *cmd)
 	ft_strcat(pathname, cmd);
 	return (pathname);
 }
-/*
-int	find_path_bin(t_node *node, char **pathname, int *is_dir)
-{
-	char		**paths;
-	struct stat	sb;
-	int			i;
 
-	sb.st_mode = 0;
-	if (!node->cmd[0][0])
-	{
-		*pathname = ft_strdup(node->cmd[0]);
-		return (1);
-	}
-	//if (stat(node->cmd[0], &sb) == 0)
-	//	*pathname = ft_strdup(node->cmd[0]);
-	paths = get_envpath_value();
-	if (!paths)
-	{
-		*pathname = ft_strdup(node->cmd[0]);
-		return (1);
-	}
-	i = 0;
-	while (paths[i] && (!*pathname || stat(*pathname, &sb) == -1))
-	{
-		if (*pathname)
-			free(*pathname);
-		*pathname = concat_pathname(paths[i], node->cmd[0]);
-		if (!*pathname)
-		{
-			free_arr_of_str(paths);
-			return (0);
-		}
-		i++;
-	}
-	if (!paths[i])
-		*pathname = ft_strdup(node->cmd[0]);
-	else
-		*is_dir = S_ISDIR(sb.st_mode);
-	free_arr_of_str(paths);
-	return (1);
-}
-*/
 int	find_path_bin(t_node *node, char **pathname, int *cmd_not_found)
 {
 	char		**paths;
@@ -326,33 +285,34 @@ int	find_path_bin(t_node *node, char **pathname, int *cmd_not_found)
 	return (1);
 }
 
-bool	is_path(char *cmd)
+bool	contain_slash(char *cmd)
 {
-	if (cmd[0] == '/')
-		return (true);
-	if (cmd[0] != '.')
-		return (false);
-	if (cmd[1] && cmd[1] != '/' && (cmd[1] != '.' && cmd[2] != '/'))
-		return (false);
-	return (true);
+	int	i;
+
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i] == '/')
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
 void	check_relative_absolute_path(t_node *node, char **pathname, int *is_dir, int *cmd_not_found)
 {
 	struct stat	sb;
+	char		**paths;
 
+	paths = get_envpath_value();
 	sb.st_mode = 0;
-	if (stat(node->cmd[0], &sb) == -1)
-	{
-		*cmd_not_found = 1;
-		return ;
-	}
+	stat(node->cmd[0], &sb);
 	if (S_ISDIR(sb.st_mode))
 	{
 		*is_dir = 1;
 		return ;
 	}
-	if (!is_path(node->cmd[0]))
+	if (paths && !contain_slash(node->cmd[0]))
 	{
 		*cmd_not_found = 1;
 		return ;
@@ -589,6 +549,8 @@ int	exec_bin(t_node *node)
 		execve(path, node->cmd, envp);
 		if (errno == EACCES)
 			display_error(ERR_PERM_DENIED, node->cmd[0]);
+		if (errno == ENOENT)
+			display_error(ERR_NO_FILE, node->cmd[0]);
 		ft_free(path);
 	}
 	ft_free(envp);
