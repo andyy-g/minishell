@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/12 14:37:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/12 16:36:05 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,7 @@ int	find_path_bin(t_node *node, char **pathname, int *cmd_not_found)
 	if (!paths || !node->cmd[0][0])
 	{
 		*cmd_not_found = 1;
+		free_arr_of_str(paths);
 		return (1);
 	}
 	i = 0;
@@ -310,13 +311,16 @@ void	check_relative_absolute_path(t_node *node, char **pathname, int *is_dir, in
 	if (S_ISDIR(sb.st_mode))
 	{
 		*is_dir = 1;
+		free_arr_of_str(paths);
 		return ;
 	}
 	if (paths && !contain_slash(node->cmd[0]))
 	{
 		*cmd_not_found = 1;
+		free_arr_of_str(paths);
 		return ;
 	}
+	free_arr_of_str(paths);
 	*cmd_not_found = 0;
 	*pathname = ft_strdup(node->cmd[0]);
 }
@@ -862,7 +866,7 @@ pid_t	*init_pid_arr(t_node *cmd, int *index_cmd)
 		nb_cmd++;
 		cmd = next_cmd(cmd);
 	}
-	pids = calloc(nb_cmd + 1, sizeof(*pids));
+	pids = ft_calloc(nb_cmd + 1, sizeof(*pids));
 	pids[nb_cmd] = -1;
 	*index_cmd = 0;
 	return (pids);

@@ -6,7 +6,7 @@
 #    By: agranger <agranger@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/29 09:54:25 by agranger          #+#    #+#              #
-#    Updated: 2022/09/05 18:11:49 by agranger         ###   ########.fr        #
+#    Updated: 2022/09/12 16:03:40 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRCS =	ft_itoa.c \
 		ft_substr.c \
 		ft_isalpha.c \
 		ft_isdigit.c \
-		ft_isalnum.c
+		ft_isalnum.c \
+		ft_atoi.c
 
 OBJS = $(SRCS:.c=.o)
 

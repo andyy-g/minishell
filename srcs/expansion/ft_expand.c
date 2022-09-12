@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 15:54:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/12 16:45:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	ft_expand(t_dblist **list, t_env **env)
 	int		i;
 
 	exp = (*list)->first;
-	while (exp->next)
+	while (exp->str)
 	{
 		i = 0;
 		if (exp->str[i] == '~' && !(exp->str[i + 1]) && *env)
@@ -104,7 +104,8 @@ int	ft_expand(t_dblist **list, t_env **env)
 		}
 		if (!ft_check_wildcard(exp, list))
 			return (0);
-		exp = exp->next;
+		if (exp && exp->str)
+			exp = exp->next;
 	}
 	return (1);
 }
