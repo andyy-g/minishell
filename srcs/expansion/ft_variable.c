@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 11:55:39 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 12:12:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,14 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	return (0);
 }
 
-int	ft_variable(t_pars **exp, t_env *env, int j)
+int	ft_variable(t_pars **exp, t_env *env, int *j)
 {
 	int		i;
+	int		save;
 	int		found;
 	char	*str;
 
-	i = j + 1;
+	i = *j + 1;
 	found = 0;
 	str = (*exp)->str;
 	if (str[i] && ft_isdigit(str[i]))
@@ -103,17 +104,19 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 		while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 			i++;
 	}
-	found = ft_check_variable(&((*exp)->str), env, i, j);
+	found = ft_check_variable(&((*exp)->str), env, i, *j);
 	if (found == 0)
 	{
-		if (!j && !(*exp)->str[i])
+		if (!*j && !(*exp)->str[i])
 		{
 			remove_pars(exp);
 			return (1);
 		}
-		while (j < i && (*exp)->str[i])
-			(*exp)->str[j++] = (*exp)->str[i++];
-		(*exp)->str[j] = '\0';
+		save = *j;
+		while (*j < i && (*exp)->str[i])
+			(*exp)->str[(*j)++] = (*exp)->str[i++];
+		(*exp)->str[*j] = '\0';
+		*j = save - 1;
 	}
 	if (!(*exp)->str)
 		return (0);

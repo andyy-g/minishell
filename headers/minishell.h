@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 10:36:50 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 12:13:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int			ft_bracket(char c, t_pars **pars, int *bracket);
 int			ft_word(char *str, t_pars **pars);
 int			ft_syntax_error(t_dblist *list, int bracket);
 int			ft_expand(t_dblist **list, t_env **env);
-int			ft_variable(t_pars **exp, t_env *env, int j);
+int			ft_variable(t_pars **exp, t_env *env, int *j);
 int			ft_wildcard(t_dblist **list, t_pars **exp);
 int			ft_copy_pars(t_pars **prev, char *dir);
 int			ft_ncmp(char *s1, char *s2, int n);
