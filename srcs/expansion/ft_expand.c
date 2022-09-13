@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 10:44:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 11:25:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,9 @@ int	ft_expand(t_dblist **list, t_env **env)
 		{
 			while (exp->str[i] == 39 || exp->str[i] == 34)
 				i = ft_exp_quote(&exp, &(*env), i, exp->str[i]);
-			if (i == -1 || (exp->str[i] == '$' && exp->str[i + 1] && \
-			*env && !ft_variable(&exp, *env, i)))
+			if (i == -1 || (exp->str[i] == '$' && exp->str[i + 1]
+				&& (ft_isalnum(exp->str[i + 1]) || exp->str[i + 1] == '_'
+				|| exp->str[i + 1] == '?') && *env && !ft_variable(&exp, *env, i)))
 				return (0);
 			i++;
 		}
