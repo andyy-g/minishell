@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 12:14:01 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 17:26:35 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 	{
 		if ((*exp)->str[i] == '*')
 			(*exp)->sp_quote = 1;
-		if ((*exp)->str[i] == '$' && *env && c == 34)
+		if ((*exp)->str[i] == '$' && *env && c == 34 && (*exp)->str[i + 1]
+			&& (ft_isalnum((*exp)->str[i + 1]) || (*exp)->str[i + 1] == '_'
+			|| (*exp)->str[i + 1] == '?'))
 		{
 			j = i - 1;
 			if (!ft_variable(&(*exp), *env, &i))
@@ -80,6 +82,31 @@ int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 	if (i >= 1)
 		i--;
 	return (i);
+}
+
+void	trim_dollar_quotes(char *str, char quote)
+{
+	int	i;
+	int	j;
+	int	match;
+
+	i = 0;
+	j = 2;
+	match = 0;
+	while (str[j])
+	{
+		while (str[j] && str[j] == quote && !match)
+		{
+			j++;
+			match = 1;
+		}
+		if (!str[j])
+			break ;
+		str[i] = str[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
 }
 
 int	ft_expand(t_dblist **list, t_env **env)
@@ -101,6 +128,9 @@ int	ft_expand(t_dblist **list, t_env **env)
 				&& (ft_isalnum(exp->str[i + 1]) || exp->str[i + 1] == '_'
 				|| exp->str[i + 1] == '?') && *env && !ft_variable(&exp, *env, &i)))
 				return (0);
+			if (exp->str[i] == '$' && exp->str[i + 1]
+				&& (exp->str[i + 1] == '\'' || exp->str[i + 1] == '"'))
+				trim_dollar_quotes(&exp->str[i], exp->str[i + 1]);
 			i++;
 		}
 		if (exp->str && !ft_check_wildcard(&exp, list))
