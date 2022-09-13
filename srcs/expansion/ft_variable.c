@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/08 23:14:55 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 10:02:24 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 	new = (char *)malloc(sizeof(char) * size + 1);
 	if (new)
 	{
-		while (str[i] != '$')
+		while (str[i] && (str[i] != '$' && str[i] != '~'))
 		{
 			new[i] = str[i];
 			i++;
