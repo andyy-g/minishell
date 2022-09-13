@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 12:12:43 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 12:30:41 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int	ft_variable(t_pars **exp, t_env *env, int *j)
 		if (!*j && !(*exp)->str[i])
 		{
 			remove_pars(exp);
+			*j = -1;
 			return (1);
 		}
 		save = *j;
