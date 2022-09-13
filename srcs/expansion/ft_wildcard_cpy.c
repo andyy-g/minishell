@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 14:26:43 by charoua           #+#    #+#             */
-/*   Updated: 2022/07/16 16:04:51 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 09:35:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,5 @@ void	ft_clear_exp(t_dblist **list, t_pars **exp, int pos)
 		free((*exp)->str);
 	if (*exp)
 		free(*exp);
+	*exp = tmp;
 }

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/12 16:45:54 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 09:35:14 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,16 @@ void	ft_home(t_pars **exp, t_env *env)
 	}
 }
 
-int	ft_check_wildcard(t_pars *exp, t_dblist **list)
+int	ft_check_wildcard(t_pars **exp, t_dblist **list)
 {
 	int	i;
 
 	i = 0;
-	while (exp->str[i] != '\0')
+	while ((*exp)->str[i] != '\0')
 	{
-		if (exp->str[i] == '*' && exp->sp_quote == 0 && exp->db_quote == 0)
+		if ((*exp)->str[i] == '*' && ((*exp)->sp_quote == 0 && (*exp)->db_quote == 0))
 		{
-			if (!ft_wildcard(list, &exp))
+			if (!ft_wildcard(list, exp))
 				return (0);
 			break ;
 		}
@@ -88,7 +88,7 @@ int	ft_expand(t_dblist **list, t_env **env)
 	int		i;
 
 	exp = (*list)->first;
-	while (exp->str)
+	while (exp->next)
 	{
 		i = 0;
 		if (exp->str[i] == '~' && !(exp->str[i + 1]) && *env)
@@ -102,10 +102,9 @@ int	ft_expand(t_dblist **list, t_env **env)
 				return (0);
 			i++;
 		}
-		if (!ft_check_wildcard(exp, list))
+		if (!ft_check_wildcard(&exp, list))
 			return (0);
-		if (exp && exp->str)
-			exp = exp->next;
+		exp = exp->next;
 	}
 	return (1);
 }
