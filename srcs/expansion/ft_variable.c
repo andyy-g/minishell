@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 10:02:24 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 10:40:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 	found = ft_check_variable(&((*exp)->str), env, i, j);
 	if (found == 0)
 	{
+		if (!j && !(*exp)->str[i])
+		{
+			remove_pars(exp);
+			return (1);
+		}
 		while (j < i && (*exp)->str[i])
 			(*exp)->str[j++] = (*exp)->str[i++];
 		(*exp)->str[j] = '\0';

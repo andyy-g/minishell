@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 09:35:14 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 10:44:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,21 +88,21 @@ int	ft_expand(t_dblist **list, t_env **env)
 	int		i;
 
 	exp = (*list)->first;
-	while (exp->next)
+	while (exp && exp->next)
 	{
 		i = 0;
 		if (exp->str[i] == '~' && !(exp->str[i + 1]) && *env)
 			ft_home(&exp, *env);
-		while (exp->str[i] != '\0')
+		while (exp->str && exp->str[i] != '\0')
 		{
 			while (exp->str[i] == 39 || exp->str[i] == 34)
 				i = ft_exp_quote(&exp, &(*env), i, exp->str[i]);
-			if (i == -1 || (exp->str[i] == '$' && \
+			if (i == -1 || (exp->str[i] == '$' && exp->str[i + 1] && \
 			*env && !ft_variable(&exp, *env, i)))
 				return (0);
 			i++;
 		}
-		if (!ft_check_wildcard(&exp, list))
+		if (exp->str && !ft_check_wildcard(&exp, list))
 			return (0);
 		exp = exp->next;
 	}

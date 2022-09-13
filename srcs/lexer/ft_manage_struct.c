@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 17:56:07 by charoua           #+#    #+#             */
-/*   Updated: 2022/08/26 16:19:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 10:39:46 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,20 @@ t_pars	*ft_create_pars(t_pars *prev)
 	else
 		return (NULL);
 	return (pars);
+}
+
+void	remove_pars(t_pars **token)
+{
+	t_pars	*prev;
+	t_pars	*next;
+
+	prev = (*token)->prev;
+	next = (*token)->next;
+	ft_free((*token)->str);
+	ft_free(*token);
+	if (prev)
+		prev->next = next;
+	if (next)
+		next->prev = prev;
+	*token = next;
 }
