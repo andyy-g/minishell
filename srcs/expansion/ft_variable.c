@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 10:40:15 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 11:55:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,13 @@ int	ft_variable(t_pars **exp, t_env *env, int j)
 	i = j + 1;
 	found = 0;
 	str = (*exp)->str;
-	while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
+	if (str[i] && ft_isdigit(str[i]))
 		i++;
+	else
+	{
+		while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
+			i++;
+	}
 	found = ft_check_variable(&((*exp)->str), env, i, j);
 	if (found == 0)
 	{
