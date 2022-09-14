@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 12:30:41 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/14 13:47:24 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,11 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 		}
 		env = env->next;
 	}
-	if (i == j + 1 && (*str)[i] && (*str)[i] == '?')
+	if (i == j + 2 && (*str)[i - 1] && (*str)[i - 1] == '?')
 	{
 		exit_status = ft_itoa(g_exit_status);
-		size = ft_strlen(exit_status) + ft_strlen(*str) - i - 1;
-		*str = ft_replacebyvar(*str, exit_status, size, i + 1);
+		size = ft_strlen(exit_status) + ft_strlen(*str) - 2;
+		*str = ft_replacebyvar(*str, exit_status, size, i);
 		ft_free(exit_status);
 		return (1);
 	}
@@ -97,7 +97,7 @@ int	ft_variable(t_pars **exp, t_env *env, int *j)
 	i = *j + 1;
 	found = 0;
 	str = (*exp)->str;
-	if (str[i] && ft_isdigit(str[i]))
+	if (str[i] && (ft_isdigit(str[i]) || str[i] == '?'))
 		i++;
 	else
 	{

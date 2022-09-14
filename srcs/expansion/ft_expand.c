@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 17:26:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/13 18:06:02 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 		i++;
 	}
 	ft_clear((*exp)->str, i);
-	if (i >= 1)
-		i--;
+	//if (i >= 1)
+	//	i--;
 	return (i);
 }
 
@@ -126,9 +126,12 @@ int	ft_expand(t_dblist **list, t_env **env)
 				i = ft_exp_quote(&exp, &(*env), i, exp->str[i]);
 			if (i == -1 || (exp->str[i] == '$' && exp->str[i + 1]
 				&& (ft_isalnum(exp->str[i + 1]) || exp->str[i + 1] == '_'
-				|| exp->str[i + 1] == '?') && *env && !ft_variable(&exp, *env, &i)))
-				return (0);
-			if (exp->str[i] == '$' && exp->str[i + 1]
+				|| exp->str[i + 1] == '?') && *env))
+			{
+				if (!ft_variable(&exp, *env, &i))
+					return (0);
+			}
+			else if (exp->str[i] == '$' && exp->str[i + 1]
 				&& (exp->str[i + 1] == '\'' || exp->str[i + 1] == '"'))
 				trim_dollar_quotes(&exp->str[i], exp->str[i + 1]);
 			i++;
