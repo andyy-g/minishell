@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/12 16:36:05 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/21 18:01:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,15 @@ bool	cmd_is(char *cmd, char *builtin)
 bool	is_builtin_no_fork(char *cmd)
 {
 	if (cmd_is(cmd, "cd")
-			|| cmd_is(cmd, "unset")
-			|| cmd_is(cmd, "exit"))
+		|| cmd_is(cmd, "unset")
+		|| cmd_is(cmd, "exit"))
 		return (true);
 	if (cmd_is(cmd, "export") && !cmd[1])
+		return (true);
+	if (cmd_is(cmd, "<")
+		|| cmd_is(cmd, "<<")
+		|| cmd_is(cmd, ">")
+		|| cmd_is(cmd, ">>"))
 		return (true);
 	return (false);
 }
@@ -160,11 +165,16 @@ void	next_logical_node(t_node **node)
 {
 	t_node	*prev;
 
+	prev = (*node)->right;
 	if (((*node)->type == AND || (*node)->type == OR))
 	{
-		*node = (*node)->parent;
-		if (*node && ((*node)->type == AND || (*node)->type == OR))
-			return ;
+		while (*node && ((*node)->type == AND || (*node)->type == OR)
+				&& prev == (*node)->right)
+		{
+			prev = *node;
+			*node = (*node)->parent;
+		}
+		return ;
 	}
 	prev = NULL;
 	while (*node && ((*node)->type == WORD || is_chevron((*node)->type)))
@@ -325,42 +335,63 @@ void	check_relative_absolute_path(t_node *node, char **pathname, int *is_dir, in
 	*pathname = ft_strdup(node->cmd[0]);
 }
 
-void	trim_quotes(char *lim, int *i, char quote, int *len)
+void	mark_chars_to_trim(char *lim)
 {
-	int	add;
-	*len -= 2;
-	add = 1;
-	if (*i > 0 && lim[*i - 1] == '$')
+	int		i;
+	char	quote;
+
+	i = 0;
+	while (lim[i])
 	{
-		add++;
-		(*i)--;
+		if (lim[i] == '\'' || lim[i] == '"')
+		{
+			quote = lim[i];
+			lim[i] = -lim[i];
+			if (i > 0 && lim[i - 1] == '$' && (i == 1 || lim[i - 2] != '$'))
+				lim[i - 1] = -lim[i - 1];
+			while (lim[i] && lim[i] != quote)
+				i++;
+			lim[i] = -lim[i];
+		}
+		if (lim[i])
+			i++;
 	}
-	while (*i < *len && lim[*i + add])
+}
+
+void	trim_lim(char *lim)
+{
+	int		i;
+	int		skip;
+
+	mark_chars_to_trim(lim);
+	i = 0;
+	skip = 0;
+	while (lim[skip])
 	{
-		while (lim[*i + add] && (lim[*i + add] == quote || lim[*i + add] == '$'))
-			add++;
-		lim[*i] = lim[*i + add];
-		if (lim[*i + add])
-			(*i)++;
+		while (lim[skip] && lim[skip] < 0)
+			skip++;
+		if (!lim[skip])
+			break ;
+		lim[i] = lim[skip];
+		i++;
+		skip++;
 	}
-	lim[*i] = '\0';
+	lim[i] = '\0';
 }
 
 bool	must_be_expanded(char *lim)
 {
 	int		i;
 	char	quote;
-	int		len;
 
 	i = 0;
 	quote = 0;
-	len = ft_strlen(lim);
 	while (lim[i])
 	{
 		if (lim[i] == '\'' || lim[i] == '"')
 		{
 			quote = lim[i];
-			trim_quotes(lim, &i, quote, &len);
+			trim_lim(lim);
 			break ;
 		}
 		i++;
@@ -479,11 +510,15 @@ int	check_is_heredoc(t_pars *token, char *lim)
 		if (pipe(pipe_heredoc) == -1)
 		{
 			perror("pipe");
+			ft_free(pipe_heredoc);
 			ft_free(lim);
 			return (0);
 		}
 		if (!launch_heredoc(token, pipe_heredoc, lim))
+		{
+			ft_free(pipe_heredoc);
 			ret = 0;
+		}
 	}
 	ft_free(lim);
 	return (ret);
@@ -647,58 +682,66 @@ int	fd_heredoc(t_node *node, t_node *cmd)
 	return (1);
 }
 
-int	check_file_out(t_node *node)
+int	set_file_out(t_node *node, t_node *cmd)
 {
-	t_node	*cmd;
-	t_node	*prev;
-
-	cmd = node;
-	prev = NULL;
-	while (node && !is_chevron(node->type))
-	{
-		if (node->type == PIPE && prev == node->left)
-			break ;
-		prev = node;
-		node = node->parent;
-	}
-	while (node && is_chevron(node->type))
-	{
-		if (node->type == FILE_OUT)
-			if (!create_file_out(node, cmd))
-				return (0);
-		if (node->type == FILE_OUT_APP)
-			if (!create_file_out_app(node, cmd))
-				return (0);
-		node = node->parent;
-	}
+	if (node->type == FILE_OUT)
+		if (!create_file_out(node, cmd))
+			return (0);
+	if (node->type == FILE_OUT_APP)
+		if (!create_file_out_app(node, cmd))
+			return (0);
 	return (1);
 }
-int	check_file_in(t_node *node)
+int	set_file_in(t_node *node, t_node *cmd)
 {
+	int		ret;
+
+	if (node->type == FILE_IN)
+	{
+		ret = file_in_exist(node, cmd);
+		if (!ret || ret == 2)
+			return (ret);
+	}
+	if (node->type == HEREDOC)
+		if (!fd_heredoc(node, cmd))
+			return (0);
+	return (1);
+}
+
+int	check_file_in_out(t_node *node)
+{	
 	t_node	*cmd;
 	t_node	*prev;
 	int		ret;
+	int		in;
+	int		out;
 
 	cmd = node;
 	prev = NULL;
+	in = 1;
+	out = 1;
 	while (node && !is_chevron(node->type))
 	{
-		if (node->type == PIPE && prev == node->right)
-			break ;
+		if (prev && prev == node->right)
+			in = 0;
+		if (node->type == PIPE && prev == node->left)
+			out = 0;
 		prev = node;
 		node = node->parent;
 	}
 	while (node && is_chevron(node->type))
 	{
-		if (node->type == FILE_IN)
+		if (in && (node->type == FILE_IN || node->type == HEREDOC))
 		{
-			ret = file_in_exist(node, cmd);
+			ret = set_file_in(node, cmd);
 			if (!ret || ret == 2)
 				return (ret);
 		}
-		if (node->type == HEREDOC)
-			if (!fd_heredoc(node, cmd))
+		if (out && (node->type == FILE_OUT || node->type == FILE_OUT_APP))
+		{
+			if (!set_file_out(node, cmd))
 				return (0);
+		}
 		node = node->parent;
 	}
 	return (1);
@@ -725,6 +768,11 @@ int	exec_cmd_wo_fork(t_node *node)
 		close(node->fd_in);
 	if (node->fd_out != STDOUT_FILENO)
 		close(node->fd_out);
+	if (node->heredoc)
+	{
+		close(node->heredoc[0]);
+		ft_free(node->heredoc);
+	}
 	return (ret);
 }
 
@@ -739,6 +787,11 @@ void	exit_child_builtin(t_node *node)
 	{
 		close(node->fd_out);
 		close(STDOUT_FILENO);
+	}
+	if (node->heredoc)
+	{
+		close(node->heredoc[0]);
+		ft_free(node->heredoc);
 	}
 	while (node->parent)
 		node = node->parent;
@@ -792,19 +845,18 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 
 int	init_fd(t_node *node, int *pipe_fd)
 {
-	int	in;
-	int	out;
+	int ret;
 	int	prev_fd;
 
+	prev_fd = -1;
 	if (pipe_fd)
 		prev_fd = pipe_fd[READ];
-	in = check_file_in(node);
-	out = check_file_out(node);
-	if (!in || !out)
+	ret = check_file_in_out(node);
+	if (!ret)
 		return (0);
-	if (!is_pipe_cmd(node))
+	if (!is_pipe_cmd(node) || !pipe_fd)
 	{
-		if (in == 2 || out == 2)
+		if (ret == 2)
 			return (2);
 		return (1);
 	}
@@ -814,7 +866,7 @@ int	init_fd(t_node *node, int *pipe_fd)
 		perror("pipe");
 		return (0);
 	}
-	if (in == 2 || out == 2)
+	if (ret == 2)
 		return (2);
 	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
 		node->fd_in = prev_fd;
@@ -842,16 +894,19 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
-		if (exec_cmd_fork(ast, pid))
+		if (!exec_cmd_fork(ast, pid))
 			return (0);
 	}
-	if (ast->is_pipe)
-		close(pipe_fd[WRITE]);
-	if (ast->fd_in != 0)
-		close(ast->fd_in);
-	if (ast->fd_out != 1)
-		close(ast->fd_out);
-	(*pids)[index_cmd] = pid;
+	else
+	{
+		if (ast->is_pipe)
+			close(pipe_fd[WRITE]);
+		if (ast->fd_in != 0)
+			close(ast->fd_in);
+		if (ast->fd_out != 1)
+			close(ast->fd_out);
+		(*pids)[index_cmd] = pid;
+	}
 	return (1);
 }
 
@@ -883,6 +938,10 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 		{
 			if (cmd->is_pipe)
 				close(pipe_fd[WRITE]);
+			if (cmd->fd_in != 0)
+				close(cmd->fd_in);
+			if (cmd->fd_out != 1)
+				close(cmd->fd_out);
 			cmd = next_cmd_after_redir(cmd);
 			continue ;
 		}

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 18:06:02 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/21 17:50:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
 {
 	int	j;
 
-	j = 0;
 	ft_clear((*exp)->str, i);
 	while ((*exp)->str[i] && (*exp)->str[i] != c)
 	{
@@ -138,7 +137,11 @@ int	ft_expand(t_dblist **list, t_env **env)
 		}
 		if (exp->str && !ft_check_wildcard(&exp, list))
 			return (0);
-		exp = exp->next;
+		if (exp->next)
+			exp = exp->next;
 	}
+	while (exp && exp->prev)
+		exp = exp->prev;
+	(*list)->first = exp;
 	return (1);
 }

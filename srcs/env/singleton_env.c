@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/17 14:34:49 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/12 16:27:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/21 15:43:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ int	replace_env_var(t_env *env, char *newval)
 	size = ft_strlen(env->var) + ft_strlen(newval) + 2;
 	newfull = ft_calloc(size, sizeof(char));
 	if (!newfull)
+	{
+		ft_free(newval);
 		return (0);
+	}
 	ft_strcpy(newfull, env->var);
 	ft_strcat(newfull, "=");
 	ft_strcat(newfull, newval);

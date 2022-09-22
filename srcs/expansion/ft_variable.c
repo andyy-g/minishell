@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/14 13:47:24 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/21 15:54:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	int		size;
 	char	*exit_status;
 
-	size = 0;
 	while (i - 1 > j && env)
 	{
 		if (env->var && ft_ncmp((*str) + j + 1, env->var, i - j - 1))
@@ -95,7 +94,6 @@ int	ft_variable(t_pars **exp, t_env *env, int *j)
 	char	*str;
 
 	i = *j + 1;
-	found = 0;
 	str = (*exp)->str;
 	if (str[i] && (ft_isdigit(str[i]) || str[i] == '?'))
 		i++;

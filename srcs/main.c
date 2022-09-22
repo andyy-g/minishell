@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/02 11:42:05 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/14 15:23:34 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 			if (!ft_lexer(input, &tokens, &error) || !ft_expand(&tokens, &env))
 				exit_failure(ast, tokens);
 			//ft_print_dblist(tokens);
-			if (error)
+			if (error || !tokens->first->str)
 			{
 				free_tokens_ast(ast, tokens);
 				continue ;
