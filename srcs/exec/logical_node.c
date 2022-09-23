@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 14:26:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/23 21:53:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ t_node	*next_cmd_logical_node(t_node *node)
 
 bool	check_status(t_node **node, int status)
 {
-	while (*node)
+	while (*node && ((*node)->type == AND || (*node)->type == OR))
 	{
 		if ((*node)->type == AND)
 		{
