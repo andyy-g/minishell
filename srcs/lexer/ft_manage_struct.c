@@ -6,11 +6,19 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 17:56:07 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/13 10:39:46 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/22 13:41:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	ft_free_pars(t_pars *token)
+{
+	if (!token)
+		return ;
+	ft_free(token->str);
+	ft_free(token);
+}
 
 void	ft_free_tokens(t_dblist *list)
 {
@@ -23,10 +31,7 @@ void	ft_free_tokens(t_dblist *list)
 	while (to_free)
 	{
 		tmp = to_free->next;
-		if (to_free->str)
-			free(to_free->str);
-		if (to_free)
-			free(to_free);
+		ft_free_pars(to_free);
 		to_free = tmp;
 	}
 	free(list);
@@ -74,8 +79,7 @@ void	remove_pars(t_pars **token)
 
 	prev = (*token)->prev;
 	next = (*token)->next;
-	ft_free((*token)->str);
-	ft_free(*token);
+	ft_free_pars(*token);
 	if (prev)
 		prev->next = next;
 	if (next)

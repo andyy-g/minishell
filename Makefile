@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/09/04 18:13:23 by agranger         ###   ########.fr        #
+#    Updated: 2022/09/23 12:33:09 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,12 +36,14 @@ CFILES			=	main.c \
 					error/ft_syntax_error.c \
 					error/ft_display_error.c \
 					expansion/ft_expand.c \
+					expansion/ft_expand_specials_chars.c \
 					expansion/ft_variable.c \
 					expansion/ft_wildcard.c \
 					expansion/ft_wildcard_cpy.c \
 					parser/node.c \
 					parser/parser.c \
 					parser/cmd_w_operator.c \
+					parser/cmd_w_redir.c \
 					parser/cmd_simple.c \
 					parser/sort_redir.c \
 					parser/tools.c \
@@ -50,9 +52,22 @@ CFILES			=	main.c \
 					env/singleton_env.c \
 					env/free_env.c \
 					env/conversion_env.c \
+					env/shlvl.c \
 					exec/ft_echo.c \
 					exec/ft_pwd.c \
 					exec/exec.c \
+					exec/init_fd_cmd.c \
+					exec/check_full_path.c \
+					exec/clean.c \
+					exec/create_file_in_out.c \
+					exec/error_exec.c \
+					exec/exec_w_fork.c \
+					exec/exec_wo_fork.c \
+					exec/find_absolute_path.c \
+					exec/heredoc_tools.c \
+					exec/launch_heredoc.c \
+					exec/logical_node.c \
+					exec/move_redir.c \
 					exec/tools.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h

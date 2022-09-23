@@ -1,33 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tools.c                                            :+:      :+:    :+:   */
+/*   move_redir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/18 21:36:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:29:47 by agranger         ###   ########.fr       */
+/*   Created: 2022/09/23 12:19:28 by agranger          #+#    #+#             */
+/*   Updated: 2022/09/23 12:28:42 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	is_pipe_cmd(t_node *node)
-{
-	while (node->parent)
-	{
-		node = node->parent;
-		if (node->type == PIPE)
-			return (true);
-	}
-	return (false);
-}
-
-t_node	*next_cmd(t_node *node)
+t_node	*next_cmd_after_redir(t_node *node)
 {
 	t_node	*prev;
 
 	prev = NULL;
+	while (node && node->type != FILE_IN)
+		node = node->parent;
 	while (node && node->type != PIPE
 		&& node->type != AND && node->type != OR)
 	{
@@ -50,40 +41,20 @@ t_node	*next_cmd(t_node *node)
 	return (node);
 }
 
-bool	is_first_cmd(t_node *node)
+void	go_to_redir_node(t_node **node, int *in, int *out)
 {
 	t_node	*prev;
 
-	while (node->parent && is_chevron(node->parent->type))
-		node = node->parent;
-	while (node->parent && node->parent->type == PIPE)
+	prev = NULL;
+	*in = 1;
+	*out = 1;
+	while (*node && !is_chevron((*node)->type))
 	{
-		prev = node;
-		node = node->parent;
-		if (prev != node->left)
-			return (false);
+		if (prev && prev == (*node)->right)
+			*in = 0;
+		if ((*node)->type == PIPE && prev == (*node)->left)
+			*out = 0;
+		prev = *node;
+		*node = (*node)->parent;
 	}
-	return (true);
-}
-
-bool	is_last_cmd(t_node *node)
-{
-	t_node	*prev;
-
-	while (node->parent && is_chevron(node->parent->type))
-		node = node->parent;
-	while (node->parent && node->parent->type == PIPE)
-	{
-		prev = node;
-		node = node->parent;
-		if (prev != node->right)
-			return (false);
-	}
-	return (true);
-}
-
-void	move_to_first_cmd(t_node **ast)
-{
-	while ((*ast)->left)
-		*ast = (*ast)->left;
 }

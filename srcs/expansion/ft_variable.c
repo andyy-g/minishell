@@ -6,17 +6,11 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/21 15:54:39 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/22 14:40:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	ft_isalnum(int c)
-{
-	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') \
-			|| (c >= '0' && c <= '9'));
-}
 
 int	ft_ncmp(char *s1, char *s2, int n)
 {
@@ -86,10 +80,27 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	return (0);
 }
 
+int	complete_str(t_pars **exp, int *j, int i)
+{
+	int	save;
+
+	if (!*j && !(*exp)->str[i])
+	{
+		remove_pars(exp);
+		*j = -1;
+		return (1);
+	}
+	save = *j;
+	while (*j < i && (*exp)->str[i])
+		(*exp)->str[(*j)++] = (*exp)->str[i++];
+	(*exp)->str[*j] = '\0';
+	*j = save - 1;
+	return (0);
+}
+
 int	ft_variable(t_pars **exp, t_env *env, int *j)
 {
 	int		i;
-	int		save;
 	int		found;
 	char	*str;
 
@@ -98,24 +109,13 @@ int	ft_variable(t_pars **exp, t_env *env, int *j)
 	if (str[i] && (ft_isdigit(str[i]) || str[i] == '?'))
 		i++;
 	else
-	{
 		while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 			i++;
-	}
 	found = ft_check_variable(&((*exp)->str), env, i, *j);
 	if (found == 0)
 	{
-		if (!*j && !(*exp)->str[i])
-		{
-			remove_pars(exp);
-			*j = -1;
+		if (complete_str(exp, j, i))
 			return (1);
-		}
-		save = *j;
-		while (*j < i && (*exp)->str[i])
-			(*exp)->str[(*j)++] = (*exp)->str[i++];
-		(*exp)->str[*j] = '\0';
-		*j = save - 1;
 	}
 	if (!(*exp)->str)
 		return (0);
