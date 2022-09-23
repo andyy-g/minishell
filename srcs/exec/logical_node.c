@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:29:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/23 14:26:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ int	get_status_last_process(pid_t *pids)
 		waitpid(pids[i], &status, 0);
 		i++;
 	}
+	if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		status = WTERMSIG(status) + 128;
+	else if (WIFSTOPPED(status))
+		status = WSTOPSIG(status) + 128;
 	return (status);
 }
 

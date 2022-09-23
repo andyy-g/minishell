@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:25:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/23 14:17:09 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	launch_exec_fork(t_node *cmd)
 	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd))
 		return (0);
 	status = get_status_last_process(pids);
-	(void)status;
+	g_exit_status = status;
 	ft_free(pids);
 	return (1);
 }
