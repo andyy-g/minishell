@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 09:04:48 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/24 09:05:33 by charoua          ###   ########.fr       */
+/*   Updated: 2022/09/24 14:43:36 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@ int	ft_isnum(char *str)
 
 int	ft_exit(t_node *node)
 {
+	printf("exit\n");
 	if (node->cmd[1] && node->cmd[2])
 	{
-		printf("exit\nminishell: exit: too many arguments\n");
+		printf("minishell: exit: too many arguments\n");
 		g_exit_status = 1;
 		return (1);
 	}
@@ -41,19 +42,14 @@ int	ft_exit(t_node *node)
 	{
 		if (!ft_isnum(node->cmd[1]))
 		{
-			printf("exit\nexit: %s: numeric argument required\n", node->cmd[1]);
+			printf("exit: %s: numeric argument required\n", node->cmd[1]);
 			g_exit_status = 2;
 		}
 		else
-		{
-			printf("exit\n");
 			g_exit_status = ft_atoi(node->cmd[1]);
-		}
 	}
 	else
-	{
-		printf("exit\n");
 		g_exit_status = 0;
-	}
+	exit_minishell(node);
 	return (0);
 }
