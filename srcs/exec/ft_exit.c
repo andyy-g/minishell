@@ -33,23 +33,27 @@ int	ft_exit(t_node *node)
 {
 	if (node->cmd[1] && node->cmd[2])
 	{
-		printf("exit\n");
-		printf("minishell: exit: too many arguments\n");
-		return (1);// sortie erreur, $? = 1;
+		printf("exit\nminishell: exit: too many arguments\n");
+		g_exit_status = 1;
+		return (1);
 	}
 	else if (node->cmd[1])
 	{
 		if (!ft_isnum(node->cmd[1]))
 		{
-			printf("exit\n");
-			printf("exit: %s: numeric argument required", node->cmd[1]);// sortie erreur, $? = 2;
+			printf("exit\nexit: %s: numeric argument required\n", node->cmd[1]);
+			g_exit_status = 2;
 		}
 		else
-			printf("exit\n");// changer valeur $? par ft_atoi(node->cmd[1]);
+		{
+			printf("exit\n");
+			g_exit_status = ft_atoi(node->cmd[1]);
+		}
 	}
 	else
-		printf("exit\n");// changer valeur $? par 0;
+	{
+		printf("exit\n");
+		g_exit_status = 0;
+	}
 	return (0);
 }
-
-// Comment tu sais que tu dois envoyer sur sortie d'erreur

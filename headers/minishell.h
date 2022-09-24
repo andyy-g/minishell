@@ -129,7 +129,7 @@ void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
 void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
 void		display_error(t_err err, char *arg);
-void    	remove_pars(t_pars **token);
+void		remove_pars(t_pars **token);
 void		ft_home(t_pars **exp, t_env *env);
 void		free_heredoc(t_pars *curr);
 void		which_error(t_node *node);
@@ -179,6 +179,7 @@ int			parser(t_node **ast, t_pars *token, int *error);
 int			exec(t_node *ast);
 int			ft_echo(t_node *node);
 int			ft_pwd(t_node *node);
+int			ft_exit(t_node *node);
 int			look_for_heredocs(t_pars *token);
 int			check_syntax(t_pars *token, char *str, int index, int bracket);
 int			init_shlvl(t_env *shell);
