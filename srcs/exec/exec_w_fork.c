@@ -111,7 +111,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	if (cmd_is(node->cmd[0], "echo"))
 		ret = exec_builtin(node, &ft_echo);
 	else if (cmd_is(node->cmd[0], "pwd"))
-		printf("PWD\n");
+		ret = exec_builtin(node, &ft_pwd);
 	else if (cmd_is(node->cmd[0], "export"))
 		printf("EXPORT\n");
 	else if (cmd_is(node->cmd[0], "env"))
