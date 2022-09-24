@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/09/23 12:33:09 by agranger         ###   ########.fr        #
+#    Updated: 2022/09/24 16:33:51 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,6 +49,7 @@ CFILES			=	main.c \
 					parser/tools.c \
 					exit/exit.c \
 					signals/eof.c \
+					signals/signals.c \
 					env/singleton_env.c \
 					env/free_env.c \
 					env/conversion_env.c \
@@ -71,7 +72,7 @@ CFILES			=	main.c \
 					builtin/ft_env.c \
 					builtin/ft_exit.c \
 					builtin/ft_pwd.c \
-					builtin/ft_unset.c \
+					builtin/ft_unset.c
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/23 12:34:37 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/24 16:35:47 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,8 @@ void		next_logical_node(t_node **node);
 void		close_fds_exec_fail(t_node *node);
 void		go_to_redir_node(t_node **node, int *in, int *out);
 void		move_to_first_cmd(t_node **ast);
+void		handle_sigint(int signum);
+int			init_signals(void);
 int			exec_bin(t_node *node);
 int			dup2_if_needed(t_node *node);
 int			exec_cmd_fork(t_node *node, pid_t pid);

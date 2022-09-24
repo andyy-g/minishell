@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/14 15:23:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/24 16:30:10 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	if (!init_signals())
+		return (0);
 	status = 1;
 	env = singleton_env(0, &status, envp);
 	if (!status)
@@ -83,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
-	//		vizAST(ast);
+			//vizAST(ast);
 			free_tokens_ast(NULL, tokens);
 			if (!error && !exec(ast))
 				exit_failure(ast, NULL);
