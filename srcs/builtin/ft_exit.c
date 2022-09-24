@@ -31,25 +31,28 @@ int	ft_isnum(char *str)
 
 int	ft_exit(t_node *node)
 {
-	printf("exit\n");
 	if (node->cmd[1] && node->cmd[2])
 	{
-		printf("minishell: exit: too many arguments\n");
-		g_exit_status = 1;
-		return (1);
+		if (!ft_isnum(node->cmd[1]))
+			display_error(ERR_EXIT_ARG_NO_NUM, node->cmd[1]);
+		else
+		{
+			display_error(ERR_EXIT_NBARG, node->cmd[1]);
+			return (1);
+		}
 	}
 	else if (node->cmd[1])
 	{
 		if (!ft_isnum(node->cmd[1]))
-		{
-			printf("exit: %s: numeric argument required\n", node->cmd[1]);
-			g_exit_status = 2;
-		}
+			display_error(ERR_EXIT_ARG_NO_NUM, node->cmd[1]);
 		else
-			g_exit_status = ft_atoi(node->cmd[1]);
+			display_error(ERR_EXIT_ARG_NUM, node->cmd[1]);
 	}
 	else
+	{
+		printf("exit\n");
 		g_exit_status = 0;
+	}
 	exit_minishell(node);
 	return (0);
 }

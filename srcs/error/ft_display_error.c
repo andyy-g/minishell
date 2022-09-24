@@ -12,16 +12,48 @@
 
 #include "minishell.h"
 
+void	ft_display_builtin(t_err err, char *arg)
+{
+	(void)arg;
+	if (err == ERR_ENV_NBARG)
+	{
+		ft_putstr_fd("exit\nminishell: env: too many arguments", 2);
+		g_exit_status = 1;
+	}
+}
+
+void	ft_display_exit(t_err err, char *arg)
+{
+	if (err == ERR_EXIT_NBARG)
+	{
+		ft_putstr_fd("exit\nminishell: exit: too many arguments", 2);
+		g_exit_status = 1;
+	}
+	if (err == ERR_EXIT_ARG_NO_NUM)
+	{
+		ft_putstr_fd("exit\nexit: ", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": numeric argument required", 2);
+		g_exit_status = 2;
+	}
+	if (err == ERR_EXIT_ARG_NUM)
+	{
+		ft_putstr_fd("exit", 2);
+		g_exit_status = ft_atoi(arg);
+	}
+}
+
 void	ft_display_three_line(t_err err, char *arg)
 {
 	if (err == ERR_UNEXPECTED_TOK)
 	{
-		ft_putstr_fd("syntax error near unexpected token `", 2);
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd("'", 2);
 	}
 	if (err == ERR_MATCHING_TOK)
 	{
+		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd("'", 2);
@@ -30,6 +62,9 @@ void	ft_display_three_line(t_err err, char *arg)
 
 void	ft_display_two_line(t_err err, char *arg)
 {
+	if (err == ERR_PERM_DENIED || err == ERR_CMD_NOT_FOUND \
+	|| err == ERR_IS_DIR || err == ERR_NO_FILE)
+		ft_putstr_fd("minishell: ", 2);
 	if (err == ERR_PERM_DENIED)
 	{
 		ft_putstr_fd(arg, 2);
@@ -54,8 +89,9 @@ void	ft_display_two_line(t_err err, char *arg)
 
 void	display_error(t_err err, char *arg)
 {
-	ft_putstr_fd("minishell: ", 2);
 	ft_display_two_line(err, arg);
 	ft_display_three_line(err, arg);
+	ft_display_exit(err, arg);
+	ft_display_builtin(err, arg);
 	ft_putstr_fd("\n", 2);
 }

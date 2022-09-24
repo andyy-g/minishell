@@ -70,7 +70,11 @@ typedef enum e_err
 	ERR_PERM_DENIED,
 	ERR_CMD_NOT_FOUND,
 	ERR_IS_DIR,
-	ERR_NO_FILE
+	ERR_NO_FILE,
+	ERR_ENV_NBARG,
+	ERR_EXIT_NBARG,
+	ERR_EXIT_ARG_NUM,
+	ERR_EXIT_ARG_NO_NUM
 }	t_err;
 
 typedef struct s_pars
