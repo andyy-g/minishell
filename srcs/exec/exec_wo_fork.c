@@ -64,7 +64,7 @@ int	exec_cmd_wo_fork(t_node *node)
 	else if (cmd_is(node->cmd[0], "unset"))
 		printf("UNSET\n");
 	else if (cmd_is(node->cmd[0], "exit"))
-		printf("EXIT\n");
+		ret = exec_builtin(node, &ft_exit);
 	close_fd_in_out(node);
 	clean_heredoc(NULL, node);
 	return (ret);

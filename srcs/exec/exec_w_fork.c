@@ -121,7 +121,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	else if (cmd_is(node->cmd[0], "unset"))
 		printf("UNSET\n");
 	else if (cmd_is(node->cmd[0], "exit"))
-		printf("EXIT\n");
+		ret = exec_builtin(node, &ft_exit);
 	else
 		ret = exec_bin(node);
 	if (pid == 0)
