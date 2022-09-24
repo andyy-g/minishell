@@ -28,5 +28,6 @@ int	ft_env(t_node *node)
 			printf("%s\n", env->full);
 		env = env->next;
 	}
+	g_exit_status = 0;
 	return (1);
 }

@@ -59,5 +59,6 @@ int	ft_unset(t_node *node)
 		}
 		i++;
 	}
+	g_exit_status = 0;
 	return (1);
 }

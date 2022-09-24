@@ -55,5 +55,6 @@ int	ft_echo(t_node *node)
 		if (nl == 0)
 			printf("\n");
 	}
+	g_exit_status = 0;
 	return (1);
 }
