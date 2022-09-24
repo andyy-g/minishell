@@ -115,7 +115,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	else if (cmd_is(node->cmd[0], "export"))
 		printf("EXPORT\n");
 	else if (cmd_is(node->cmd[0], "env"))
-		printf("ENV\n");
+		ret = exec_builtin(node, &ft_env);
 	else if (cmd_is(node->cmd[0], "cd"))
 		printf("CD\n");
 	else if (cmd_is(node->cmd[0], "unset"))

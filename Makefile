@@ -54,6 +54,7 @@ CFILES			=	main.c \
 					env/conversion_env.c \
 					env/shlvl.c \
 					exec/ft_echo.c \
+					exec/ft_env.c \
 					exec/ft_pwd.c \
 					exec/ft_exit.c \
 					exec/exec.c \
