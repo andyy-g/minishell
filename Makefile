@@ -55,8 +55,9 @@ CFILES			=	main.c \
 					env/shlvl.c \
 					exec/ft_echo.c \
 					exec/ft_env.c \
-					exec/ft_pwd.c \
 					exec/ft_exit.c \
+					exec/ft_pwd.c \
+					exec/ft_unset.c \
 					exec/exec.c \
 					exec/init_fd_cmd.c \
 					exec/check_full_path.c \

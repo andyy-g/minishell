@@ -62,7 +62,7 @@ int	exec_cmd_wo_fork(t_node *node)
 	else if (cmd_is(node->cmd[0], "export"))
 		printf("EXPORT\n");
 	else if (cmd_is(node->cmd[0], "unset"))
-		printf("UNSET\n");
+		ret = exec_builtin(node, &ft_unset);
 	else if (cmd_is(node->cmd[0], "exit"))
 		ret = exec_builtin(node, &ft_exit);
 	close_fd_in_out(node);

@@ -24,7 +24,8 @@ int	ft_env(t_node *node)
 	}
 	while (env)
 	{
-		printf("%s\n", env->full);
+		if (env->full)
+			printf("%s\n", env->full);
 		env = env->next;
 	}
 	return (1);
