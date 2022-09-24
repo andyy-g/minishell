@@ -37,28 +37,57 @@ void	ft_unset_var(t_env **env)
 	ft_free((*env)->full);
 }
 
+int	ft_syntax_unset(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (ft_isalpha((int)str[i]) || str[i] == '_')
+	{
+		i++;
+		while (str[i] != '\0')
+		{
+			if (!ft_isalnum((int)str[i]))
+				return (0);
+			i++;
+		}
+	}
+	else
+		return (0);
+	return (1);
+}	
+
 int	ft_unset(t_node *node)
 {
 	int		i;
-	int		size;
+	int		err;
 	t_env	*env;
 
 	i = 1;
+	err = 0;
 	while (node->cmd[i])
 	{
 		env = singleton_env(1, NULL, NULL);
-		while (env)
+		if (ft_syntax_unset(node->cmd[i]))
 		{
-			size = ft_strlen(node->cmd[i]);
-			if (env->var && ft_ncmp(node->cmd[i], env->var, size))
+			while (env)
 			{
-				ft_unset_var(&env);
-				break ;
+				if (env->var && ft_ncmp(node->cmd[i], env->var, ft_strlen(node->cmd[i])))
+				{
+					ft_unset_var(&env);
+					break ;
+				}
+				env = env->next;
 			}
-			env = env->next;
+			if (err == 0)
+				g_exit_status = 0;
+		}
+		else
+		{
+			display_error(ERR_UNSET_ARG, node->cmd[1]);
+			err = 1;
 		}
 		i++;
 	}
-	g_exit_status = 0;
 	return (1);
 }

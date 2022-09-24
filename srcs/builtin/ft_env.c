@@ -18,15 +18,15 @@ int	ft_env(t_node *node)
 
 	env = singleton_env(1, NULL, NULL);
 	if (node->cmd[1])
+		display_error(ERR_ENV_NBARG, node->cmd[1]);
+	else
 	{
-		printf("exit\nminishell: env: too many arguments\n");
-		g_exit_status = 1;
-	}
-	while (env)
-	{
-		if (env->full)
-			printf("%s\n", env->full);
-		env = env->next;
+		while (env)
+		{
+			if (env->full)
+				printf("%s\n", env->full);
+			env = env->next;
+		}
 	}
 	g_exit_status = 0;
 	return (1);
