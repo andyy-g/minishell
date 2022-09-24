@@ -53,11 +53,6 @@ CFILES			=	main.c \
 					env/free_env.c \
 					env/conversion_env.c \
 					env/shlvl.c \
-					exec/ft_echo.c \
-					exec/ft_env.c \
-					exec/ft_exit.c \
-					exec/ft_pwd.c \
-					exec/ft_unset.c \
 					exec/exec.c \
 					exec/init_fd_cmd.c \
 					exec/check_full_path.c \
@@ -71,7 +66,12 @@ CFILES			=	main.c \
 					exec/launch_heredoc.c \
 					exec/logical_node.c \
 					exec/move_redir.c \
-					exec/tools.c
+					exec/tools.c \
+					builtin/ft_echo.c \
+					builtin/ft_env.c \
+					builtin/ft_exit.c \
+					builtin/ft_pwd.c \
+					builtin/ft_unset.c \
 					
 HFILES			=	$(HEADERDIR)/minishell.h
 
@@ -100,7 +100,8 @@ $(OBJDIR)		:
 						$(OBJDIR)/signals \
 						$(OBJDIR)/env \
 						$(OBJDIR)/error \
-						$(OBJDIR)/exec
+						$(OBJDIR)/exec \
+						$(OBJDIR)/builtin
 
 $(OBJDIR)/%.o	:	$(SRCDIR)/%.c
 					@$(CC) -o $@ -c $< $(CFLAGS) -I./$(HEADERDIR)
