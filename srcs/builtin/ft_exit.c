@@ -31,6 +31,7 @@ int	ft_isnum(char *str)
 
 int	ft_exit(t_node *node)
 {
+	printf("exit\n");
 	if (node->cmd[1] && node->cmd[2])
 	{
 		if (!ft_isnum(node->cmd[1]))
@@ -49,10 +50,7 @@ int	ft_exit(t_node *node)
 			display_error(ERR_EXIT_ARG_NUM, node->cmd[1]);
 	}
 	else
-	{
-		printf("exit\n");
 		g_exit_status = 0;
-	}
 	exit_minishell(node);
 	return (0);
 }

@@ -33,21 +33,18 @@ void	ft_display_exit(t_err err, char *arg)
 {
 	if (err == ERR_EXIT_NBARG)
 	{
-		ft_putstr_fd("exit\nminishell: exit: too many arguments", 2);
+		ft_putstr_fd("minishell: exit: too many arguments", 2);
 		g_exit_status = 1;
 	}
 	if (err == ERR_EXIT_ARG_NO_NUM)
 	{
-		ft_putstr_fd("exit\nexit: ", 2);
+		ft_putstr_fd("exit: ", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd(": numeric argument required", 2);
 		g_exit_status = 2;
 	}
 	if (err == ERR_EXIT_ARG_NUM)
-	{
-		ft_putstr_fd("exit", 2);
 		g_exit_status = ft_atoi(arg);
-	}
 }
 
 void	ft_display_three_line(t_err err, char *arg)
