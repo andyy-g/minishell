@@ -35,6 +35,7 @@ void	ft_unset_var(t_env **env)
 	ft_free((*env)->var);
 	ft_free((*env)->value);
 	ft_free((*env)->full);
+	ft_free((*env));
 }
 
 int	ft_syntax_unset(char *str)
@@ -55,7 +56,20 @@ int	ft_syntax_unset(char *str)
 	else
 		return (0);
 	return (1);
-}	
+}
+
+void	ft_find_var(t_env **env, char *str, int size)
+{
+	while (*env)
+	{
+		if ((*env)->var && ft_ncmp(str, (*env)->var, size))
+		{
+			ft_unset_var(&(*env));
+			break ;
+		}
+		*env = (*env)->next;
+	}
+}
 
 int	ft_unset(t_node *node)
 {
@@ -70,15 +84,7 @@ int	ft_unset(t_node *node)
 		env = singleton_env(1, NULL, NULL);
 		if (ft_syntax_unset(node->cmd[i]))
 		{
-			while (env)
-			{
-				if (env->var && ft_ncmp(node->cmd[i], env->var, ft_strlen(node->cmd[i])))
-				{
-					ft_unset_var(&env);
-					break ;
-				}
-				env = env->next;
-			}
+			ft_find_var(&env, node->cmd[i], ft_strlen(node->cmd[i]));
 			if (err == 0)
 				g_exit_status = 0;
 		}

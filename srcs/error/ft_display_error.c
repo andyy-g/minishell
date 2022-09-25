@@ -14,7 +14,6 @@
 
 void	ft_display_builtin(t_err err, char *arg)
 {
-	(void)arg;
 	if (err == ERR_ENV_NBARG)
 	{
 		ft_putstr_fd("minishell: env: too many arguments", 2);
@@ -25,6 +24,11 @@ void	ft_display_builtin(t_err err, char *arg)
 		ft_putstr_fd("minishell: unset: '", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd("' : not a valid identifier", 2);
+		g_exit_status = 1;
+	}
+	if (err == ERR_CD_NBARG)
+	{
+		ft_putstr_fd("minishell: cd: too many arguments", 2);
 		g_exit_status = 1;
 	}
 }

@@ -88,14 +88,15 @@ int		go_to_path(int option, t_env *env)
 	return (ret);
 }
 
-int				ft_cd(t_node *node, t_env *env)
+int				ft_cd(t_node *node)
 {
     int		cd_ret;
+	t_env	*env;
 
+	env = singleton_env(1, NULL, NULL);
     if (node->cmd[1] && node->cmd[2])
 	{
-		printf("minishell: cd: too many arguments\n");
-		g_exit_status = 1;
+		display_error(ERR_CD_NBARG, node->cmd[1]);
 		return (1);
 	}
     else
