@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/22 14:40:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 17:00:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,20 @@ int	ft_ncmp(char *s1, char *s2, int n)
 	return (0);
 }
 
-char	*ft_replacebyvar(char *str, char *var, int size, int pos)
+char	*ft_replacebyvar(char *str, char *var, int start, int end)
 {
 	int		i;
 	int		j;
+	int		size;
 	char	*new;
 
 	i = 0;
 	j = 0;
+	size = ft_strlen(var) + ft_strlen(str) - end + start;
 	new = (char *)malloc(sizeof(char) * size + 1);
 	if (new)
 	{
-		while (str[i] && (str[i] != '$' && str[i] != '~'))
+		while (str[i] && i < start)
 		{
 			new[i] = str[i];
 			i++;
@@ -46,8 +48,8 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 		while (var[j])
 			new[i++] = var[j++];
 		j = 0;
-		while (str[pos + j])
-			new[i++] = str[pos + j++];
+		while (str[end + j])
+			new[i++] = str[end + j++];
 		new[i] = '\0';
 	}
 	free(str);
@@ -56,15 +58,13 @@ char	*ft_replacebyvar(char *str, char *var, int size, int pos)
 
 int	ft_check_variable(char **str, t_env *env, int i, int j)
 {
-	int		size;
 	char	*exit_status;
 
 	while (i - 1 > j && env)
 	{
 		if (env->var && ft_ncmp((*str) + j + 1, env->var, i - j - 1))
 		{
-			size = ft_strlen(env->value) + ft_strlen(*str) - i + j;
-			*str = ft_replacebyvar(*str, env->value, size, i);
+			*str = ft_replacebyvar(*str, env->value, j, i);
 			return (1);
 		}
 		env = env->next;
@@ -72,8 +72,7 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	if (i == j + 2 && (*str)[i - 1] && (*str)[i - 1] == '?')
 	{
 		exit_status = ft_itoa(g_exit_status);
-		size = ft_strlen(exit_status) + ft_strlen(*str) - 2;
-		*str = ft_replacebyvar(*str, exit_status, size, i);
+		*str = ft_replacebyvar(*str, exit_status, j, i);
 		ft_free(exit_status);
 		return (1);
 	}
