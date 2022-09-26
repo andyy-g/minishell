@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 17:00:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 17:20:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,18 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	return (0);
 }
 
-int	complete_str(t_pars **exp, int *j, int i)
+int	complete_str(t_pars **exp, int *j, int i, int *error)
 {
 	int	save;
 
 	if (!*j && !(*exp)->str[i])
 	{
+		if ((*exp)->prev && ((*exp)->prev->token == FILE_OUT
+				|| (*exp)->prev->token == FILE_OUT_APP))
+		{
+			*error = 1;
+			display_error(ERR_AMB_REDIRECT, (*exp)->str);
+		}
 		remove_pars(exp);
 		*j = -1;
 		return (1);
@@ -97,7 +103,7 @@ int	complete_str(t_pars **exp, int *j, int i)
 	return (0);
 }
 
-int	ft_variable(t_pars **exp, t_env *env, int *j)
+int	ft_variable(t_pars **exp, t_env *env, int *j, int *error)
 {
 	int		i;
 	int		found;
@@ -113,7 +119,7 @@ int	ft_variable(t_pars **exp, t_env *env, int *j)
 	found = ft_check_variable(&((*exp)->str), env, i, *j);
 	if (found == 0)
 	{
-		if (complete_str(exp, j, i))
+		if (complete_str(exp, j, i, error))
 			return (1);
 	}
 	if (!(*exp)->str)

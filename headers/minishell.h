@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/24 16:35:47 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 17:20:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ typedef enum e_err
 	ERR_CD_NBARG,
 	ERR_EXIT_NBARG,
 	ERR_EXIT_ARG_NUM,
-	ERR_EXIT_ARG_NO_NUM
+	ERR_EXIT_ARG_NO_NUM,
+	ERR_AMB_REDIRECT
 }	t_err;
 
 typedef struct s_pars
@@ -178,8 +179,8 @@ int			ft_and(char *str, t_pars **pars);
 int			ft_bracket(char c, t_pars **pars, int *bracket);
 int			ft_word(char *str, t_pars **pars);
 int			ft_syntax_error(t_dblist *list, int bracket);
-int			ft_expand(t_dblist **list, t_env **env);
-int			ft_variable(t_pars **exp, t_env *env, int *j);
+int			ft_expand(t_dblist **list, t_env **env, int *error);
+int			ft_variable(t_pars **exp, t_env *env, int *j, int *error);
 int			ft_wildcard(t_dblist **list, t_pars **exp);
 int			ft_copy_pars(t_pars **prev, char *dir);
 int			ft_ncmp(char *s1, char *s2, int n);

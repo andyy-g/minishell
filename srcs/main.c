@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/24 16:30:10 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 17:08:36 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,21 @@ int	main(int argc, char **argv, char **envp)
 		if (input && !is_only_spaces(input))
 		{
 			error = 0;
-			if (!ft_lexer(input, &tokens, &error) || !ft_expand(&tokens, &env))
+			if (!ft_lexer(input, &tokens, &error))
 				exit_failure(ast, tokens);
-			//ft_print_dblist(tokens);
 			if (error || !tokens->first->str)
 			{
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
+			if (!ft_expand(&tokens, &env, &error))
+				exit_failure(ast, tokens);
+			if (error || !tokens->first->str)
+			{
+				free_tokens_ast(ast, tokens);
+				continue ;
+			}
+
 			if (!parser(&ast, tokens->first, &error))
 				exit_failure(ast, tokens);
 			if (error)
@@ -85,7 +92,6 @@ int	main(int argc, char **argv, char **envp)
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
-			//vizAST(ast);
 			free_tokens_ast(NULL, tokens);
 			if (!error && !exec(ast))
 				exit_failure(ast, NULL);

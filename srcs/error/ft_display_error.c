@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 09:28:39 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 16:02:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 17:17:18 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,12 @@ void	ft_display_three_line(t_err err, char *arg)
 		ft_putstr_fd("unexpected EOF while looking for matching `", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd("'", 2);
+	}
+	if (err == ERR_AMB_REDIRECT)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": ambiguous redirect", 2);
 	}
 }
 
