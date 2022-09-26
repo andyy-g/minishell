@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 09:04:48 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/24 14:43:36 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 16:02:54 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	ft_exit(t_node *node)
 		if (!ft_isnum(node->cmd[1]))
 			display_error(ERR_EXIT_ARG_NO_NUM, node->cmd[1]);
 		else
-			display_error(ERR_EXIT_ARG_NUM, node->cmd[1]);
+			g_exit_status = ft_atoi(node->cmd[1]);
 	}
 	else
 		g_exit_status = 0;

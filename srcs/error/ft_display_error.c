@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 09:28:39 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/09 09:28:46 by charoua          ###   ########.fr       */
+/*   Updated: 2022/09/26 16:02:22 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,6 @@ void	ft_display_exit(t_err err, char *arg)
 		ft_putstr_fd(": numeric argument required", 2);
 		g_exit_status = 2;
 	}
-	if (err == ERR_EXIT_ARG_NUM)
-		g_exit_status = ft_atoi(arg);
 }
 
 void	ft_display_three_line(t_err err, char *arg)
