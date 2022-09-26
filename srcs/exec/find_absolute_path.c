@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:21:35 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 11:31:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/26 16:24:27 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	find_path_bin(t_node *node, char **pathname, int *cmd_not_found)
 
 	sb.st_mode = 0;
 	paths = get_envpath_value();
-	if (!paths || !node->cmd[0][0])
+	if (!paths || !node->cmd[0][0] || node->cmd[0][0] == '.')
 		return (no_env_or_cmd_empty(cmd_not_found, paths));
 	i = -1;
 	while (paths[++i])
