@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 17:20:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 16:05:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,20 @@ char	*ft_replacebyvar(char *str, char *var, int start, int end)
 	return (new);
 }
 
-int	ft_check_variable(char **str, t_env *env, int i, int j)
+int	ft_check_variable(t_pars **exp, int i, int j, int *error)
 {
 	char	*exit_status;
+	char	**str;
+	t_env	*env;
 
+	env = singleton_env(1, NULL, NULL);
+	str = &((*exp)->str);
 	while (i - 1 > j && env)
 	{
 		if (env->var && ft_ncmp((*str) + j + 1, env->var, i - j - 1))
 		{
-			*str = ft_replacebyvar(*str, env->value, j, i);
+			if (!check_ambiguous_redirect(exp, env, *str, error))
+				*str = ft_replacebyvar(*str, env->value, j, i);
 			return (1);
 		}
 		env = env->next;
@@ -79,31 +84,29 @@ int	ft_check_variable(char **str, t_env *env, int i, int j)
 	return (0);
 }
 
-int	complete_str(t_pars **exp, int *j, int i, int *error)
+void	complete_str(t_pars **exp, int *j, int i, int *error)
 {
 	int	save;
 
 	if (!*j && !(*exp)->str[i])
 	{
-		if ((*exp)->prev && ((*exp)->prev->token == FILE_OUT
-				|| (*exp)->prev->token == FILE_OUT_APP))
+		if ((*exp)->prev && is_chevron((*exp)->prev->token))
 		{
 			*error = 1;
 			display_error(ERR_AMB_REDIRECT, (*exp)->str);
 		}
 		remove_pars(exp);
 		*j = -1;
-		return (1);
+		return ;
 	}
 	save = *j;
 	while (*j < i && (*exp)->str[i])
 		(*exp)->str[(*j)++] = (*exp)->str[i++];
 	(*exp)->str[*j] = '\0';
 	*j = save - 1;
-	return (0);
 }
 
-int	ft_variable(t_pars **exp, t_env *env, int *j, int *error)
+int	ft_variable(t_pars **exp, int *j, int *error, bool dquote)
 {
 	int		i;
 	int		found;
@@ -116,13 +119,18 @@ int	ft_variable(t_pars **exp, t_env *env, int *j, int *error)
 	else
 		while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 			i++;
-	found = ft_check_variable(&((*exp)->str), env, i, *j);
-	if (found == 0)
-	{
-		if (complete_str(exp, j, i, error))
-			return (1);
-	}
+	found = ft_check_variable(exp, i, *j, error);
 	if (!(*exp)->str)
 		return (0);
+	if (found == 2)
+	{
+		*error = 1;
+		return (1);
+	}
+	if (found == 0)
+		complete_str(exp, j, i, error);
+	else
+		if (!word_splitting(exp, dquote))
+			return (0);
 	return (1);
 }

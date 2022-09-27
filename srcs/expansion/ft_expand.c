@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 17:09:27 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 16:05:35 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,13 @@ bool	must_be_trim(t_pars *exp, int i)
 	return (false);
 }
 
-int	check_env_var(t_pars **exp, t_env **env, int *i, int *error)
+int	check_env_var(t_pars **exp, int *i, int *error)
 {
 	while ((*exp)->str[*i] == 39 || (*exp)->str[*i] == 34)
-		*i = ft_exp_quote(exp, &(*env), *i, (*exp)->str[*i]);
-	if (is_env_variable(*exp, *i) && *env)
+		*i = ft_exp_quote(exp, *i, (*exp)->str[*i], error);
+	if (is_env_variable(*exp, *i))
 	{
-		if (!ft_variable(exp, *env, i, error))
+		if (!ft_variable(exp, i, error, false))
 			return (0);
 	}
 	else if (must_be_trim(*exp, *i))
@@ -70,7 +70,7 @@ int	check_env_var(t_pars **exp, t_env **env, int *i, int *error)
 	return (1);
 }
 
-int	ft_expand(t_dblist **list, t_env **env, int *error)
+int	ft_expand(t_dblist **list, int *error)
 {
 	t_pars	*exp;
 	int		i;
@@ -79,11 +79,11 @@ int	ft_expand(t_dblist **list, t_env **env, int *error)
 	while (exp && exp->next)
 	{
 		i = 0;
-		if (exp->str[i] == '~' && !(exp->str[i + 1]) && *env)
-			ft_home(&exp, *env);
+		if (exp->str[i] == '~' && !(exp->str[i + 1]))
+			ft_home(&exp);
 		while (exp->str && exp->str[i] != '\0')
 		{
-			if (!check_env_var(&exp, env, &i, error))
+			if (!check_env_var(&exp, &i, error))
 				return (0);
 			i++;
 		}

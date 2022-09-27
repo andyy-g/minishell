@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/09/24 16:33:51 by agranger         ###   ########.fr        #
+#    Updated: 2022/09/27 15:53:10 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,11 +35,13 @@ CFILES			=	main.c \
 					lexer/ft_token.c \
 					error/ft_syntax_error.c \
 					error/ft_display_error.c \
+					error/ambiguous_redirect.c \
 					expansion/ft_expand.c \
 					expansion/ft_expand_specials_chars.c \
 					expansion/ft_variable.c \
 					expansion/ft_wildcard.c \
 					expansion/ft_wildcard_cpy.c \
+					expansion/word_splitting.c \
 					parser/node.c \
 					parser/parser.c \
 					parser/cmd_w_operator.c \

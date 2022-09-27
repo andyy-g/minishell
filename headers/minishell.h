@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 17:20:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 16:06:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void		*free_nodes(t_node *redir, t_node *right,
 void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
 void		display_error(t_err err, char *arg);
 void		remove_pars(t_pars **token);
-void		ft_home(t_pars **exp, t_env *env);
+void		ft_home(t_pars **exp);
 void		free_heredoc(t_pars *curr);
 void		which_error(t_node *node);
 void		exit_child_builtin(t_node *node);
@@ -152,6 +152,7 @@ void		close_fds_exec_fail(t_node *node);
 void		go_to_redir_node(t_node **node, int *in, int *out);
 void		move_to_first_cmd(t_node **ast);
 void		handle_sigint(int signum);
+int			word_splitting(t_pars **exp, bool dquote);
 int			init_signals(void);
 int			exec_bin(t_node *node);
 int			dup2_if_needed(t_node *node);
@@ -168,7 +169,7 @@ int			set_heredoc(t_node *node, t_node *cmd);
 int			launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim);
 int			ft_check_wildcard(t_pars **exp, t_dblist **list);
 int			check_is_heredoc(t_pars *token, char *lim);
-int			ft_exp_quote(t_pars **exp, t_env **env, int i, char c);
+int			ft_exp_quote(t_pars **exp, int i, char c, int *error);
 int			ft_lexer(char *str, t_dblist **list, int *error);
 int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);
 int			ft_quote(char *str);
@@ -179,8 +180,8 @@ int			ft_and(char *str, t_pars **pars);
 int			ft_bracket(char c, t_pars **pars, int *bracket);
 int			ft_word(char *str, t_pars **pars);
 int			ft_syntax_error(t_dblist *list, int bracket);
-int			ft_expand(t_dblist **list, t_env **env, int *error);
-int			ft_variable(t_pars **exp, t_env *env, int *j, int *error);
+int			ft_expand(t_dblist **list, int *error);
+int			ft_variable(t_pars **exp, int *j, int *error, bool dquote);
 int			ft_wildcard(t_dblist **list, t_pars **exp);
 int			ft_copy_pars(t_pars **prev, char *dir);
 int			ft_ncmp(char *s1, char *s2, int n);
@@ -224,6 +225,7 @@ bool		is_uniq_cmd(t_node *node);
 bool		is_last_cmd(t_node *node);
 bool		is_first_cmd(t_node *node);
 bool		is_pipe_cmd(t_node *node);
+bool		check_ambiguous_redirect(t_pars **exp, t_env *env, char *str, int *error);
 t_pars		*ft_create_pars(t_pars *prev);
 t_pars		*ft_create_pars(t_pars *prev);
 t_pars		*put_redirs_in_order(t_pars *token);

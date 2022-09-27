@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/11 19:29:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/12 16:03:24 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 14:17:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isalnum(int c);
 int		ft_atoi(const char *str);
+int		is_charset_str(char *str, char *charset);
 char	*ft_strdup(const char *s1);
 char	*ft_strndup(const char *s1, size_t n);
 char	*ft_strcpy(char *dst, char *src);

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/26 17:08:36 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 15:17:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int	main(int argc, char **argv, char **envp)
 	int			status;
 	t_node		*ast;
 	t_dblist	*tokens;
-	t_env		*env;
 	int			error;
 
 	(void)argc;
@@ -57,7 +56,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!init_signals())
 		return (0);
 	status = 1;
-	env = singleton_env(0, &status, envp);
+	singleton_env(0, &status, envp);
 	if (!status)
 		return (EXIT_FAILURE);
 	while (1)
@@ -77,7 +76,7 @@ int	main(int argc, char **argv, char **envp)
 				free_tokens_ast(ast, tokens);
 				continue ;
 			}
-			if (!ft_expand(&tokens, &env, &error))
+			if (!ft_expand(&tokens, &error))
 				exit_failure(ast, tokens);
 			if (error || !tokens->first->str)
 			{

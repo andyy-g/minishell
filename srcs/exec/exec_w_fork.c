@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:27:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 13:54:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ pid_t	*init_pid_arr(t_node *cmd, int *index_cmd)
 		cmd = next_cmd(cmd);
 	}
 	pids = ft_calloc(nb_cmd + 1, sizeof(*pids));
+	if (!pids)
+		return (NULL);
 	pids[nb_cmd] = -1;
 	*index_cmd = 0;
 	return (pids);

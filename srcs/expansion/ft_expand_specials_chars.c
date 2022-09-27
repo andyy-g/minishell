@@ -6,17 +6,21 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 14:25:04 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/22 14:32:28 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/27 16:04:23 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_home(t_pars **exp, t_env *env)
+void	ft_home(t_pars **exp)
 {
 	int		size;
 	char	*str;
+	t_env	*env;
 
+	env = singleton_env(1, NULL, NULL);
+	if (!env)
+		return ;
 	str = (*exp)->str;
 	while (env)
 	{
@@ -58,21 +62,21 @@ void	ft_clear(char *str, int i)
 	}
 }
 
-int	ft_exp_quote(t_pars **exp, t_env **env, int i, char c)
+int	ft_exp_quote(t_pars **exp, int i, char c, int *error)
 {
-	int	j;
+	int		j;
 
 	ft_clear((*exp)->str, i);
 	while ((*exp)->str[i] && (*exp)->str[i] != c)
 	{
 		if ((*exp)->str[i] == '*')
 			(*exp)->sp_quote = 1;
-		if ((*exp)->str[i] == '$' && *env && c == 34 && (*exp)->str[i + 1]
+		if ((*exp)->str[i] == '$' && c == 34 && (*exp)->str[i + 1]
 			&& (ft_isalnum((*exp)->str[i + 1]) || (*exp)->str[i + 1] == '_'
 				|| (*exp)->str[i + 1] == '?'))
 		{
 			j = i - 1;
-			if (!ft_variable(&(*exp), *env, &i))
+			if (!ft_variable(&(*exp), &i, error, true))
 				return (-1);
 			i = j;
 		}
