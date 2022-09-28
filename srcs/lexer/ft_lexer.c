@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/23 14:32:47 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/28 16:05:47 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	ft_create_str(char *str, int size, t_pars **pars, t_dblist **list)
 	return (1);
 }
 
-int	ft_token_size(char *str, char c, t_pars **pars, int *bracket)
+int	ft_token_size(char *str, char c, t_pars **pars, int *bracket, t_sa *sig)
 {
 	int	i;
 
@@ -82,11 +82,11 @@ int	ft_token_size(char *str, char c, t_pars **pars, int *bracket)
 	else if (c == '(' || c == ')')
 		i = ft_bracket(c, &(*pars), bracket);
 	if (c != '\n' && c != ' ' && c != '\t' && i == 0)
-		i = ft_word(str, &(*pars));
+		i = ft_word(str, &(*pars), sig);
 	return (i);
 }
 
-int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
+int	ft_add_lex(char *str, t_pars **pars, t_dblist **list, t_sa *sig)
 {
 	int	i;
 	int	j;
@@ -96,7 +96,7 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	bracket = 0;
 	while (str[i] != '\0')
 	{
-		j = ft_token_size(str + i, str[i], pars, &bracket);
+		j = ft_token_size(str + i, str[i], pars, &bracket, sig);
 		if (j == -1 || j == -2)
 			return (j + 1);
 		else if (j > 0)
@@ -114,7 +114,7 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list)
 	return (1);
 }
 
-int	ft_lexer(char *str, t_dblist **list, int *err)
+int	ft_lexer(char *str, t_dblist **list, int *err, t_sa *sig)
 {
 	int		error;
 	t_pars	*pars;
@@ -127,7 +127,7 @@ int	ft_lexer(char *str, t_dblist **list, int *err)
 		return (0);
 	(*list)->first = pars;
 	(*list)->last = pars;
-	error = ft_add_lex(str, &pars, list);
+	error = ft_add_lex(str, &pars, list, sig);
 	if (!error)
 		return (0);
 	if (error == -1)

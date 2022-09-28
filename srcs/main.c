@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/27 15:17:19 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/28 16:04:27 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,19 @@ int	main(int argc, char **argv, char **envp)
 	t_node		*ast;
 	t_dblist	*tokens;
 	int			error;
+	t_sa		sig[2];
 
 	(void)argc;
 	(void)argv;
-	if (!init_signals())
-		return (0);
-	status = 1;
+		status = 1;
 	singleton_env(0, &status, envp);
 	if (!status)
 		return (EXIT_FAILURE);
 	while (1)
 	{
+		if (!set_signal(SIGINT, INPUT, sig[INT])
+			|| !set_signal(SIGQUIT, INPUT, sig[QUIT]))
+			return (0);
 		ast = NULL;
 		tokens = NULL;
 		input = readline("minishell$> ");
@@ -68,8 +70,11 @@ int	main(int argc, char **argv, char **envp)
 		is_eof(input);
 		if (input && !is_only_spaces(input))
 		{
+			if (!set_signal(SIGINT, EXEC, sig[INT])
+				|| !set_signal(SIGQUIT, EXEC, sig[QUIT]))
+				return (0);
 			error = 0;
-			if (!ft_lexer(input, &tokens, &error))
+			if (!ft_lexer(input, &tokens, &error, sig))
 				exit_failure(ast, tokens);
 			if (error || !tokens->first->str)
 			{

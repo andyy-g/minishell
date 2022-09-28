@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/27 16:06:55 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/28 18:12:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,20 @@ typedef enum e_err
 	ERR_AMB_REDIRECT
 }	t_err;
 
+typedef enum e_context
+{
+	INPUT = 0,
+	EXEC,
+	HDOC,
+	IGN
+}	t_context;
+
+typedef enum e_sig
+{
+	INT = 0,
+	QUIT
+}	t_sig;
+
 typedef struct s_pars
 {
 	char			*str;
@@ -119,6 +133,8 @@ typedef struct s_env
 	struct s_env	*prev;
 }	t_env;
 
+typedef struct sigaction	t_sa;
+
 void		ft_print_dblist(t_dblist *list);
 void		ft_check_word(t_dblist **list);
 void		ft_error(int err, t_dblist **list);
@@ -151,7 +167,12 @@ void		next_logical_node(t_node **node);
 void		close_fds_exec_fail(t_node *node);
 void		go_to_redir_node(t_node **node, int *in, int *out);
 void		move_to_first_cmd(t_node **ast);
-void		handle_sigint(int signum);
+void		sigint_input(int signum);
+void		sigint_exec(int signum);
+void		sigint_hdoc(int signum);
+void		sigquit_exec(int signum);
+int			is_eof_heredoc(char *input, char *lim, int line);
+int			set_signal(int sig, t_context context, t_sa sa);
 int			word_splitting(t_pars **exp, bool dquote);
 int			init_signals(void);
 int			exec_bin(t_node *node);
@@ -166,19 +187,19 @@ int			file_in_exist(t_node *node, t_node *cmd);
 int			create_file_out(t_node *node, t_node *cmd);
 int			create_file_out_app(t_node *node, t_node *cmd);
 int			set_heredoc(t_node *node, t_node *cmd);
-int			launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim);
+int			launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig);
 int			ft_check_wildcard(t_pars **exp, t_dblist **list);
-int			check_is_heredoc(t_pars *token, char *lim);
+int			check_is_heredoc(t_pars *token, char *lim, t_sa *sig);
 int			ft_exp_quote(t_pars **exp, int i, char c, int *error);
-int			ft_lexer(char *str, t_dblist **list, int *error);
-int			ft_add_lex(char *str, t_pars **pars, t_dblist **list);
+int			ft_lexer(char *str, t_dblist **list, int *error, t_sa *sig);
+int			ft_add_lex(char *str, t_pars **pars, t_dblist **list, t_sa *sig);
 int			ft_quote(char *str);
 int			ft_line(char *str, t_pars **pars);
 int			ft_input(char *str, t_pars **pars);
 int			ft_output(char *str, t_pars **pars);
 int			ft_and(char *str, t_pars **pars);
 int			ft_bracket(char c, t_pars **pars, int *bracket);
-int			ft_word(char *str, t_pars **pars);
+int			ft_word(char *str, t_pars **pars, t_sa *sig);
 int			ft_syntax_error(t_dblist *list, int bracket);
 int			ft_expand(t_dblist **list, int *error);
 int			ft_variable(t_pars **exp, int *j, int *error, bool dquote);

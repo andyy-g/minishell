@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:07:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:27:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/28 18:16:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,30 @@ char	*heredoc_expansion(char *str)
 	return (ret);
 }
 
-int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
+int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig)
 {
 	char	*input;
 	bool	expansion;
+	int		i;
+	int		ret;
 
+	if (!set_signal(SIGINT, HDOC, sig[INT])
+		|| !set_signal(SIGQUIT, HDOC, sig[QUIT]))
+		return (0);
 	expansion = must_be_expanded(lim);
+	i = 0;
 	while (1)
 	{
 		input = readline("> ");
+		i++;
+		ret = is_eof_heredoc(input, lim, i);
+		if (ret == -1)
+			return (0);
+		if (ret)
+		{
+			clean_heredoc(token, NULL);
+			break ;
+		}
 		if (!ft_strcmp(lim, input))
 			break ;
 		if (expansion)
@@ -103,7 +118,7 @@ int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim)
 	return (1);
 }
 
-int	check_is_heredoc(t_pars *token, char *lim)
+int	check_is_heredoc(t_pars *token, char *lim, t_sa sig[2])
 {
 	int	*pipe_heredoc;
 	int	ret;
@@ -121,11 +136,14 @@ int	check_is_heredoc(t_pars *token, char *lim)
 			ft_free(lim);
 			return (0);
 		}
-		if (!launch_heredoc(token, pipe_heredoc, lim))
+		if (!launch_heredoc(token, pipe_heredoc, lim, sig))
 		{
 			ft_free(pipe_heredoc);
 			ret = 0;
 		}
+		if (!set_signal(SIGINT, EXEC, sig[INT])
+			|| !set_signal(SIGQUIT, EXEC, sig[QUIT]))
+			return (0);
 	}
 	ft_free(lim);
 	return (ret);
