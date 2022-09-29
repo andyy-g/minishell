@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/27 13:54:20 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 17:12:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	exit_child_builtin(t_node *node)
 	exit_minishell(node);
 }
 
-int	exec_bin(t_node *node)
+int	exec_bin(t_node *node, t_sa *sig)
 {
 	char	**envp;
 	char	*path;
@@ -72,6 +72,8 @@ int	exec_bin(t_node *node)
 		check_full_path(node, &path, &is_dir, &cmd_not_found);
 	if (check_error(node, is_dir, cmd_not_found))
 	{
+		if (!set_signal(IGN, sig))
+			return (0);
 		execve(path, node->cmd, envp);
 		which_error(node);
 		ft_free(path);
@@ -103,7 +105,7 @@ int	dup2_if_needed(t_node *node)
 	return (1);
 }
 
-int	exec_cmd_fork(t_node *node, pid_t pid)
+int	exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig)
 {
 	int	ret;
 
@@ -125,7 +127,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	else if (cmd_is(node->cmd[0], "exit"))
 		ret = exec_builtin(node, &ft_exit);
 	else
-		ret = exec_bin(node);
+		ret = exec_bin(node, sig);
 	if (pid == 0)
 		exit_child_builtin(node);
 	return (ret);

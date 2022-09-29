@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 15:27:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 14:32:50 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 14:47:30 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int set_signal_sigint(t_context context, t_sa sa)
 		sa.sa_handler = &sigint_exec;
 	if (context == HDOC)
 		sa.sa_handler = &sigint_hdoc;
+	if (context == IGN)
+		sa.sa_handler = SIG_IGN;
 	if (sigaction(SIGINT, &sa, NULL) == -1)
 	{
 		perror("sigaction");
@@ -36,7 +38,7 @@ int	set_signal_sigquit(t_context context, t_sa sa)
 	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_flags = SA_RESTART;
 	sigemptyset(&sa.sa_mask);
-	if (context == INPUT || context == HDOC)
+	if (context == INPUT || context == HDOC || context == IGN)
 		sa.sa_handler = SIG_IGN;
 	if (context == EXEC)
 		sa.sa_handler = &sigquit_exec;
@@ -53,7 +55,7 @@ int	set_signal_sigpipe(t_context context, t_sa sa)
 	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_flags = SA_RESTART;
 	sigemptyset(&sa.sa_mask);
-	if (context == INPUT || context == EXEC)
+	if (context == INPUT || context == EXEC || context == IGN)
 		sa.sa_handler = SIG_DFL;
 	if (context == HDOC)
 		sa.sa_handler = &sigpipe_hdoc;

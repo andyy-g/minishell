@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 14:17:09 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 17:11:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd)
 	}
 }
 
-int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
+int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *sig)
 {
 	pid_t	pid;
 
@@ -41,7 +41,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
-		if (!exec_cmd_fork(ast, pid))
+		if (!exec_cmd_fork(ast, pid, sig))
 			return (0);
 	}
 	else
@@ -54,7 +54,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 	return (1);
 }
 
-int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
+int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *sig)
 {
 	int	ret;
 
@@ -69,7 +69,7 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 			cmd = next_cmd_after_redir(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))
+		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd, sig))
 			return (0);
 		clean_heredoc(NULL, cmd->parent);
 		is_next_cmd_logical_node(&cmd, pids, &index_cmd);
@@ -78,7 +78,7 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 	return (1);
 }
 
-int	launch_exec_fork(t_node *cmd)
+int	launch_exec_fork(t_node *cmd, t_sa *sig)
 {
 	int		status;
 	int		index_cmd;
@@ -90,7 +90,7 @@ int	launch_exec_fork(t_node *cmd)
 	pids = init_pid_arr(cmd, &index_cmd);
 	if (!pids)
 		return (0);
-	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd))
+	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd, sig))
 		return (0);
 	status = get_status_last_process(pids);
 	g_exit_status = status;
@@ -98,7 +98,7 @@ int	launch_exec_fork(t_node *cmd)
 	return (1);
 }
 
-int	exec(t_node *ast)
+int	exec(t_node *ast, t_sa *sig)
 {
 	int	ret;
 
@@ -112,7 +112,7 @@ int	exec(t_node *ast)
 			return (0);
 		return (1);
 	}
-	if (!launch_exec_fork(ast))
+	if (!launch_exec_fork(ast, sig))
 		return (0);
 	return (1);
 }

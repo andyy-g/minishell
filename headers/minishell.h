@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/29 14:39:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 17:13:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,9 +178,9 @@ int			is_eof_heredoc(char *input, char *lim, int line);
 int			set_signal(t_context context, t_sa *sa);
 int			word_splitting(t_pars **exp, bool dquote);
 int			init_signals(void);
-int			exec_bin(t_node *node);
+int			exec_bin(t_node *node, t_sa *sig);
 int			dup2_if_needed(t_node *node);
-int			exec_cmd_fork(t_node *node, pid_t pid);
+int			exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig);
 int			init_fd(t_node *node, int *pipe_fd);
 int			init_pipe(t_node *node, int prev_fd, int *pipe_fd, int ret);
 int			check_file_in_out(t_node *node);
@@ -210,7 +210,7 @@ int			ft_wildcard(t_dblist **list, t_pars **exp);
 int			ft_copy_pars(t_pars **prev, char *dir);
 int			ft_ncmp(char *s1, char *s2, int n);
 int			parser(t_node **ast, t_pars *token, int *error);
-int			exec(t_node *ast);
+int			exec(t_node *ast, t_sa *sig);
 int			ft_cd(t_node *node);
 int			ft_echo(t_node *node);
 int			ft_env(t_node *node);
