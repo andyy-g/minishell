@@ -6,7 +6,7 @@
 #    By: agranger <agranger@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/29 09:54:25 by agranger          #+#    #+#              #
-#    Updated: 2022/09/27 14:16:26 by agranger         ###   ########.fr        #
+#    Updated: 2022/09/29 12:10:18 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ SRCS =	ft_itoa.c \
 		ft_strcat.c \
 		ft_putchar_fd.c \
 		ft_putstr_fd.c \
+		ft_putnbr_fd.c \
 		ft_split.c \
 		ft_tolower.c \
 		ft_substr.c \

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/28 18:12:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 14:39:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ typedef enum e_context
 typedef enum e_sig
 {
 	INT = 0,
-	QUIT
+	QUIT,
+	SPIPE
 }	t_sig;
 
 typedef struct s_pars
@@ -135,6 +136,7 @@ typedef struct s_env
 
 typedef struct sigaction	t_sa;
 
+void		write_pipe_heredoc(int fd, char *str, int len);
 void		ft_print_dblist(t_dblist *list);
 void		ft_check_word(t_dblist **list);
 void		ft_error(int err, t_dblist **list);
@@ -170,9 +172,10 @@ void		move_to_first_cmd(t_node **ast);
 void		sigint_input(int signum);
 void		sigint_exec(int signum);
 void		sigint_hdoc(int signum);
+void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
 int			is_eof_heredoc(char *input, char *lim, int line);
-int			set_signal(int sig, t_context context, t_sa sa);
+int			set_signal(t_context context, t_sa *sa);
 int			word_splitting(t_pars **exp, bool dquote);
 int			init_signals(void);
 int			exec_bin(t_node *node);

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:07:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/28 18:16:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 14:38:49 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,29 +76,18 @@ char	*heredoc_expansion(char *str)
 
 int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig)
 {
-	char	*input;
-	bool	expansion;
-	int		i;
-	int		ret;
+	char			*input;
+	bool			expansion;
+	static int		i;
 
-	if (!set_signal(SIGINT, HDOC, sig[INT])
-		|| !set_signal(SIGQUIT, HDOC, sig[QUIT]))
+	if (!set_signal(HDOC, sig))
 		return (0);
 	expansion = must_be_expanded(lim);
-	i = 0;
 	while (1)
 	{
 		input = readline("> ");
 		i++;
-		ret = is_eof_heredoc(input, lim, i);
-		if (ret == -1)
-			return (0);
-		if (ret)
-		{
-			clean_heredoc(token, NULL);
-			break ;
-		}
-		if (!ft_strcmp(lim, input))
+		if (is_eof_heredoc(input, lim, i) || !ft_strcmp(lim, input))
 			break ;
 		if (expansion)
 		{
@@ -118,7 +107,7 @@ int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig)
 	return (1);
 }
 
-int	check_is_heredoc(t_pars *token, char *lim, t_sa sig[2])
+int	check_is_heredoc(t_pars *token, char *lim, t_sa *sig)
 {
 	int	*pipe_heredoc;
 	int	ret;
@@ -141,8 +130,7 @@ int	check_is_heredoc(t_pars *token, char *lim, t_sa sig[2])
 			ft_free(pipe_heredoc);
 			ret = 0;
 		}
-		if (!set_signal(SIGINT, EXEC, sig[INT])
-			|| !set_signal(SIGQUIT, EXEC, sig[QUIT]))
+		if (!set_signal(EXEC, sig))
 			return (0);
 	}
 	ft_free(lim);

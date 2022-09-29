@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/28 16:04:27 by agranger         ###   ########.fr       */
+/*   Updated: 2022/09/29 14:20:02 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	main(int argc, char **argv, char **envp)
 	t_node		*ast;
 	t_dblist	*tokens;
 	int			error;
-	t_sa		sig[2];
+	t_sa		sig[3];
 
 	(void)argc;
 	(void)argv;
@@ -60,8 +60,7 @@ int	main(int argc, char **argv, char **envp)
 		return (EXIT_FAILURE);
 	while (1)
 	{
-		if (!set_signal(SIGINT, INPUT, sig[INT])
-			|| !set_signal(SIGQUIT, INPUT, sig[QUIT]))
+		if (!set_signal(INPUT, sig))
 			return (0);
 		ast = NULL;
 		tokens = NULL;
@@ -70,8 +69,7 @@ int	main(int argc, char **argv, char **envp)
 		is_eof(input);
 		if (input && !is_only_spaces(input))
 		{
-			if (!set_signal(SIGINT, EXEC, sig[INT])
-				|| !set_signal(SIGQUIT, EXEC, sig[QUIT]))
+			if (!set_signal(EXEC, sig))
 				return (0);
 			error = 0;
 			if (!ft_lexer(input, &tokens, &error, sig))

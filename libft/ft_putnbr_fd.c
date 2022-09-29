@@ -1,36 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eof.c                                              :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/13 13:47:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 12:11:37 by agranger         ###   ########.fr       */
+/*   Created: 2022/09/29 12:09:44 by agranger          #+#    #+#             */
+/*   Updated: 2022/09/29 12:09:59 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	is_eof(char *input)
+void	ft_putnbr_fd(int n, int fd)
 {
-	if (!input)
+	if (n >= 0 && n < 10)
+		ft_putchar_fd(n + '0', fd);
+	else if (n == -2147483648)
+		write(fd, "-2147483648", 11);
+	else if (n < 0)
 	{
-		printf("exit\n");
-		exit_minishell(NULL);
+		ft_putchar_fd('-', fd);
+		ft_putnbr_fd(-n, fd);
 	}
-}
-
-int	is_eof_heredoc(char *input, char *lim, int line)
-{
-	if (!input)
+	else
 	{
-		ft_putstr_fd("minishell: warning: here-document at line ", 2);
-		ft_putnbr_fd(line, 2);
-		ft_putstr_fd(" delimited by end-of-file (wanted `", 2);
-		ft_putstr_fd(lim, 2);
-		ft_putstr_fd("')\n", 2);
-		return (1);
+		ft_putnbr_fd(n / 10, fd);
+		ft_putnbr_fd(n % 10, fd);
 	}
-	return (0);
 }
