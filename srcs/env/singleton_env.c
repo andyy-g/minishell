@@ -54,6 +54,7 @@ t_env	*new_env(char *str)
 	env->value = ft_strdup(&str[equal + 1]);
 	if (!env->value)
 		return (error_malloc(env));
+	env->pos = 0;
 	env->next = NULL;
 	env->prev = NULL;
 	return (env);
@@ -94,6 +95,7 @@ t_env	*singleton_env(int i, int *status, char **envp)
 		if (envp)
 		{
 			env = create_env(envp, status);
+			env = ft_env_sort(env);
 			return (env);
 		}
 		else

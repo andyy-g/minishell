@@ -130,6 +130,7 @@ typedef struct s_env
 	char			*var;
 	char			*value;
 	char			*full;
+	int				pos;
 	struct s_env	*next;
 	struct s_env	*prev;
 }	t_env;
@@ -215,6 +216,7 @@ int			ft_cd(t_node *node);
 int			ft_echo(t_node *node);
 int			ft_env(t_node *node);
 int			ft_exit(t_node *node);
+int			ft_export(t_node *node);
 int			ft_pwd(t_node *node);
 int			ft_unset(t_node *node);
 int			look_for_heredocs(t_pars *token);
@@ -274,6 +276,7 @@ t_node		*put_next_node_above(t_node *ret, int *status, t_pars **token,
 				t_node *(*cmd_next_node)(t_pars **token, int *status));
 t_dblist	*create_list(void);
 t_env		*singleton_env(int i, int *status, char **envp);
+t_env		*ft_env_sort(t_env *env);
 pid_t		*init_pid_arr(t_node *cmd, int *index_cmd);
 
 void		vizAST(t_node *ast);

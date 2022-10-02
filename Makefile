@@ -54,6 +54,7 @@ CFILES			=	main.c \
 					signals/set_signals.c \
 					signals/handler.c \
 					env/singleton_env.c \
+					env/sort_env.c \
 					env/free_env.c \
 					env/conversion_env.c \
 					env/shlvl.c \
@@ -74,6 +75,7 @@ CFILES			=	main.c \
 					builtin/ft_echo.c \
 					builtin/ft_env.c \
 					builtin/ft_exit.c \
+					builtin/ft_export.c \
 					builtin/ft_pwd.c \
 					builtin/ft_unset.c
 					
