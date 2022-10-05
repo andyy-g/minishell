@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:07:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 14:38:49 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:41:50 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,47 +74,72 @@ char	*heredoc_expansion(char *str)
 	return (ret);
 }
 
-int	launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig)
-{
-	char			*input;
-	bool			expansion;
-	static int		i;
-
-	if (!set_signal(HDOC, sig))
-		return (0);
-	expansion = must_be_expanded(lim);
-	while (1)
-	{
-		input = readline("> ");
-		i++;
-		if (is_eof_heredoc(input, lim, i) || !ft_strcmp(lim, input))
-			break ;
-		if (expansion)
-		{
-			input = heredoc_expansion(input);
-			if (!input)
-				return (0);
-			write(pipe_heredoc[WRITE], input, ft_strlen(input));
-			ft_free(input);
-		}
-		else
-			write(pipe_heredoc[WRITE], input, ft_strlen(input));
-		write(pipe_heredoc[WRITE], "\n", 1);
-	}
-	clean_heredoc(token, NULL);
-	token->heredoc = pipe_heredoc;
-	close(pipe_heredoc[WRITE]);
-	return (1);
-}
+int launch_heredoc(t_pars *token, int *pipe_heredoc, char *lim, t_sa *sig)
+  {
+      char            *input;
+      bool            expansion;
+      static int      i;  
+      pid_t           pid;
+      int             status;
+  
+	  if (!set_signal(IGN, sig))
+		  return (0);
+      pid = fork();
+      if (pid == -1) 
+      {   
+          perror("fork");
+          return (0);
+      }   
+      if (pid == 0)
+      {   
+          g_exit_status = 0;
+          if (!set_signal(HDOC, sig))
+              return (0);
+          close(pipe_heredoc[READ]);
+          expansion = must_be_expanded(lim);
+          while (1) 
+          {   
+              input = readline("> ");
+              i++;
+              if (is_eof_heredoc(input, lim, i) || !ft_strcmp(lim, input))
+                  break ;
+              if (expansion)
+              {   
+                  input = heredoc_expansion(input);
+                  if (!input)
+                      return (0);
+                  write(pipe_heredoc[WRITE], input, ft_strlen(input));
+                  ft_free(input);
+              }   
+              else
+                  write(pipe_heredoc[WRITE], input, ft_strlen(input));
+              write(pipe_heredoc[WRITE], "\n", 1); 
+          }   
+          close(pipe_heredoc[WRITE]);
+		  ft_free(lim);
+		  //free_tokens_ast(NULL, token);
+          exit_minishell(NULL);
+      }   
+      waitpid(pid, &status, 0); 
+	  status = convert_status(status);
+	  g_exit_status = status;
+      clean_heredoc(token, NULL);
+      token->heredoc = pipe_heredoc;
+      close(pipe_heredoc[WRITE]);
+	  if (status == 130)
+		  return (-2);
+      return (1);
+  }
 
 int	check_is_heredoc(t_pars *token, char *lim, t_sa *sig)
 {
 	int	*pipe_heredoc;
 	int	ret;
+	int	err;
 
 	ret = 1;
 	if (!lim)
-		return (0);
+		return (-1);
 	if (token && token->str && token->token == HEREDOC)
 	{
 		pipe_heredoc = malloc(sizeof(int) * 2);
@@ -123,15 +148,18 @@ int	check_is_heredoc(t_pars *token, char *lim, t_sa *sig)
 			perror("pipe");
 			ft_free(pipe_heredoc);
 			ft_free(lim);
-			return (0);
+			return (-1);
 		}
-		if (!launch_heredoc(token, pipe_heredoc, lim, sig))
+		err = launch_heredoc(token, pipe_heredoc, lim, sig);
+		if (!err)
 		{
 			ft_free(pipe_heredoc);
-			ret = 0;
+			ret = -1;
 		}
+		if (err == -2)
+			ret = err;
 		if (!set_signal(EXEC, sig))
-			return (0);
+			return (-1);
 	}
 	ft_free(lim);
 	return (ret);

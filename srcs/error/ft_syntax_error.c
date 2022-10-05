@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/08 22:11:33 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:16:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,15 +84,17 @@ int	check_bracket_syntax(t_pars *curr, t_pars *prev, int bracket, char *str)
 int	check_syntax(t_pars *curr, char *str, int i, int bracket)
 {
 	t_pars	*prev;
+	int		ret;
 
 	prev = curr->prev;
 	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n')
 		i++;
-	if (!check_redir_syntax(curr, prev, &str[i]))
-		return (0);
-	if (!check_op_syntax(curr, prev, &str[i]))
-		return (0);
-	if (!check_bracket_syntax(curr, prev, bracket, &str[i]))
-		return (0);
-	return (1);
+	ret = check_redir_syntax(curr, prev, &str[i]);
+	if (ret)
+		ret = check_op_syntax(curr, prev, &str[i]);
+	if (ret)
+		ret =check_bracket_syntax(curr, prev, bracket, &str[i]);
+	if (!ret)
+		g_exit_status = 2;
+	return (ret);
 }

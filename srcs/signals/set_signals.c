@@ -6,11 +6,22 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 15:27:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 14:47:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:39:53 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	convert_status(int status)
+{
+	if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		status = WTERMSIG(status) + 128;
+	else if (WIFSTOPPED(status))
+		status = WSTOPSIG(status) + 128;
+	return (status);
+}
 
 int set_signal_sigint(t_context context, t_sa sa)
 {

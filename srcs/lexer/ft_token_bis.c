@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/28 16:06:14 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:19:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int	ft_word(char *str, t_pars **pars, t_sa *sig)
 {
 	int		i;
 	char	c;
+	int		ret;
 
 	i = 0;
 	while (str[i] != '\0')
@@ -84,8 +85,9 @@ int	ft_word(char *str, t_pars **pars, t_sa *sig)
 		i++;
 	}
 	(*pars)->token = WORD;
-	if (!check_is_heredoc((*pars)->prev, ft_substr(str, 0, i), sig))
-		return (-1);
+	ret = check_is_heredoc((*pars)->prev, ft_substr(str, 0, i), sig);
+	if (ret == -1 || ret == -2)
+		return (ret);
 	return (i);
 }
 

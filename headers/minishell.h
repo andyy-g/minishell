@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/29 17:13:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:36:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void		sigint_exec(int signum);
 void		sigint_hdoc(int signum);
 void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
+int			convert_status(int status);
 int			is_eof_heredoc(char *input, char *lim, int line);
 int			set_signal(t_context context, t_sa *sa);
 int			word_splitting(t_pars **exp, bool dquote);

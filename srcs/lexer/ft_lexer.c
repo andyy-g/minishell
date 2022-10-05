@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/29 11:42:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:57:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,25 @@ int	ft_create_str(char *str, int size, t_pars **pars, t_dblist **list)
 	return (1);
 }
 
-int	ft_token_size(char *str, char c, t_pars **pars, int *bracket, t_sa *sig)
+int	ft_token_size(char *str, t_pars **pars, int *bracket, t_sa *sig)
 {
-	int	i;
+	int		i;
+	char	c;
 
+	c = str[0];
 	i = ft_quote(str);
 	if (c == '|')
-		i = ft_line(str, &(*pars));
+		i = ft_line(str, pars);
 	else if (c == '<')
-		i = ft_input(str, &(*pars));
+		i = ft_input(str, pars);
 	else if (c == '>')
-		i = ft_output(str, &(*pars));
+		i = ft_output(str, pars);
 	else if (c == '&')
-		i = ft_and(str, &(*pars));
+		i = ft_and(str, pars);
 	else if (c == '(' || c == ')')
-		i = ft_bracket(c, &(*pars), bracket);
+		i = ft_bracket(c, pars, bracket);
 	if (c != '\n' && c != ' ' && c != '\t' && i == 0)
-		i = ft_word(str, &(*pars), sig);
+		i = ft_word(str, pars, sig);
 	return (i);
 }
 
@@ -96,7 +98,7 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list, t_sa *sig)
 	bracket = 0;
 	while (str[i] != '\0')
 	{
-		j = ft_token_size(str + i, str[i], pars, &bracket, sig);
+		j = ft_token_size(str + i, pars, &bracket, sig);
 		if (j == -1 || j == -2)
 			return (j + 1);
 		else if (j > 0)
@@ -132,7 +134,6 @@ int	ft_lexer(char *str, t_dblist **list, int *err, t_sa *sig)
 		return (0);
 	if (error == -1)
 	{
-		g_exit_status = 2;
 		*err = 1;
 		free_heredoc(pars);
 	}
