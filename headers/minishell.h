@@ -152,6 +152,7 @@ void		is_eof(char *input);
 void		exit_minishell(t_node *ast);
 void		ft_free_tokens(t_dblist *list);
 void		free_env(t_env *env);
+void		ft_env_sort(void);
 void		free_tokens_ast(t_node *ast, t_dblist *tokens);
 void		ft_free_pars(t_pars *token);
 void		*free_nodes(t_node *redir, t_node *right,
@@ -282,7 +283,6 @@ t_node		*put_next_node_above(t_node *ret, int *status, t_pars **token,
 				t_node *(*cmd_next_node)(t_pars **token, int *status));
 t_dblist	*create_list(void);
 t_env		*singleton_env(int i, int *status, char **envp);
-t_env		*ft_env_sort(t_env *env);
 pid_t		*init_pid_arr(t_node *cmd, int *index_cmd);
 
 void		vizAST(t_node *ast);

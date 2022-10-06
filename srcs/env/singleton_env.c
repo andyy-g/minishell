@@ -95,7 +95,7 @@ t_env	*singleton_env(int i, int *status, char **envp)
 		if (envp)
 		{
 			env = create_env(envp, status);
-			env = ft_env_sort(env);
+			ft_env_sort();
 			return (env);
 		}
 		else

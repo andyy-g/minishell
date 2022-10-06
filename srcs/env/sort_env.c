@@ -12,10 +12,12 @@
 
 #include "minishell.h"
 
-int	ft_env_pos(char *str, t_env *env)
+int	ft_env_pos(char *str)
 {
 	int		pos;
+	t_env	*env;
 
+	env = singleton_env(1, NULL, NULL);
 	pos = 1;
 	while (env)
 	{
@@ -26,17 +28,16 @@ int	ft_env_pos(char *str, t_env *env)
 	return (pos);
 }
 
-t_env	*ft_env_sort(t_env *env)
+void	ft_env_sort(void)
 {
 	char	*str;
-	t_env	*tmp;
+	t_env	*env;
 
-	tmp = env;
-	while (tmp)
+	env = singleton_env(1, NULL, NULL);
+	while (env)
 	{
-		str = tmp->var;
-		tmp->pos = ft_env_pos(str, env);
-		tmp = tmp->next;
+		str = env->var;
+		env->pos = ft_env_pos(str);
+		env = env->next;
 	}
-	return (env);
 }

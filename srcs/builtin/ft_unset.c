@@ -36,6 +36,7 @@ void	ft_unset_var(t_env **env)
 	ft_free((*env)->value);
 	ft_free((*env)->full);
 	ft_free((*env));
+	ft_env_sort();
 }
 
 int	ft_syntax_unset(char *str)
