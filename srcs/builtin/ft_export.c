@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 12:44:18 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/02 12:44:29 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/06 23:52:37 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	ft_export(t_node *node)
 	int		size;
 	t_env	*env;
 	t_env	*tmp;
+	t_env	*test;
 
 	i = 1;
 	env = singleton_env(1, NULL, NULL);
@@ -48,11 +49,13 @@ int	ft_export(t_node *node)
 	}
 	else if ((node->cmd[1]))
 	{
-		if (env)
+		if (!ft_strcmp(node->cmd[1], "test"))
 		{
-		}
-		else
-		{
+			printf("Hello\n");
+			test = new_env("TEST=test");
+			if (!test)
+				return (0);
+			add_back_env(&env, test);
 		}
 	}
 	//si pas d'env pour env afficher PWD SHLVL et _, pour export OLDPWD vide PWD et SHLVL

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:11:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:29:07 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 00:07:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	is_builtin_no_fork(char *cmd)
 		|| cmd_is(cmd, "unset")
 		|| cmd_is(cmd, "exit"))
 		return (true);
-	if (cmd_is(cmd, "export") && !cmd[1])
+	if (cmd_is(cmd, "export") && cmd[1])
 		return (true);
 	if (cmd_is(cmd, "<")
 		|| cmd_is(cmd, "<<")

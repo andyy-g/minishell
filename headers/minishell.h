@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 16:17:17 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 23:51:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ void		sigint_exec(int signum);
 void		sigint_hdoc(int signum);
 void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
+void		add_back_env(t_env **first, t_env *new);
 int 		fork_heredoc_child(t_dblist **list, t_sa *sig, int *pipe_heredoc, char *lim);
 int			fork_heredoc_parent(pid_t pid, t_pars *token, int *pipe_heredoc);
 int			convert_status(int status);
@@ -283,6 +284,7 @@ t_node		*put_next_node_above(t_node *ret, int *status, t_pars **token,
 				t_node *(*cmd_next_node)(t_pars **token, int *status));
 t_dblist	*create_list(void);
 t_env		*singleton_env(int i, int *status, char **envp);
+t_env		*new_env(char *str);
 pid_t		*init_pid_arr(t_node *cmd, int *index_cmd);
 
 void		vizAST(t_node *ast);
