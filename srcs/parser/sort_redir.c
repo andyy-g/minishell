@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 16:28:46 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/04 18:07:51 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:17:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool	redir_in_order(t_pars **token)
 		go_to_rpar(token);
 	else if ((*token)->token == WORD)
 	{
-		while ((*token)->token == WORD)
+		while ((*token)->str && (*token)->token == WORD)
 			*token = (*token)->next;
 	}
 	while ((*token)->str && is_redir_token(*token))

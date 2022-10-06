@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/05 17:57:58 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:29:27 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,35 +38,37 @@ void	ft_print_dblist(t_dblist *list)
 	printf("\n");
 }
 
-int	ft_create_str(char *str, int size, t_pars **pars, t_dblist **list)
+int	ft_create_str(char *str, int size, t_dblist **list)
 {
 	int	i;
 	int	length;
+	t_pars	*pars;
 
+	pars = (*list)->curr;
 	i = 0;
-	length = size - 2 * ((*pars)->db_quote + (*pars)->sp_quote);
-	(*pars)->str = (char *)malloc(sizeof(char) * (length + 1));
-	if ((*pars)->str)
+	length = size - 2 * (pars->db_quote + pars->sp_quote);
+	pars->str = (char *)malloc(sizeof(char) * (length + 1));
+	if (pars->str)
 	{
 		while (i < length)
 		{
-			((*pars)->str)[i] = str[i + (*pars)->db_quote + (*pars)->sp_quote];
+			(pars->str)[i] = str[i + pars->db_quote + pars->sp_quote];
 			i++;
 		}
-		((*pars)->str)[i] = '\0';
-		(*list)->last = (*pars);
-		(*pars)->next = ft_create_pars(*pars);
-		if (!(*pars)->next)
+		(pars->str)[i] = '\0';
+		(*list)->last = pars;
+		pars->next = ft_create_pars(pars);
+		if (!pars->next)
 			return (0);
-		(*pars) = (*pars)->next;
-		(*pars)->next = NULL;
+		(*list)->curr = pars->next;
+		(*list)->curr->next = NULL;
 	}
 	else
 		return (0);
 	return (1);
 }
 
-int	ft_token_size(char *str, t_pars **pars, int *bracket, t_sa *sig)
+int	ft_token_size(char *str, t_dblist **list, int *bracket, t_sa *sig)
 {
 	int		i;
 	char	c;
@@ -74,17 +76,17 @@ int	ft_token_size(char *str, t_pars **pars, int *bracket, t_sa *sig)
 	c = str[0];
 	i = ft_quote(str);
 	if (c == '|')
-		i = ft_line(str, pars);
+		i = ft_line(str, (*list)->curr);
 	else if (c == '<')
-		i = ft_input(str, pars);
+		i = ft_input(str, (*list)->curr);
 	else if (c == '>')
-		i = ft_output(str, pars);
+		i = ft_output(str, (*list)->curr);
 	else if (c == '&')
-		i = ft_and(str, pars);
+		i = ft_and(str, (*list)->curr);
 	else if (c == '(' || c == ')')
-		i = ft_bracket(c, pars, bracket);
+		i = ft_bracket(c, (*list)->curr, bracket);
 	if (c != '\n' && c != ' ' && c != '\t' && i == 0)
-		i = ft_word(str, pars, sig);
+		i = ft_word(str, list, sig);
 	return (i);
 }
 
@@ -96,23 +98,24 @@ int	ft_add_lex(char *str, t_pars **pars, t_dblist **list, t_sa *sig)
 
 	i = 0;
 	bracket = 0;
+	(*list)->curr = *pars;
 	while (str[i] != '\0')
 	{
-		j = ft_token_size(str + i, pars, &bracket, sig);
+		j = ft_token_size(str + i, list, &bracket, sig);
 		if (j == -1 || j == -2)
 			return (j + 1);
 		else if (j > 0)
 		{
-			if (!ft_create_str(str + i, j, pars, &(*list)))
+			if (!ft_create_str(str + i, j, list))
 				return (0);
-			if (!check_syntax((*pars)->prev, str, i + j, bracket))
+			if (!check_syntax((*list)->curr->prev, str, i + j, bracket))
 				return (-1);
 			i = i + j;
 		}
 		else
 			i++;
 	}
-	ft_check_word(&(*list));
+	ft_check_word(list);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/05 17:19:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:00:53 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,14 @@ int	ft_quote(char *str)
 	}
 }
 
-int	ft_word(char *str, t_pars **pars, t_sa *sig)
+int	ft_word(char *str, t_dblist **list, t_sa *sig)
 {
 	int		i;
 	char	c;
 	int		ret;
+	t_pars	*pars;
 
+	pars = (*list)->curr;
 	i = 0;
 	while (str[i] != '\0')
 	{
@@ -84,8 +86,10 @@ int	ft_word(char *str, t_pars **pars, t_sa *sig)
 			break ;
 		i++;
 	}
-	(*pars)->token = WORD;
-	ret = check_is_heredoc((*pars)->prev, ft_substr(str, 0, i), sig);
+	pars->token = WORD;
+	(*list)->curr = pars->prev;
+	ret = check_is_heredoc(ft_substr(str, 0, i), sig, list);
+	(*list)->curr = pars;
 	if (ret == -1 || ret == -2)
 		return (ret);
 	return (i);

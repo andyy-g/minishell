@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/09/27 18:56:47 by agranger         ###   ########.fr        #
+#    Updated: 2022/10/06 15:52:52 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -70,6 +70,7 @@ CFILES			=	main.c \
 					exec/heredoc_tools.c \
 					exec/launch_heredoc.c \
 					exec/logical_node.c \
+					exec/fork_heredoc.c \
 					exec/move_redir.c \
 					exec/tools.c \
 					builtin/ft_echo.c \

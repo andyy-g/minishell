@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 18:42:46 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/05 16:20:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 15:49:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ void	sigint_hdoc(int signum)
 
 void	sigpipe_hdoc(int signum)
 {
-	(void)signum;
+	g_exit_status = signum;
+	close(STDIN_FILENO);
 	return ;
 }
 

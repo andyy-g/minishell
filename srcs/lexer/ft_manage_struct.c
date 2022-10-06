@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 17:56:07 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/22 13:41:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/06 11:20:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ t_dblist	*create_list(void)
 		return (NULL);
 	list->first = NULL;
 	list->last = NULL;
+	list->curr = NULL;
 	return (list);
 }
 
