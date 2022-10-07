@@ -93,7 +93,7 @@ int	check_syntax(t_pars *curr, char *str, int i, int bracket)
 	if (ret)
 		ret = check_op_syntax(curr, prev, &str[i]);
 	if (ret)
-		ret =check_bracket_syntax(curr, prev, bracket, &str[i]);
+		ret = check_bracket_syntax(curr, prev, bracket, &str[i]);
 	if (!ret)
 		g_exit_status = 2;
 	return (ret);

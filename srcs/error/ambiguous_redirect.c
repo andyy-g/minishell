@@ -12,14 +12,15 @@
 
 #include "minishell.h"
 
-bool	check_ambiguous_redirect(t_pars **exp, t_env *env, char *str, int *error)
+bool	check_ambiguous_redirect(t_pars **exp,
+t_env *env, char *str, int *error)
 {
 	if ((*exp)->prev && is_chevron((*exp)->prev->token)
-			&& is_charset_str(env->value, " \t\n"))
-	{   
+		&& is_charset_str(env->value, " \t\n"))
+	{
 		display_error(ERR_AMB_REDIRECT, str);
 		*error = 1;
 		return (1);
-	}   
+	}
 	return (0);
 }
