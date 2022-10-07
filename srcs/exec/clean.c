@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:00:59 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 21:23:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 22:47:49 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ void	close_fds_exec_fail(t_node *node)
 
 void	free_tokens_ast(t_node **ast, t_dblist **tokens)
 {
-	if (*tokens)
+	if (tokens)
 	{
 		ft_free_tokens(*tokens);
 		*tokens = NULL;
 	}
-	if (*ast)
+	if (ast)
 	{
 		ast_delete_nodes(*ast);
 		*ast = NULL;
