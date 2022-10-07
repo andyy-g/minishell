@@ -76,6 +76,7 @@ typedef enum e_err
 	ERR_ENV_NBARG,
 	ERR_UNSET_ARG,
 	ERR_CD_NBARG,
+	ERR_CD_CHDIR,
 	ERR_EXIT_NBARG,
 	ERR_EXIT_ARG_NUM,
 	ERR_EXIT_ARG_NO_NUM,
@@ -235,6 +236,7 @@ int			find_path_bin(t_node *node, char **pathname, int *cmd_not_found);
 int			get_status_last_process(pid_t *pids);
 int			exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node));
 int			exec_cmd_wo_fork(t_node *node);
+char		*ft_strdup_two(char *var, char *pwd);
 char		*heredoc_expansion(char *str);
 char		*replace_exp_heredoc(char *str, int start, int len, char *var);
 char		*get_env_var_heredoc(char *var);

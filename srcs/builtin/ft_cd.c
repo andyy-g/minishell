@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-char	*ft_strdup_two(char *var, char *pwd)
+char *ft_strdup_two(char *var, char *pwd)
 {
-	char	*full;
-	int	i;
-	int	j;
+	char *full;
+	int i;
+	int j;
 
 	if (!var || !pwd)
 		return (NULL);
@@ -28,80 +28,52 @@ char	*ft_strdup_two(char *var, char *pwd)
 	return (full);
 }
 
-void		print_error(t_node *node)
+char *get_env_path(t_env *env, const char *var)
 {
-	ft_putstr_fd("cd: ", 2);
-	if (node->cmd[2])
-		ft_putstr_fd("string not in pwd: ", 2);
-	else
+	while (env)
 	{
-		ft_putstr_fd(strerror(errno), 2);
-		ft_putstr_fd(": ", 2);
-	}
-	ft_putendl_fd(args[1], 2);
-}
-
-char		*get_env_path(t_env *env, const char *var, size_t len)
-{
-	char	*oldpwd;
-	int		i;
-	int		j;
-	int		s_alloc;
-
-	while (env && env->next != NULL)
-	{
-		if (ft_strncmp(env->value, var, len) == 0)
-		{
-			s_alloc = ft_strlen(env->value) - len;
-			if (!(oldpwd = malloc(sizeof(char) * s_alloc + 1)))
-				return (NULL);
-			i = 0;
-			j = 0;
-			while (env->value[i++])
-			{
-				if (i > (int)len)
-					oldpwd[j++] = env->value[i];
-			}
-			oldpwd[j] = '\0';
-			return (oldpwd);
-		}
+		if (env->var && ft_strcmp(var, env->var) == 0)
+			return (ft_strdup(env->value));
 		env = env->next;
 	}
 	return (NULL);
 }
 
-int		ft_update_oldpwd(t_env *env)
+int ft_update_pwd(const char *var, int option)
 {
-	char	cwd[PATH_MAX];
-	char	*oldpwd;
-	t_env	*env;
-	t_env	*tmp;
-	t_env	*new;
+	char *cwd;
+	char *pwd;
+	t_env *env;
+	t_env *tmp;
+	t_env *new;
 
 	env = singleton_env(1, NULL, NULL);
 	tmp = env;
-	if (getcwd(cwd, PATH_MAX) == NULL)
+	cwd = (char *)malloc(sizeof(char) * PATH_MAX);
+	if (!cwd || getcwd(cwd, PATH_MAX) == NULL)
 		return (0);
 	while (tmp)
 	{
-		if (tmp->var && ft_strcmp("OLDPWD", tmp->var))
+		if (tmp->var && ft_strcmp(var, tmp->var) == 0)
 		{
-			oldpwd = tmp->value;
+			pwd = tmp->value;
 			tmp->value = ft_strdup(cwd);
-			free(oldpwd);
-			oldpwd = tmp->full;
-			tmp->full = ft_strdup_two(new->var, new->value);
-			free(oldpwd);
+			free(pwd);
+			pwd = tmp->full;
+			tmp->full = ft_strdup_two(tmp->var, tmp->value);
+			free(pwd);
 			free(cwd);
 			ft_env_sort();
 			return (1);
 		}
 		tmp = tmp->next;
 	}
+	if (option == 1)
+	{
 	new = malloc(sizeof(t_env));
 	if (new)
 	{
-		new->var = ft_strdup("OLDPWD");
+		new->var = ft_strdup(var);
 		new->value = ft_strdup(cwd);
 		new->full = ft_strdup_two(new->var, new->value);
 		new->pos = 0;
@@ -112,66 +84,66 @@ int		ft_update_oldpwd(t_env *env)
 		ft_env_sort();
 		return (1);
 	}
+	}
 	return (0);
 }
 
-int		go_to_path(int option, t_env *env)
+int ft_go_path(int option)
 {
-	int		ret;
-	char	*env_path;
+	t_env *env;
+	char *env_path;
 
 	env_path = NULL;
+	env = singleton_env(1, NULL, NULL);
 	if (option == 0)
 	{
-		update_oldpwd(env);
-		env_path = get_env_path(env, "HOME", 4);
+		ft_update_pwd("OLDPWD", 0);
+		env_path = get_env_path(env, "HOME");
 		if (!env_path)
-        {
-			printf("minishell : cd: HOME not set");
-			return (0);
-        }
+		{
+			printf("minishell: cd: HOME not set\n");
+			return (1);
+		}
 	}
 	else if (option == 1)
 	{
-		env_path = get_env_path(env, "OLDPWD", 6);
+		env_path = get_env_path(env, "OLDPWD");
 		if (!env_path)
-        {
-			printf("minishell : cd: OLDPWD not set");
-			return (0);
-        }
-		update_oldpwd(env);
+		{
+			printf("minishell: cd: OLDPWD not set\n");
+			return (1);
+		}
+		else
+		{
+			printf("%s\n", env_path);
+			ft_update_pwd("OLDPWD", 1);
+		}
 	}
-	ret = chdir(env_path);
-	//ft_memdel(env_path);
-	return (ret);
+	g_exit_status = chdir(env_path);
+	free(env_path);
+	return (-g_exit_status);
 }
 
-int				ft_cd(t_node *node)
+int ft_cd(t_node *node)
 {
-    int		cd_ret;
-	t_env	*env;
-
-	env = singleton_env(1, NULL, NULL);
-    if (node && node->cmd[1] && node->cmd[2])
-	{
+	if (node && node->cmd[1] && node->cmd[2])
 		display_error(ERR_CD_NBARG, node->cmd[1]);
-		return (1);
+	else
+	{
+		if (!(node->cmd[1]))
+			g_exit_status = ft_go_path(0);
+		if (ft_strcmp(node->cmd[1], "-") == 0)
+			g_exit_status = ft_go_path(1);
+		else
+		{
+			ft_update_pwd("OLDPWD", 1);
+			g_exit_status = - chdir(node->cmd[1]);
+			ft_update_pwd("PWD", 1);
+			if (g_exit_status != 0)
+				display_error(ERR_CD_CHDIR, node->cmd[1]);
+		}
+		if (g_exit_status == 0)
+			ft_update_pwd("PWD", 1);
 	}
-    else
-    {
-        if (!(node->cmd[1]))
-		    return (go_to_path(0, env));
-    	if (ft_strcmp(node->cmd[1], "-") == 0)
-	    	cd_ret = go_to_path(1, env);
-    	else
-	    {
-		    update_oldpwd(env);
-	    	cd_ret = chdir(node->cmd[1]);
-		    if (cd_ret < 0)
-			    cd_ret *= -1;
-	    	if (cd_ret != 0)
-		    	print_error(node);
-    	}
-    }
-	return (cd_ret);
+	return (1);
 }

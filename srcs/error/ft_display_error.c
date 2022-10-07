@@ -31,6 +31,14 @@ void	ft_display_builtin(t_err err, char *arg)
 		ft_putstr_fd("minishell: cd: too many arguments", 2);
 		g_exit_status = 1;
 	}
+	if (err == ERR_CD_CHDIR)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		g_exit_status = 1;
+	}
 }
 
 void	ft_display_exit(t_err err, char *arg)
