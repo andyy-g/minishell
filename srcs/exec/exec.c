@@ -6,15 +6,15 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 18:48:48 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:32:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd, t_sa *sig)
+void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd)
 {
-	if (!check_logical_node(cmd, *pids, sig))
+	if (!check_logical_node(cmd, *pids))
 	{
 		*cmd = next_cmd(*cmd);
 		(*index_cmd)++;
@@ -26,20 +26,10 @@ void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd, t_sa *
 	}
 }
 
-int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *sig)
+int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 {
 	pid_t	pid;
-	
-	if (!ft_strcmp(ast->cmd[0], "./minishell"))
-	{
-		if (!set_signal(IGN, sig))
-			return (0);
-	}
-	else
-	{
-		if (!set_signal(EXEC, sig))
-			return (0);
-	}
+
 	pid = fork();
 	if (pid == -1)
 	{
@@ -51,7 +41,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *s
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
-		if (!exec_cmd_fork(ast, pid, sig))
+		if (!exec_cmd_fork(ast, pid))
 			return (0);
 	}
 	else
@@ -64,7 +54,7 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *s
 	return (1);
 }
 
-int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *sig)
+int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)
 {
 	int	ret;
 
@@ -79,10 +69,10 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd, t_sa 
 			cmd = next_cmd_after_redir(cmd);
 			continue ;
 		}
-		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd, sig))
+		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd))
 			return (0);
 		clean_heredoc(NULL, cmd->parent);
-		is_next_cmd_logical_node(&cmd, pids, &index_cmd, sig);
+		is_next_cmd_logical_node(&cmd, pids, &index_cmd);
 	}
 	close(pipe_fd[READ]);
 	return (1);
@@ -100,9 +90,11 @@ int	launch_exec_fork(t_node *cmd, t_sa *sig)
 	pids = init_pid_arr(cmd, &index_cmd);
 	if (!pids)
 		return (0);
-	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd, sig))
+	if (!set_signals_exec(cmd->cmd[0], sig))
 		return (0);
-	status = get_status_last_process(pids, sig);
+	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd))
+		return (0);
+	status = get_status_last_process(pids);
 	g_exit_status = status;
 	ft_free(pids);
 	return (1);

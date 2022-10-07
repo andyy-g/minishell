@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/10/07 00:24:55 by agranger         ###   ########.fr        #
+#    Updated: 2022/10/07 19:23:37 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,7 @@ CFILES			=	main.c \
 					signals/eof.c \
 					signals/set_signals.c \
 					signals/handler.c \
+					signals/signals_exec.c \
 					env/singleton_env.c \
 					env/sort_env.c \
 					env/free_env.c \

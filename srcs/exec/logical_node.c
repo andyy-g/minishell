@@ -6,19 +6,18 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 18:16:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:03:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	get_status_last_process(pid_t *pids, t_sa *sig)
+int	get_status_last_process(pid_t *pids)
 {
 	int	i;
 	int	status;
 
 	i = 0;
-	(void)sig;
 	while (pids[i] != -1)
 	{
 		waitpid(pids[i], &status, 0);
@@ -90,13 +89,13 @@ bool	check_status(t_node **node, int status)
 	return (true);
 }
 
-bool	check_logical_node(t_node **node, pid_t *pids, t_sa *sig)
+bool	check_logical_node(t_node **node, pid_t *pids)
 {
 	int	status;
 
 	next_logical_node(node);
 	if (!*node || (*node)->type == PIPE)
 		return (false);
-	status = get_status_last_process(pids, sig);
+	status = get_status_last_process(pids);
 	return (check_status(node, status));
 }

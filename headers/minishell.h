@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 01:21:36 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:26:42 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,8 @@ void		sigint_hdoc(int signum);
 void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
 void		add_back_env(t_env **first, t_env *new);
+int			set_signals_exec(char *cmd, t_sa *sig);
+int			pipe_heredoc(char *lim, t_dblist **list, t_sa *sig);	
 int 		fork_heredoc_child(t_dblist **list, t_sa *sig, int *pipe_heredoc, char *lim);
 int			fork_heredoc_parent(pid_t pid, t_pars *token, int *pipe_heredoc);
 int			convert_status(int status);
@@ -191,9 +193,9 @@ int			is_eof_heredoc(char *input, char *lim, int line);
 int			set_signal(t_context context, t_sa *sa);
 int			word_splitting(t_pars **exp, bool dquote);
 int			init_signals(void);
-int			exec_bin(t_node *node, t_sa *sig);
+int			exec_bin(t_node *node);
 int			dup2_if_needed(t_node *node);
-int			exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig);
+int			exec_cmd_fork(t_node *node, pid_t pid);
 int			init_fd(t_node *node, int *pipe_fd);
 int			init_pipe(t_node *node, int prev_fd, int *pipe_fd, int ret);
 int			check_file_in_out(t_node *node);
@@ -236,7 +238,7 @@ int			check_syntax(t_pars *token, char *str, int index, int bracket);
 int			init_shlvl(t_env *shell);
 int			no_env_or_cmd_empty(int *cmd_not_found, char **paths);
 int			find_path_bin(t_node *node, char **pathname, int *cmd_not_found);
-int			get_status_last_process(pid_t *pids, t_sa *sig);
+int			get_status_last_process(pid_t *pids);
 int			exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node));
 int			exec_cmd_wo_fork(t_node *node);
 char		*ft_strdup_two(char *var, char *pwd);
@@ -256,7 +258,7 @@ bool		must_be_appended(t_node *node);
 bool		check_error(t_node *node, int is_dir, int cmd_not_found);
 bool		must_be_expanded(char *lim);
 bool		contain_slash(char *cmd);
-bool		check_logical_node(t_node **node, pid_t *pids, t_sa *sig);
+bool		check_logical_node(t_node **node, pid_t *pids);
 bool		check_status(t_node **node, int status);
 bool		cmd_is(char *cmd, char *builtin);
 bool		is_builtin_no_fork(char *cmd);

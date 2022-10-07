@@ -6,11 +6,37 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/06 15:53:53 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 02:07:07 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:18:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	pipe_heredoc(char *lim, t_dblist **list, t_sa *sig)
+{
+	int	*pipe_heredoc;
+	int	err;
+
+	pipe_heredoc = malloc(sizeof(int) * 2);
+	if (pipe(pipe_heredoc) == -1)
+	{
+		perror("pipe");
+		ft_free(pipe_heredoc);
+		ft_free(lim);
+		return (-1);
+	}
+	err = launch_heredoc(list, pipe_heredoc, lim, sig);
+	if (!err)
+	{
+		ft_free(pipe_heredoc);
+		return (-1);
+	}
+	if (err == -2)
+		return (-2);
+	if (!set_signal(INPUT, sig))
+		return (-1);
+	return (1);
+}
 
 bool	check_len_bytes(int bytes)
 {

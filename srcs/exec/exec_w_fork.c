@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 14:52:21 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:01:32 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,13 @@ void	exit_child_builtin(t_node *node)
 	exit_minishell(node);
 }
 
-int	exec_bin(t_node *node, t_sa *sig)
+int	exec_bin(t_node *node)
 {
 	char	**envp;
 	char	*path;
 	int		is_dir;
 	int		cmd_not_found;
 
-	(void)sig;
 	is_dir = 0;
 	cmd_not_found = 0;
 	if (is_chevron(node->type))
@@ -104,7 +103,7 @@ int	dup2_if_needed(t_node *node)
 	return (1);
 }
 
-int	exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig)
+int	exec_cmd_fork(t_node *node, pid_t pid)
 {
 	int	ret;
 
@@ -126,7 +125,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig)
 	else if (cmd_is(node->cmd[0], "exit"))
 		ret = exec_builtin(node, &ft_exit);
 	else
-		ret = exec_bin(node, sig);
+		ret = exec_bin(node);
 	if (pid == 0)
 		exit_child_builtin(node);
 	return (ret);

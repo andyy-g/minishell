@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 14:25:04 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/27 16:04:23 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:44:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	ft_home(t_pars **exp)
 {
-	int		size;
 	char	*str;
 	t_env	*env;
 
@@ -26,8 +25,7 @@ void	ft_home(t_pars **exp)
 	{
 		if (env->var && ft_ncmp("HOME", env->var, 4))
 		{
-			size = ft_strlen(env->value) + ft_strlen(str) - 1;
-			(*exp)->str = ft_replacebyvar(str, env->value, size, 1);
+			(*exp)->str = ft_replacebyvar(str, env->value, 0, 1);
 			break ;
 		}
 		env = env->next;

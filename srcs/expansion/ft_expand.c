@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/27 16:05:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:40:11 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	ft_expand(t_dblist **list, int *error)
 	while (exp && exp->next)
 	{
 		i = 0;
-		if (exp->str[i] == '~' && !(exp->str[i + 1]))
+		if (exp->str[i] == '~' && (!exp->str[i + 1] || exp->str[i + 1] == '/'))
 			ft_home(&exp);
 		while (exp->str && exp->str[i] != '\0')
 		{

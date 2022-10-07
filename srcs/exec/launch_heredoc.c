@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:07:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 16:13:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 19:18:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,7 @@ int	launch_heredoc(t_dblist **list, int *pipe_heredoc, char *lim, t_sa *sig)
 
 int	check_is_heredoc(char *lim, t_sa *sig, t_dblist **list)
 {
-	int		*pipe_heredoc;
 	int		ret;
-	int		err;
 	t_pars	*token;
 
 	token = (*list)->curr;
@@ -110,26 +108,7 @@ int	check_is_heredoc(char *lim, t_sa *sig, t_dblist **list)
 	if (!lim)
 		return (-1);
 	if (token && token->str && token->token == HEREDOC)
-	{
-		pipe_heredoc = malloc(sizeof(int) * 2);
-		if (pipe(pipe_heredoc) == -1)
-		{
-			perror("pipe");
-			ft_free(pipe_heredoc);
-			ft_free(lim);
-			return (-1);
-		}
-		err = launch_heredoc(list, pipe_heredoc, lim, sig);
-		if (!err)
-		{
-			ft_free(pipe_heredoc);
-			ret = -1;
-		}
-		if (err == -2)
-			ret = err;
-		if (!set_signal(INPUT, sig))
-			return (-1);
-	}
+		ret = pipe_heredoc(lim, list, sig);
 	ft_free(lim);
 	return (ret);
 }
