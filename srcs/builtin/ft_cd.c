@@ -100,7 +100,7 @@ void	ft_update_pwd(const char *var, int option)
 	}
 }
 
-int	ft_go_path(int option)
+void	ft_go_path(int option)
 {
 	t_env	*env;
 	char	*env_path;
@@ -112,10 +112,8 @@ int	ft_go_path(int option)
 		ft_update_pwd("OLDPWD", 0);
 		env_path = get_env_path(env, "HOME");
 		if (!env_path)
-		{
-			printf("minishell: cd: HOME not set\n");
-			return (1);
-		}
+			display_error(ERR_CD_CHDIR, NULL);
+
 	}
 	else if (option == 1)
 	{
@@ -131,9 +129,11 @@ int	ft_go_path(int option)
 			ft_update_pwd("OLDPWD", 1);
 		}
 	}
-	g_exit_status = chdir(env_path);
-	free(env_path);
-	return (-g_exit_status);
+	if (env_path)
+	{
+		g_exit_status = chdir(env_path);
+		free(env_path);
+	}
 }
 
 int	ft_cd(t_node *node)
@@ -143,9 +143,9 @@ int	ft_cd(t_node *node)
 	else
 	{
 		if (!(node->cmd[1]))
-			g_exit_status = ft_go_path(0);
+			ft_go_path(0);
 		else if (node->cmd[1] && ft_strcmp(node->cmd[1], "-") == 0)
-			g_exit_status = ft_go_path(1);
+			ft_go_path(1);
 		else
 		{
 			ft_update_pwd("OLDPWD", 1);

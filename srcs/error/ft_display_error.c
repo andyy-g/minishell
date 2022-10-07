@@ -39,6 +39,11 @@ void	ft_display_builtin(t_err err, char *arg)
 		ft_putstr_fd(strerror(errno), 2);
 		g_exit_status = 1;
 	}
+	if (err == ERR_CD_HOME)
+	{
+		ft_putstr_fd("minishell: cd: HOME not set", 2);
+		g_exit_status = 1;
+	}
 }
 
 void	ft_display_exit(t_err err, char *arg)
