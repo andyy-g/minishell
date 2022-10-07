@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 19:32:01 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 23:05:28 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
-		if (!exec_cmd_fork(ast, pid))
-			return (0);
+		exec_cmd_fork(ast, pid);
+		return (0);
 	}
 	else
 	{
@@ -50,8 +50,8 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 			close(pipe_fd[WRITE]);
 		close_fd_in_out(ast);
 		(*pids)[index_cmd] = pid;
+		return (1);
 	}
-	return (1);
 }
 
 int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd)

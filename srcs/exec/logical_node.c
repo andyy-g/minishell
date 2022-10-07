@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 19:03:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 23:02:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	get_status_last_process(pid_t *pids)
 	int	i;
 	int	status;
 
+	status = 0;
 	i = 0;
 	while (pids[i] != -1)
 	{

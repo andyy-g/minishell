@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 14:22:22 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 16:53:02 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 23:11:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	ft_cd(t_node *node)
 {
 	if (node && node->cmd[1] && node->cmd[2])
 		display_error(ERR_CD_NBARG, node->cmd[1]);
-	else
+	else if (node)
 	{
 		if (!(node->cmd[1]))
 			ft_go_path(0);

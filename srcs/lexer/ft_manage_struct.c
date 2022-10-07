@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 17:56:07 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 11:20:43 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 22:55:44 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	ft_free_tokens(t_dblist *list)
 	t_pars	*tmp;
 	t_pars	*to_free;
 
+	if (!list)
+		return ;
 	to_free = list->first;
 	while (to_free && to_free->prev)
 		to_free = to_free->prev;

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 22:03:47 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 22:03:52 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/07 23:17:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,9 @@ void	ft_print_env_exp(t_env *env)
 		tmp = env;
 		while (tmp && i != tmp->pos)
 			tmp = tmp->next;
-		printf("declare -x %s", tmp->var);
-		if (tmp->value)
+		if (tmp)
+			printf("declare -x %s", tmp->var);
+		if (tmp && tmp->value)
 			printf("=\"%s\"\n", tmp->value);
 		else
 			printf("\n");

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 20:45:36 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 20:45:39 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/07 23:12:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,6 @@ void	ft_update_pwd(const char *var, int option)
 		}
 		if (option == 1 && !get_env_path(env, var))
 			ft_create_pwd(var, cwd);
-		free(cwd);
 	}
+	free(cwd);
 }
