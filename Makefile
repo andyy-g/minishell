@@ -35,6 +35,7 @@ CFILES			=	main.c \
 					lexer/ft_token.c \
 					error/ft_syntax_error.c \
 					error/ft_display_error.c \
+					error/ft_display_error_bis.c \
 					error/ambiguous_redirect.c \
 					expansion/ft_expand.c \
 					expansion/ft_expand_specials_chars.c \

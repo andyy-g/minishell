@@ -133,7 +133,7 @@ typedef struct s_node
 	struct s_node	*parent;
 	struct s_node	*left;
 	struct s_node	*right;
-}	t_node;
+}							t_node;
 
 typedef struct s_env
 {
@@ -143,7 +143,7 @@ typedef struct s_env
 	int				pos;
 	struct s_env	*next;
 	struct s_env	*prev;
-}	t_env;
+}							t_env;
 
 typedef struct sigaction	t_sa;
 
@@ -187,9 +187,13 @@ void		sigint_hdoc(int signum);
 void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
 void		add_back_env(t_env **first, t_env *new);
+void		ft_display_cd(t_err err, char *arg);
+void		ft_display_export(t_err err, char *arg);
+void		ft_display_builtin(t_err err, char *arg);
 int			set_signals_exec(char *cmd, t_sa *sig);
 int			pipe_heredoc(char *lim, t_dblist **list, t_sa *sig);	
-int 		fork_heredoc_child(t_dblist **list, t_sa *sig, int *pipe_heredoc, char *lim);
+int			fork_heredoc_child(t_dblist **list,
+				t_sa *sig, int *pipe_heredoc, char *lim);
 int			fork_heredoc_parent(pid_t pid, t_pars *token, int *pipe_heredoc);
 int			convert_status(int status);
 int			is_eof_heredoc(char *input, char *lim, int line);
@@ -208,7 +212,8 @@ int			file_in_exist(t_node *node, t_node *cmd);
 int			create_file_out(t_node *node, t_node *cmd);
 int			create_file_out_app(t_node *node, t_node *cmd);
 int			set_heredoc(t_node *node, t_node *cmd);
-int			launch_heredoc(t_dblist **list, int *pipe_heredoc, char *lim, t_sa *sig);
+int			launch_heredoc(t_dblist **list,
+				int *pipe_heredoc, char *lim, t_sa *sig);
 int			ft_check_wildcard(t_pars **exp, t_dblist **list);
 int			check_is_heredoc(char *lim, t_sa *sig, t_dblist **list);
 int			ft_exp_quote(t_pars **exp, int i, char c, int *error);
@@ -269,7 +274,8 @@ bool		is_uniq_cmd(t_node *node);
 bool		is_last_cmd(t_node *node);
 bool		is_first_cmd(t_node *node);
 bool		is_pipe_cmd(t_node *node);
-bool		check_ambiguous_redirect(t_pars **exp, t_env *env, char *str, int *error);
+bool		check_ambiguous_redirect(t_pars **exp,
+				t_env *env, char *str, int *error);
 t_pars		*ft_create_pars(t_pars *prev);
 t_pars		*ft_create_pars(t_pars *prev);
 t_pars		*put_redirs_in_order(t_pars *token);
