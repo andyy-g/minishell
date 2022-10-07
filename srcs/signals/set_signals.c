@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 15:27:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/05 16:39:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 01:32:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int set_signal_sigint(t_context context, t_sa sa)
 	sa.sa_flags = SA_RESTART;
 	if (context == INPUT)
 		sa.sa_handler = &sigint_input;
-	if (context == EXEC || context == HDOC)
+	if (context == EXEC)
 		sa.sa_handler = &sigint_exec;
 	if (context == HDOC)
 		sa.sa_handler = &sigint_hdoc;

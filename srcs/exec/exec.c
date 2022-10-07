@@ -6,15 +6,15 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/06 16:31:36 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 14:40:34 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd)
+void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd, t_sa *sig)
 {
-	if (!check_logical_node(cmd, *pids))
+	if (!check_logical_node(cmd, *pids, sig))
 	{
 		*cmd = next_cmd(*cmd);
 		(*index_cmd)++;
@@ -38,6 +38,8 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *s
 	}
 	if (pid == 0)
 	{
+		//if (!set_signal(EXEC, sig))
+		//	return (0);
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
@@ -72,7 +74,7 @@ int	tree_traversal(t_node *cmd, int *pipe_fd, pid_t **pids, int index_cmd, t_sa 
 		if (!ret || !fork_process(cmd, pipe_fd, pids, index_cmd, sig))
 			return (0);
 		clean_heredoc(NULL, cmd->parent);
-		is_next_cmd_logical_node(&cmd, pids, &index_cmd);
+		is_next_cmd_logical_node(&cmd, pids, &index_cmd, sig);
 	}
 	close(pipe_fd[READ]);
 	return (1);
@@ -90,9 +92,11 @@ int	launch_exec_fork(t_node *cmd, t_sa *sig)
 	pids = init_pid_arr(cmd, &index_cmd);
 	if (!pids)
 		return (0);
+	if (!set_signal(IGN, sig))
+		return (0);
 	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd, sig))
 		return (0);
-	status = get_status_last_process(pids);
+	status = get_status_last_process(pids, sig);
 	g_exit_status = status;
 	ft_free(pids);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 17:12:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 14:40:14 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	exec_bin(t_node *node, t_sa *sig)
 		check_full_path(node, &path, &is_dir, &cmd_not_found);
 	if (check_error(node, is_dir, cmd_not_found))
 	{
-		if (!set_signal(IGN, sig))
+		if (!set_signal(EXEC, sig))
 			return (0);
 		execve(path, node->cmd, envp);
 		which_error(node);

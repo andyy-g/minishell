@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:43:23 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/29 17:07:48 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 01:36:41 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ int	main(int argc, char **argv, char **envp)
 		is_eof(input);
 		if (input && !is_only_spaces(input))
 		{
-			if (!set_signal(EXEC, sig))
-				return (0);
 			error = 0;
 			if (!ft_lexer(input, &tokens, &error, sig))
 				exit_failure(ast, tokens);

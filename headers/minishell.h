@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 23:51:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 01:21:36 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ int			check_syntax(t_pars *token, char *str, int index, int bracket);
 int			init_shlvl(t_env *shell);
 int			no_env_or_cmd_empty(int *cmd_not_found, char **paths);
 int			find_path_bin(t_node *node, char **pathname, int *cmd_not_found);
-int			get_status_last_process(pid_t *pids);
+int			get_status_last_process(pid_t *pids, t_sa *sig);
 int			exec_builtin(t_node *ast, int (*ft_builtin)(t_node *node));
 int			exec_cmd_wo_fork(t_node *node);
 char		*ft_strdup_two(char *var, char *pwd);
@@ -253,7 +253,7 @@ bool		must_be_appended(t_node *node);
 bool		check_error(t_node *node, int is_dir, int cmd_not_found);
 bool		must_be_expanded(char *lim);
 bool		contain_slash(char *cmd);
-bool		check_logical_node(t_node **node, pid_t *pids);
+bool		check_logical_node(t_node **node, pid_t *pids, t_sa *sig);
 bool		check_status(t_node **node, int status);
 bool		cmd_is(char *cmd, char *builtin);
 bool		is_builtin_no_fork(char *cmd);
