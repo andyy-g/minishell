@@ -112,17 +112,13 @@ void	ft_go_path(int option)
 		ft_update_pwd("OLDPWD", 0);
 		env_path = get_env_path(env, "HOME");
 		if (!env_path)
-			display_error(ERR_CD_CHDIR, NULL);
-
+			display_error(ERR_CD_HOME, NULL);
 	}
 	else if (option == 1)
 	{
 		env_path = get_env_path(env, "OLDPWD");
 		if (!env_path)
-		{
-			printf("minishell: cd: OLDPWD not set\n");
-			return (1);
-		}
+			display_error(ERR_CD_OLDPWD, NULL);
 		else
 		{
 			printf("%s\n", env_path);

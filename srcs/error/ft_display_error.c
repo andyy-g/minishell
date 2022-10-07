@@ -12,20 +12,8 @@
 
 #include "minishell.h"
 
-void	ft_display_builtin(t_err err, char *arg)
+void	ft_display_cd(t_err err, char *arg)
 {
-	if (err == ERR_ENV_NBARG)
-	{
-		ft_putstr_fd("minishell: env: too many arguments", 2);
-		g_exit_status = 1;
-	}
-	if (err == ERR_UNSET_ARG)
-	{
-		ft_putstr_fd("minishell: unset: '", 2);
-		ft_putstr_fd(arg, 2);
-		ft_putstr_fd("' : not a valid identifier", 2);
-		g_exit_status = 1;
-	}
 	if (err == ERR_CD_NBARG)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments", 2);
@@ -42,6 +30,27 @@ void	ft_display_builtin(t_err err, char *arg)
 	if (err == ERR_CD_HOME)
 	{
 		ft_putstr_fd("minishell: cd: HOME not set", 2);
+		g_exit_status = 1;
+	}
+	if (err == ERR_CD_OLDPWD)
+	{
+		ft_putstr_fd("minishell: cd: OLDPWD not set", 2);
+		g_exit_status = 1;
+	}
+}
+
+void	ft_display_builtin(t_err err, char *arg)
+{
+	if (err == ERR_ENV_NBARG)
+	{
+		ft_putstr_fd("minishell: env: too many arguments", 2);
+		g_exit_status = 1;
+	}
+	if (err == ERR_UNSET_ARG)
+	{
+		ft_putstr_fd("minishell: unset: '", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("' : not a valid identifier", 2);
 		g_exit_status = 1;
 	}
 }
@@ -118,5 +127,6 @@ void	display_error(t_err err, char *arg)
 	ft_display_three_line(err, arg);
 	ft_display_exit(err, arg);
 	ft_display_builtin(err, arg);
+	ft_display_cd(err, arg);
 	ft_putstr_fd("\n", 2);
 }
