@@ -81,6 +81,8 @@ CFILES			=	main.c \
 					builtin/ft_env.c \
 					builtin/ft_exit.c \
 					builtin/ft_export.c \
+					builtin/ft_export_utils.c \
+					builtin/ft_export_utils_bis.c \
 					builtin/ft_pwd.c \
 					builtin/ft_unset.c
 					
