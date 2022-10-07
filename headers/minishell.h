@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
@@ -77,6 +78,8 @@ typedef enum e_err
 	ERR_UNSET_ARG,
 	ERR_CD_NBARG,
 	ERR_CD_CHDIR,
+	ERR_CD_HOME,
+	ERR_CD_OLDPWD,
 	ERR_EXIT_NBARG,
 	ERR_EXIT_ARG_NUM,
 	ERR_EXIT_ARG_NO_NUM,
