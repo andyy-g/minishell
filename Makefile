@@ -76,6 +76,7 @@ CFILES			=	main.c \
 					exec/move_redir.c \
 					exec/tools.c \
 					builtin/ft_cd.c \
+					builtin/ft_cd_utils.c \
 					builtin/ft_echo.c \
 					builtin/ft_env.c \
 					builtin/ft_exit.c \

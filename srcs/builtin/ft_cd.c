@@ -12,91 +12,14 @@
 
 #include "minishell.h"
 
-char	*ft_strdup_two(char *var, char *pwd)
+void	ft_go_path_oldpwd(char *env_path)
 {
-	int		i;
-	int		j;
-	char	*full;
-
-	if (!var || !pwd)
-		return (NULL);
-	full = malloc(sizeof(char) * (ft_strlen(var) + ft_strlen(pwd) + 2));
-	if (!full)
-		return (NULL);
-	i = 0;
-	while (var[i])
+	if (!env_path)
+		display_error(ERR_CD_OLDPWD, NULL);
+	else
 	{
-		full[i] = var[i];
-		i++;
-	}
-	full[i++] = '=';
-	j = 0;
-	while (pwd[j])
-	{
-		full[i + j] = pwd[j];
-		j++;
-	}
-	full[i + j] = '\0';
-	return (full);
-}
-
-char	*get_env_path(t_env *env, const char *var)
-{
-	while (env)
-	{
-		if (env->var && ft_strcmp(var, env->var) == 0)
-			return (ft_strdup(env->value));
-		env = env->next;
-	}
-	return (NULL);
-}
-
-void	ft_create_pwd(const char *var, char *cwd)
-{
-	t_env	*env;
-	t_env	*new;
-
-	env = singleton_env(1, NULL, NULL);
-	new = malloc(sizeof(t_env));
-	if (new)
-	{
-		new->var = ft_strdup(var);
-		new->value = ft_strdup(cwd);
-		new->full = ft_strdup_two(new->var, new->value);
-		new->pos = 0;
-		new->prev = NULL;
-		new->next = NULL;
-		add_back_env(&env, new);
-		ft_env_sort();
-	}
-}
-
-void	ft_update_pwd(const char *var, int option)
-{
-	char	*cwd;
-	t_env	*env;
-	t_env	*tmp;
-
-	env = singleton_env(1, NULL, NULL);
-	tmp = env;
-	cwd = (char *)malloc(sizeof(char) * PATH_MAX);
-	if (cwd && getcwd(cwd, PATH_MAX))
-	{
-		while (tmp)
-		{
-			if (tmp->var && ft_strcmp(var, tmp->var) == 0)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup(cwd);
-				free(tmp->full);
-				tmp->full = ft_strdup_two(tmp->var, tmp->value);
-				ft_env_sort();
-			}
-			tmp = tmp->next;
-		}
-		if (option == 1 && !get_env_path(env, var))
-			ft_create_pwd(var, cwd);
-		free(cwd);
+		printf("%s\n", env_path);
+		ft_update_pwd("OLDPWD", 1);
 	}
 }
 
@@ -117,17 +40,11 @@ void	ft_go_path(int option)
 	else if (option == 1)
 	{
 		env_path = get_env_path(env, "OLDPWD");
-		if (!env_path)
-			display_error(ERR_CD_OLDPWD, NULL);
-		else
-		{
-			printf("%s\n", env_path);
-			ft_update_pwd("OLDPWD", 1);
-		}
+		ft_go_path_oldpwd(env_path);
 	}
 	if (env_path)
 	{
-		if (option != 0 && ft_strcmp("\0", env_path))
+		if ((option == 1 && ft_strcmp("\0", env_path)) || option == 0)
 			g_exit_status = chdir(env_path);
 		free(env_path);
 	}

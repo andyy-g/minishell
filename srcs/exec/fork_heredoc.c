@@ -88,7 +88,7 @@ int	fork_heredoc_child(t_dblist **list, t_sa *sig, int *pipe_heredoc, char *lim)
 	close(pipe_heredoc[WRITE]);
 	ft_free(pipe_heredoc);
 	ft_free(lim);
-	free_tokens_ast(NULL, *list);
+	free_tokens_ast(NULL, list);
 	exit_minishell(NULL);
 	return (1);
 }

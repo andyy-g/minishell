@@ -17,7 +17,7 @@ void	exit_minishell(t_node *ast)
 	while (ast && ast->parent)
 		ast = ast->parent;
 	rl_clear_history();
-	free_tokens_ast(ast, NULL);
+	free_tokens_ast(&ast, NULL);
 	singleton_env(2, NULL, NULL);
 	exit(g_exit_status);
 }

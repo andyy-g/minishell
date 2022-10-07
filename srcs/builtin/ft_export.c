@@ -95,7 +95,7 @@ char	*ft_strdup_value(const char *str)
 		return (NULL);
 }
 
-char	*ft_strdup_full(const char *var, const char *value)
+char	*ft_strdup_full(char *var, char *value)
 {
 	char	*new;
 	size_t	i;
@@ -170,30 +170,111 @@ int	ft_syntax_export(char *str)
 	return (1);
 }
 
-int	ft_export(t_node *node)
+int	ft_add_to_value(int option, t_env **tmp, t_env **new)
+{
+	while (*tmp)
+	{
+		if ((*tmp)->var && ft_strcmp((*new)->var, (*tmp)->var) == 0)
+		{
+			free((*new)->var);
+			free((*tmp)->value);
+			(*tmp)->value = ft_strdup((*new)->value);
+			free((*new)->value);
+			free((*tmp)->full);
+			(*tmp)->full = ft_strdup((*new)->full);
+			free((*new)->full);
+			free(*new);
+			option = 3 ;
+			break;
+		}
+		(*tmp) = (*tmp)->next;
+	}
+	return (option);
+}
+
+int	ft_override_value(int option, t_env **tmp, t_env **new)
+{
+	char	*delete;
+
+	while (*tmp)
+	{
+		if ((*tmp)->var && ft_strcmp((*new)->var, (*tmp)->var) == 0)
+		{
+			free((*new)->var);
+			delete = (*tmp)->value;
+			(*tmp)->value = ft_strdup_two_val((*tmp)->value, (*new)->value);
+			free(delete);
+			free((*new)->value);
+			free((*tmp)->full);
+			(*tmp)->full = ft_strdup_full((*tmp)->var, (*tmp)->value);
+			free((*new)->full);
+			free(*new);
+			option = 3 ;
+			break;
+		}
+		(*tmp) = (*tmp)->next;
+	}
+	return (option);
+}
+
+void	ft_print_env_exp(t_env *env)
 {
 	int		i;
 	int		size;
+	t_env	*tmp;
+
+	i = 1;
+	size = ft_envsize(env);
+	while (i <= size)
+	{
+		tmp = env;
+		while (tmp && i != tmp->pos)
+			tmp = tmp->next;
+		printf("declare -x %s", tmp->var);
+		if (tmp->value)
+			printf("=\"%s\"\n", tmp->value);
+		else
+			printf("\n");
+		i++;
+	}
+}
+
+void	ft_create_new(t_env	**new, char *str)
+{
+	(*new)->var = ft_strdup_var(str);
+	(*new)->value = ft_strdup_value(str);
+	(*new)->full = ft_strdup_full((*new)->var, (*new)->value);
+	(*new)->pos = 0;
+	(*new)->prev = NULL;
+	(*new)->next = NULL;
+}
+
+void	ft_error_export(int option, char *str)
+{
+	if ((ft_strlen(str) >= 2) && str[0] == '-' && option != -1)
+	{
+		display_error(ERR_EXPORT_INV, str);
+		g_exit_status = 1;
+	}
+	else if (option != -1)
+	{
+		display_error(ERR_EXPORT_ARG, str);
+		g_exit_status = 1;
+	}
+}
+
+int	ft_export(t_node *node)
+{
+	int		i;
 	int		option;
-	char	*delete;
 	t_env	*env;
 	t_env	*tmp;
 	t_env	*new;
 
 	i = 1;
 	env = singleton_env(1, NULL, NULL);
-	size = ft_envsize(env);
 	if (!(node->cmd[1]) && env)
-	{
-		while (i <= size)
-		{
-			tmp = env;
-			while (tmp && i != tmp->pos)
-				tmp = tmp->next;
-			printf("declare -x %s=\"%s\"\n", tmp->var, tmp->value);
-			i++;
-		}
-	}
+		ft_print_env_exp(env);
 	while (node->cmd[i])
 	{
 		option = ft_syntax_export(node->cmd[i]);
@@ -202,84 +283,29 @@ int	ft_export(t_node *node)
 			new = malloc(sizeof(t_env));
 			if (new)
 			{
-				new->var = ft_strdup_var(node->cmd[i]);
-				new->value = ft_strdup_value(node->cmd[i]);
-				new->full = ft_strdup_full(new->var, new->value);
-				new->pos = 0;
-				new->prev = NULL;
-				new->next = NULL;
+				ft_create_new(&new, node->cmd[i]);
 				tmp = env;
-				while (tmp)
-				{
-					if (tmp->var && ft_strcmp(new->var, tmp->var) == 0)
-					{
-						free(new->var);
-						free(tmp->value);
-						tmp->value = ft_strdup(new->value);
-						free(new->value);
-						free(tmp->full);
-						tmp->full = ft_strdup(new->full);
-						free(new->full);
-						free(new);
-						option = 3 ;
-						break;
-					}
-					tmp = tmp->next;
-				}
+				option = ft_add_to_value(option, &tmp, &new);
 				if (option == 1)
 					add_back_env(&env, new);
 				ft_env_sort();
 			}
 		}
-
 		else if (option == 2)
 		{
 			new = malloc(sizeof(t_env));
 			if (new)
 			{
-				new->var = ft_strdup_var(node->cmd[i]);
-				new->value = ft_strdup_value(node->cmd[i]);
-				new->full = ft_strdup_full(new->var, new->value);
-				new->pos = 0;
-				new->prev = NULL;
-				new->next = NULL;
+				ft_create_new(&new, node->cmd[i]);
 				tmp = env;
-				while (tmp)
-				{
-					if (tmp->var && ft_strcmp(new->var, tmp->var) == 0)
-					{
-						free(new->var);
-						delete = tmp->value;
-						tmp->value = ft_strdup_two_val(tmp->value, new->value);
-						free(delete);
-						free(new->value);
-						free(tmp->full);
-						tmp->full = ft_strdup_full(tmp->var, tmp->value);
-						free(new->full);
-						free(new);
-						option = 3 ;
-						break;
-					}
-					tmp = tmp->next;
-				}
+				option = ft_override_value(option, &tmp, &new);
 				if (option == 2)
 					add_back_env(&env, new);
 				ft_env_sort();
 			}
 		}
 		else
-		{
-			if (ft_strlen(node->cmd[1]) >= 2 && node->cmd[1][0] == '-' && option != -1)
-			{
-				display_error(ERR_EXPORT_INV, node->cmd[1]);
-				g_exit_status = 1;
-			}
-			else if (option != -1)
-			{
-				display_error(ERR_EXPORT_ARG, node->cmd[1]);
-				g_exit_status = 1;
-			}
-		}
+			ft_error_export(option, node->cmd[i]);
 		i++;
 	}
 	return (1);
