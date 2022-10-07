@@ -49,7 +49,7 @@ int	ft_syntax_unset(char *str)
 		i++;
 		while (str[i] != '\0')
 		{
-			if (!ft_isalnum((int)str[i]))
+			if (!ft_isalnum((int)str[i]) && str[i] != '_')
 				return (0);
 			i++;
 		}

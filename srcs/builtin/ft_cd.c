@@ -127,7 +127,8 @@ void	ft_go_path(int option)
 	}
 	if (env_path)
 	{
-		g_exit_status = chdir(env_path);
+		if (option != 0 && ft_strcmp("\0", env_path))
+			g_exit_status = chdir(env_path);
 		free(env_path);
 	}
 }
