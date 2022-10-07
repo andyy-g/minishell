@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/07 14:22:22 by charoua           #+#    #+#             */
+/*   Updated: 2022/10/07 14:23:03 by charoua          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char *ft_strdup_two(char *var, char *pwd)
+char	*ft_strdup_two(char *var, char *pwd)
 {
-	char *full;
-	int i;
-	int j;
+	int		i;
+	int		j;
+	char	*full;
 
 	if (!var || !pwd)
 		return (NULL);
@@ -28,7 +40,7 @@ char *ft_strdup_two(char *var, char *pwd)
 	return (full);
 }
 
-char *get_env_path(t_env *env, const char *var)
+char	*get_env_path(t_env *env, const char *var)
 {
 	while (env)
 	{
@@ -39,13 +51,13 @@ char *get_env_path(t_env *env, const char *var)
 	return (NULL);
 }
 
-int ft_update_pwd(const char *var, int option)
+int	ft_create_pwd(const char *var, char *cwd)
 {
-	char *cwd;
-	char *pwd;
-	t_env *env;
-	t_env *tmp;
-	t_env *new;
+	char	*cwd;
+	char	*pwd;
+	t_env	*env;
+	t_env	*tmp;
+	t_env	*new;
 
 	env = singleton_env(1, NULL, NULL);
 	tmp = env;
@@ -70,28 +82,77 @@ int ft_update_pwd(const char *var, int option)
 	}
 	if (option == 1)
 	{
-	new = malloc(sizeof(t_env));
-	if (new)
-	{
-		new->var = ft_strdup(var);
-		new->value = ft_strdup(cwd);
-		new->full = ft_strdup_two(new->var, new->value);
-		new->pos = 0;
-		new->prev = NULL;
-		new->next = NULL;
-		free(cwd);
-		add_back_env(&env, new);
-		ft_env_sort();
-		return (1);
-	}
+		new = malloc(sizeof(t_env));
+		if (new)
+		{
+			new->var = ft_strdup(var);
+			new->value = ft_strdup(cwd);
+			new->full = ft_strdup_two(new->var, new->value);
+			new->pos = 0;
+			new->prev = NULL;
+			new->next = NULL;
+			free(cwd);
+			add_back_env(&env, new);
+			ft_env_sort();
+			return (1);
+		}
 	}
 	return (0);
 }
 
-int ft_go_path(int option)
+int	ft_update_pwd(const char *var, int option)
 {
-	t_env *env;
-	char *env_path;
+	char	*cwd;
+	char	*pwd;
+	t_env	*env;
+	t_env	*tmp;
+	t_env	*new;
+
+	env = singleton_env(1, NULL, NULL);
+	tmp = env;
+	cwd = (char *)malloc(sizeof(char) * PATH_MAX);
+	if (!cwd || getcwd(cwd, PATH_MAX) == NULL)
+		return (0);
+	while (tmp)
+	{
+		if (tmp->var && ft_strcmp(var, tmp->var) == 0)
+		{
+			pwd = tmp->value;
+			tmp->value = ft_strdup(cwd);
+			free(pwd);
+			pwd = tmp->full;
+			tmp->full = ft_strdup_two(tmp->var, tmp->value);
+			free(pwd);
+			free(cwd);
+			ft_env_sort();
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	if (option == 1)
+	{
+		new = malloc(sizeof(t_env));
+		if (new)
+		{
+			new->var = ft_strdup(var);
+			new->value = ft_strdup(cwd);
+			new->full = ft_strdup_two(new->var, new->value);
+			new->pos = 0;
+			new->prev = NULL;
+			new->next = NULL;
+			free(cwd);
+			add_back_env(&env, new);
+			ft_env_sort();
+			return (1);
+		}
+	}
+	return (0);
+}
+
+int	ft_go_path(int option)
+{
+	t_env	*env;
+	char	*env_path;
 
 	env_path = NULL;
 	env = singleton_env(1, NULL, NULL);
@@ -124,7 +185,7 @@ int ft_go_path(int option)
 	return (-g_exit_status);
 }
 
-int ft_cd(t_node *node)
+int	ft_cd(t_node *node)
 {
 	if (node && node->cmd[1] && node->cmd[2])
 		display_error(ERR_CD_NBARG, node->cmd[1]);
@@ -132,12 +193,12 @@ int ft_cd(t_node *node)
 	{
 		if (!(node->cmd[1]))
 			g_exit_status = ft_go_path(0);
-		if (ft_strcmp(node->cmd[1], "-") == 0)
+		else if (node->cmd[1] && ft_strcmp(node->cmd[1], "-") == 0)
 			g_exit_status = ft_go_path(1);
 		else
 		{
 			ft_update_pwd("OLDPWD", 1);
-			g_exit_status = - chdir(node->cmd[1]);
+			g_exit_status = -chdir(node->cmd[1]);
 			ft_update_pwd("PWD", 1);
 			if (g_exit_status != 0)
 				display_error(ERR_CD_CHDIR, node->cmd[1]);

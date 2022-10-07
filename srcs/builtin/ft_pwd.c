@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int ft_pwd(t_node *node)
+int	ft_pwd(t_node *node)
 {
-	char *cwd;
+	char	*cwd;
 
 	(void)node;
 	cwd = (char *)malloc(sizeof(char) * PATH_MAX);
