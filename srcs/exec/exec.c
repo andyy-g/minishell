@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 16:46:33 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 18:48:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,16 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *s
 {
 	pid_t	pid;
 	
-	if (!set_signal(EXEC, sig))
-		return (0);
+	if (!ft_strcmp(ast->cmd[0], "./minishell"))
+	{
+		if (!set_signal(IGN, sig))
+			return (0);
+	}
+	else
+	{
+		if (!set_signal(EXEC, sig))
+			return (0);
+	}
 	pid = fork();
 	if (pid == -1)
 	{
@@ -40,8 +48,6 @@ int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *s
 	}
 	if (pid == 0)
 	{
-		//if (!set_signal(EXEC, sig))
-		//	return (0);
 		free(*pids);
 		if (ast->is_pipe)
 			close(pipe_fd[READ]);
