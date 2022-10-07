@@ -56,6 +56,7 @@ int	ft_export(t_node *node)
 			if (!test)
 				return (0);
 			add_back_env(&env, test);
+			ft_env_sort();
 		}
 	}
 	//si pas d'env pour env afficher PWD SHLVL et _, pour export OLDPWD vide PWD et SHLVL

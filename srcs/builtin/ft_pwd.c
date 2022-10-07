@@ -12,33 +12,7 @@
 
 #include "minishell.h"
 
-char	*ft_strdup_two(char *var, char *pwd)
-{
-	char	*full;
-	int	i;
-	int	j;
 
-	if (!var || !pwd)
-		return (NULL);
-	full = malloc(sizeof(char) * (ft_strlen(var) + ft_strlen(pwd) + 2));
-	if (!full)
-		return (NULL);
-	i = 0;
-	while (var[i])
-	{
-		full[i] = var[i];
-		i++;
-	}
-	full[i++] = '=';
-	j = 0;
-	while (pwd[j])
-	{
-		full[i + j] = pwd[j];
-		j++;
-	}
-	full[i + j] = '\0';
-	return (full);
-}
 
 void	ft_switch_pwd(t_env **env, t_env **pwd, t_env **oldpwd, char *cwd)
 {
