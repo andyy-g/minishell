@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:07:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/06 16:35:43 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 16:13:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	check_is_heredoc(char *lim, t_sa *sig, t_dblist **list)
 		}
 		if (err == -2)
 			ret = err;
-		if (!set_signal(EXEC, sig))
+		if (!set_signal(INPUT, sig))
 			return (-1);
 	}
 	ft_free(lim);

@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 14:40:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 16:46:33 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd, t_sa *
 int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd, t_sa *sig)
 {
 	pid_t	pid;
-
+	
+	if (!set_signal(EXEC, sig))
+		return (0);
 	pid = fork();
 	if (pid == -1)
 	{
@@ -91,8 +93,6 @@ int	launch_exec_fork(t_node *cmd, t_sa *sig)
 	pipe_fd[WRITE] = -1;
 	pids = init_pid_arr(cmd, &index_cmd);
 	if (!pids)
-		return (0);
-	if (!set_signal(IGN, sig))
 		return (0);
 	if (!tree_traversal(cmd, pipe_fd, &pids, index_cmd, sig))
 		return (0);

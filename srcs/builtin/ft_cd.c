@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 14:22:22 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 14:23:03 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/07 14:59:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,14 @@ char	*get_env_path(t_env *env, const char *var)
 
 int	ft_create_pwd(const char *var, char *cwd)
 {
-	char	*cwd;
+//	char	*cwd;
 	char	*pwd;
 	t_env	*env;
 	t_env	*tmp;
 	t_env	*new;
+	int		option;
 
+	option = 0;
 	env = singleton_env(1, NULL, NULL);
 	tmp = env;
 	cwd = (char *)malloc(sizeof(char) * PATH_MAX);

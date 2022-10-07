@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 14:40:14 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 14:52:21 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ int	exec_bin(t_node *node, t_sa *sig)
 	int		is_dir;
 	int		cmd_not_found;
 
+	(void)sig;
 	is_dir = 0;
 	cmd_not_found = 0;
 	if (is_chevron(node->type))
@@ -72,8 +73,6 @@ int	exec_bin(t_node *node, t_sa *sig)
 		check_full_path(node, &path, &is_dir, &cmd_not_found);
 	if (check_error(node, is_dir, cmd_not_found))
 	{
-		if (!set_signal(EXEC, sig))
-			return (0);
 		execve(path, node->cmd, envp);
 		which_error(node);
 		ft_free(path);
@@ -121,7 +120,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid, t_sa *sig)
 	else if (cmd_is(node->cmd[0], "env"))
 		ret = exec_builtin(node, &ft_env);
 	else if (cmd_is(node->cmd[0], "cd"))
-		ret = exec_builtin(node, &ft_cd);
+		printf("CD\n");
 	else if (cmd_is(node->cmd[0], "unset"))
 		ret = exec_builtin(node, &ft_unset);
 	else if (cmd_is(node->cmd[0], "exit"))
