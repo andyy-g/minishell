@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 18:42:46 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 18:50:14 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 20:30:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	sigint_input(int signum)
 {
-	write(1, "\n", 1); 
+	write(1, "\n", 1);
 	rl_on_new_line();
-	rl_replace_line("", 0); 
+	rl_replace_line("", 0);
 	rl_redisplay();
 	g_exit_status = 128 + signum;
 	return ;
@@ -32,10 +32,10 @@ void	sigint_exec(int signum)
 }
 
 void	sigint_hdoc(int signum)
-{   
+{
 	g_exit_status = 128 + signum;
 	close(STDIN_FILENO);
-	write(1, "\n", 1); 
+	write(1, "\n", 1);
 	return ;
 }
 

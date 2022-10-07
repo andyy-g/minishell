@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 15:27:48 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 01:32:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 20:31:18 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	convert_status(int status)
 	return (status);
 }
 
-int set_signal_sigint(t_context context, t_sa sa)
+int	set_signal_sigint(t_context context, t_sa sa)
 {
 	ft_memset(&sa, 0, sizeof(sa));
 	sigemptyset(&sa.sa_mask);

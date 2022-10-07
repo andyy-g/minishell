@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 12:00:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 20:28:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,21 +64,18 @@ int	ft_quote(char *str)
 	}
 }
 
-int	ft_word(char *str, t_dblist **list, t_sa *sig)
+int	ft_word(char *str, t_dblist **list, t_sa *sig, int i)
 {
-	int		i;
 	char	c;
 	int		ret;
 	t_pars	*pars;
 
 	pars = (*list)->curr;
-	i = 0;
 	while (str[i] != '\0')
 	{
 		if (str[i] == 34 || str[i] == 39)
 		{
-			c = str[i];
-			i++;
+			c = str[i++];
 			while (str[i] != c)
 				i++;
 		}

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 12:29:27 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 20:28:16 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,18 @@ void	ft_print_dblist(t_dblist *list)
 
 int	ft_create_str(char *str, int size, t_dblist **list)
 {
-	int	i;
-	int	length;
+	int		i;
+	int		length;
 	t_pars	*pars;
 
 	pars = (*list)->curr;
-	i = 0;
+	i = -1;
 	length = size - 2 * (pars->db_quote + pars->sp_quote);
 	pars->str = (char *)malloc(sizeof(char) * (length + 1));
 	if (pars->str)
 	{
-		while (i < length)
-		{
+		while (++i < length)
 			(pars->str)[i] = str[i + pars->db_quote + pars->sp_quote];
-			i++;
-		}
 		(pars->str)[i] = '\0';
 		(*list)->last = pars;
 		pars->next = ft_create_pars(pars);
@@ -86,7 +83,7 @@ int	ft_token_size(char *str, t_dblist **list, int *bracket, t_sa *sig)
 	else if (c == '(' || c == ')')
 		i = ft_bracket(c, (*list)->curr, bracket);
 	if (c != '\n' && c != ' ' && c != '\t' && i == 0)
-		i = ft_word(str, list, sig);
+		i = ft_word(str, list, sig, 0);
 	return (i);
 }
 

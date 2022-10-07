@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 19:26:42 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 21:18:33 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ void		exit_minishell(t_node *ast);
 void		ft_free_tokens(t_dblist *list);
 void		free_env(t_env *env);
 void		ft_env_sort(void);
-void		free_tokens_ast(t_node *ast, t_dblist *tokens);
+void		free_tokens_ast(t_node **ast, t_dblist **tokens);
 void		ft_free_pars(t_pars *token);
 void		*free_nodes(t_node *redir, t_node *right,
 				t_node *left, int *status);
@@ -225,7 +225,7 @@ int			ft_input(char *str, t_pars *pars);
 int			ft_output(char *str, t_pars *pars);
 int			ft_and(char *str, t_pars *pars);
 int			ft_bracket(char c, t_pars *pars, int *bracket);
-int			ft_word(char *str, t_dblist **list, t_sa *sig);
+int			ft_word(char *str, t_dblist **list, t_sa *sig, int i);
 int			ft_syntax_error(t_dblist *list, int bracket);
 int			ft_expand(t_dblist **list, int *error);
 int			ft_variable(t_pars **exp, int *j, int *error, bool dquote);
