@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 21:18:33 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/07 21:31:35 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@
 
 # define WRITE_MAX 50000
 
-extern int		g_exit_status;
+extern int					g_exit_status;
+
+typedef struct sigaction	t_sa;
 
 typedef enum e_toktype
 {
@@ -144,8 +146,6 @@ typedef struct s_env
 	struct s_env	*next;
 	struct s_env	*prev;
 }							t_env;
-
-typedef struct sigaction	t_sa;
 
 void		write_pipe_heredoc(int fd, char *str, int len);
 void		ft_print_dblist(t_dblist *list);
