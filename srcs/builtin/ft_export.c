@@ -75,7 +75,7 @@ int	ft_syntax_export(char *str)
 		if (str[i] == '+' && str[i + 1] && str[i + 1] == '=')
 			return (2);
 	}
-	if (str[i] == '!')
+	else if (str[i] == '!')
 	{
 		display_error(ERR_EXPORT_EVENT, str + i);
 		return (-1);
@@ -85,42 +85,74 @@ int	ft_syntax_export(char *str)
 	return (1);
 }
 
+int	ft_export_arg(char *str, t_env **env, t_env **tmp)
+{
+	int		option;
+	t_env	*new;
+
+	option = ft_syntax_export(str);
+	if (option == 1 || option == 2)
+	{
+		new = malloc(sizeof(t_env));
+		if (new)
+		{
+			if (!ft_create_new(&new, str))
+			{
+				ft_free(new);
+				return (1);
+			}
+			(*tmp) = (*env);
+			if (option == 1 && ft_add_to_value(option, &(*tmp), &new) == 1)
+				add_back_env(&(*env), new);
+			if (option == 2 && ft_override_value(option, &(*tmp), &new) == 2)
+				add_back_env(&(*env), new);
+			ft_env_sort();
+		}
+	}
+	else if (option == 0)
+		ft_error_export(option, str);
+	return (0);
+}
+
+int	ft_check_exclamation(t_node *node)
+{
+	int		i;
+
+	i = 1;
+	if (node)
+	{
+		while (node->cmd[i])
+		{
+			while
+			if (node->cmd[i][0] && node->cmd[i][0] == '!')
+			{
+				display_error(ERR_EXPORT_EVENT, str + i);
+				return (0);
+			}
+			i++;
+		}
+	}
+	return (1)
+}
+
 int	ft_export(t_node *node)
 {
 	int		i;
-	int		option;
 	t_env	*env;
 	t_env	*tmp;
-	t_env	*new;
 
 	i = 1;
 	env = singleton_env(1, NULL, NULL);
 	if (!(node->cmd[1]) && env)
 		ft_print_env_exp(env);
-	while (node->cmd[i])
+	if (node && ft_check_exclamation(node))
 	{
-		option = ft_syntax_export(node->cmd[i]);
-		if (option == 1 || option == 2)
+		while (node->cmd[i])
 		{
-			new = malloc(sizeof(t_env));
-			if (new)
-			{
-				if (!ft_create_new(&new, node->cmd[i]))
-				{
-					ft_free(new);
-					return (1);
-				}
-				tmp = env;
-				if (option == 1 && ft_add_to_value(option, &tmp, &new) == 1)
-					add_back_env(&env, new);
-				if (option == 2 && ft_override_value(option, &tmp, &new) == 2)
-					add_back_env(&env, new);
-				ft_env_sort();
-			}
+			if (ft_export_arg(node->cmd[1], &env, &tmp) == 1)
+				return (1);
+			i++;
 		}
-		else if (option != -1)
-			ft_error_export(option, node->cmd[i]);
-		i++;
 	}
 	return (1);
 }
