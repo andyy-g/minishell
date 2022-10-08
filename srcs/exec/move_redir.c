@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:19:28 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:28:42 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:07:47 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,22 +39,4 @@ t_node	*next_cmd_after_redir(t_node *node)
 			node = node->left;
 	}
 	return (node);
-}
-
-void	go_to_redir_node(t_node **node, int *in, int *out)
-{
-	t_node	*prev;
-
-	prev = NULL;
-	*in = 1;
-	*out = 1;
-	while (*node && !is_chevron((*node)->type))
-	{
-		if (prev && prev == (*node)->right)
-			*in = 0;
-		if ((*node)->type == PIPE && prev == (*node)->left)
-			*out = 0;
-		prev = *node;
-		*node = (*node)->parent;
-	}
 }

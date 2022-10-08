@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:39:00 by agranger          #+#    #+#             */
-/*   Updated: 2022/07/14 15:07:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 16:57:28 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_node	*cmd_simple(t_pars **token, int *status)
 	t_node	*cmd;
 
 	(void)status;
-	if (!*token || !(*token)->str || (*token)->token != WORD)
+	if (*token && (*token)->str && (*token)->token != WORD && (*token)->token != NONE)
 		return (NULL);
 	cmd = ast_create_node((*token)->token, token);
 	if (!cmd)

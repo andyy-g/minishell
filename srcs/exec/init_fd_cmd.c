@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:28:38 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:28:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:07:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,19 @@ int	check_file_in_out(t_node *node)
 {
 	t_node	*cmd;
 	int		ret;
-	int		in;
-	int		out;
 
 	cmd = node;
-	go_to_redir_node(&node, &in, &out);
+	while (node && !is_chevron(node->type))
+		node = node->parent;
 	while (node && is_chevron(node->type))
 	{
-		if (in && (node->type == FILE_IN || node->type == HEREDOC))
+		if (node->type == FILE_IN || node->type == HEREDOC)
 		{
 			ret = set_file_in(node, cmd);
 			if (!ret || ret == 2)
 				return (ret);
 		}
-		if (out && (node->type == FILE_OUT || node->type == FILE_OUT_APP))
+		if (node->type == FILE_OUT || node->type == FILE_OUT_APP)
 		{
 			if (!set_file_out(node, cmd))
 				return (0);

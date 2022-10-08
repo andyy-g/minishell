@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 17:50:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/08/26 16:28:18 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 16:58:09 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ char	**create_simple_cmd(t_pars **cmd, int *status, t_toktype type)
 			return (set_status_error(status, ret));
 		i++;
 		*cmd = (*cmd)->next;
+		if ((*cmd)->token != WORD)
+			break ;
 	}
 	ret[i] = NULL;
 	return (ret);
@@ -65,6 +67,7 @@ t_node	*ast_create_node(t_toktype type, t_pars **simple_cmd)
 	t_node	*ret;
 	int		status;
 
+	status = 1;
 	ret = malloc(sizeof(*ret));
 	if (!ret)
 		return (NULL);

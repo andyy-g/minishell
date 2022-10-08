@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:37:39 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 10:41:28 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:02:18 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,31 +34,12 @@ int	file_in_exist(t_node *node, t_node *cmd)
 	return (1);
 }
 
-bool	must_be_appended(t_node *node)
-{
-	t_node	*prev;
-
-	prev = NULL;
-	while (node && node->type != AND && node->type != OR)
-	{
-		prev = node;
-		node = node->parent;
-	}
-	if (node && node->right == prev)
-		return (true);
-	return (false);
-}
-
 int	create_file_out(t_node *node, t_node *cmd)
 {
 	int	fd;
 
-	if (must_be_appended(cmd))
-		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
-				| O_APPEND | O_CLOEXEC, 0644);
-	else
-		fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
-				| O_TRUNC | O_CLOEXEC, 0644);
+	fd = open(node->right->cmd[0], O_WRONLY | O_CREAT
+			| O_TRUNC | O_CLOEXEC, 0644);
 	if (fd == -1)
 	{
 		perror("open");

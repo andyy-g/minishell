@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 21:36:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/23 12:29:47 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 13:55:27 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 bool	is_pipe_cmd(t_node *node)
 {
-	while (node->parent)
+	while (node->parent && node->parent->type != AND
+			&& node->parent->type != OR)
 	{
 		node = node->parent;
 		if (node->type == PIPE)
@@ -40,7 +41,7 @@ t_node	*next_cmd(t_node *node)
 		node = node->parent;
 	}
 	if (node && node->type != PIPE)
-		return (NULL);
+		return (node);
 	if (node)
 	{
 		node = node->right;

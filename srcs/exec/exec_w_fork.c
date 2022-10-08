@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 11:37:25 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 13:29:53 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ pid_t	*init_pid_arr(t_node *cmd, int *index_cmd)
 	pid_t	*pids;
 
 	nb_cmd = 0;
-	while (cmd)
+	while (cmd && cmd->type != AND && cmd->type != OR)
 	{
 		nb_cmd++;
 		cmd = next_cmd(cmd);

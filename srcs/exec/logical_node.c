@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 23:02:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 17:44:07 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ int	get_status_last_process(pid_t *pids)
 	i = 0;
 	while (pids[i] != -1)
 	{
-		waitpid(pids[i], &status, 0);
+		if (pids[i] == 0)
+			status = g_exit_status;
+		else
+			waitpid(pids[i], &status, 0);
 		i++;
 	}
 	return (convert_status(status));
@@ -59,7 +62,7 @@ void	next_logical_node(t_node **node)
 t_node	*next_cmd_logical_node(t_node *node)
 {
 	node = node->right;
-	while (node->left)
+	while (node && node->left)
 		node = node->left;
 	return (node);
 }
@@ -90,13 +93,9 @@ bool	check_status(t_node **node, int status)
 	return (true);
 }
 
-bool	check_logical_node(t_node **node, pid_t *pids)
+bool	check_logical_node(t_node **node)
 {
-	int	status;
-
-	next_logical_node(node);
-	if (!*node || (*node)->type == PIPE)
+	if (!*node)
 		return (false);
-	status = get_status_last_process(pids);
-	return (check_status(node, status));
+	return (check_status(node, g_exit_status));
 }
