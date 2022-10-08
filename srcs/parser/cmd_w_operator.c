@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 15:40:08 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 23:06:42 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 01:46:24 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ t_node	*put_next_node_above(t_node *ret, int *status, t_pars **token,
 
 	if (!(*token)->str)
 		return (ret);
-	tmp = ret;
 	while ((*token)->str)
 	{
 		tmp = cmd_next_node(token, status);
