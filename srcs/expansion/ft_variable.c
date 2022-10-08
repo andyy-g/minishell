@@ -29,30 +29,11 @@ int	ft_ncmp(char *s1, char *s2, int n)
 
 char	*ft_replacebyvar(char *str, char *var, int start, int end)
 {
-	int		i;
-	int		j;
-	int		size;
 	char	*new;
 
-	i = 0;
-	j = 0;
-	size = ft_strlen(var) + ft_strlen(str) - end + start;
-	new = (char *)malloc(sizeof(char) * size + 1);
-	if (new)
-	{
-		while (str[i] && i < start)
-		{
-			new[i] = str[i];
-			i++;
-		}
-		while (var[j])
-			new[i++] = var[j++];
-		j = 0;
-		while (str[end + j])
-			new[i++] = str[end + j++];
-		new[i] = '\0';
-	}
+	new = ft_fill_new(str, var, start, end);
 	free(str);
+	ft_trim_str(&new);
 	return (new);
 }
 

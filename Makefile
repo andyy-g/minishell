@@ -40,6 +40,7 @@ CFILES			=	main.c \
 					expansion/ft_expand.c \
 					expansion/ft_expand_specials_chars.c \
 					expansion/ft_variable.c \
+					expansion/ft_variable_utils.c \
 					expansion/ft_wildcard.c \
 					expansion/ft_wildcard_cpy.c \
 					expansion/word_splitting.c \
