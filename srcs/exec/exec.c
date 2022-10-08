@@ -6,20 +6,11 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 17:01:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:26:38 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	is_next_cmd_logical_node(t_node **cmd, pid_t **pids, int *index_cmd)
-{
-	if (check_logical_node(cmd, *pids))
-	{
-		ft_free(*pids);
-		*pids = init_pid_arr(*cmd, index_cmd);
-	}
-}
 
 int	fork_process(t_node *ast, int *pipe_fd, pid_t **pids, int index_cmd)
 {
@@ -90,9 +81,23 @@ int	launch_exec_fork(t_node **cmd, t_sa *sig, pid_t **pids, int *index_cmd)
 	return (1);
 }
 
+int	launch_exec_wo_fork(t_node *ast)
+{
+	int	ret;
+
+	ret = init_fd(ast, NULL);
+	if (ret != 2)
+	{
+		if (!ret || !exec_cmd_wo_fork(ast))
+			return (0);
+	}
+	else
+		g_exit_status = 1;
+	return (1);
+}
+
 int	exec(t_node *ast, t_sa *sig)
 {
-	int		ret;
 	pid_t	*pids;
 	int		index_cmd;
 
@@ -103,27 +108,17 @@ int	exec(t_node *ast, t_sa *sig)
 	while (ast)
 	{
 		if (ast->type == NONE)
-		{
 			ast = next_cmd(ast);
-		}
 		else if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 		{	
-			ret = init_fd(ast, NULL);
-			if (ret != 2)
-			{
-				if (!ret || !exec_cmd_wo_fork(ast))
-					return (0);
-			}
-			else
-				g_exit_status = 1;
+			if (!launch_exec_wo_fork(ast))
+				return (0);
 			ast = next_cmd(ast);
 		}
 		else
-		{
 			if (!launch_exec_fork(&ast, sig, &pids, &index_cmd))
 				return (0);
-		}
-		is_next_cmd_logical_node(&ast, &pids, &index_cmd);
+		check_logical_node(&ast, &pids, &index_cmd);
 	}
 	ft_free(pids);
 	return (1);

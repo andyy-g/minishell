@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 17:44:07 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:27:59 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,13 @@ bool	check_status(t_node **node, int status)
 	return (true);
 }
 
-bool	check_logical_node(t_node **node)
+void	check_logical_node(t_node **node, pid_t **pids, int *index_cmd)
 {
 	if (!*node)
-		return (false);
-	return (check_status(node, g_exit_status));
+		return ;
+	if (check_status(node, g_exit_status))
+	{
+		ft_free(*pids);
+		*pids = init_pid_arr(*node, index_cmd);
+	}
 }

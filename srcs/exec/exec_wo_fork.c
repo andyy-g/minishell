@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:11:42 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 12:02:52 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:12:20 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	is_builtin_no_fork(char *cmd)
 bool	is_uniq_cmd(t_node *node)
 {
 	while (node->parent && node->parent->type != AND
-			&& node->parent->type != OR)
+		&& node->parent->type != OR)
 		node = node->parent;
 	if (is_chevron(node->type) || node->type == WORD)
 		return (true);

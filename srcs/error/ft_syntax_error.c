@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 18:01:12 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:13:19 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ int	check_bracket_syntax(t_pars *curr, t_pars *prev, int bracket, char *str)
 	else if (curr->token == LPAR && prev \
 	&& (prev->token == WORD || prev->token == RPAR))
 		display_error(ERR_UNEXPECTED_TOK, curr->str);
-	else if (prev && prev->token == RPAR && (curr->token != AND && curr->token != OR))
+	else if (prev && prev->token == RPAR
+		&& (curr->token != AND && curr->token != OR))
 		display_error(ERR_UNEXPECTED_TOK, prev->str);
 	else if (bracket < 0)
 		display_error(ERR_UNEXPECTED_TOK, curr->str);

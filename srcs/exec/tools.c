@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 21:36:23 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 13:55:27 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:12:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 bool	is_pipe_cmd(t_node *node)
 {
 	while (node->parent && node->parent->type != AND
-			&& node->parent->type != OR)
+		&& node->parent->type != OR)
 	{
 		node = node->parent;
 		if (node->type == PIPE)

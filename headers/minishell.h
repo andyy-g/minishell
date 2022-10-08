@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 18:08:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:27:26 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ void		ft_display_export(t_err err, char *arg);
 void		ft_display_builtin(t_err err, char *arg);
 void		ft_concat(char **str, int i, int j, int word);
 void		ft_trim_str(char **str);
+void		check_logical_node(t_node **node, pid_t **pids, int *index_cmd);
 int			ft_update_pwd(const char *var, int option);
 int			expand_exit_status(char **str, int i, int j);
 int			set_signals_exec(char *cmd, t_sa *sig);
@@ -285,7 +286,6 @@ bool		must_be_appended(t_node *node);
 bool		check_error(t_node *node, int is_dir, int cmd_not_found);
 bool		must_be_expanded(char *lim);
 bool		contain_slash(char *cmd);
-bool		check_logical_node(t_node **node);
 bool		check_status(t_node **node, int status);
 bool		cmd_is(char *cmd, char *builtin);
 bool		is_builtin_no_fork(char *cmd);
