@@ -6,74 +6,40 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 13:53:34 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 18:48:01 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 01:31:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_concat(char **str, int i, int j, int word)
+bool	is_whitespace(char c)
 {
-	int	k;
-
-	k = 0;
-	if (word == 1 && (*str)[i + k])
-	{
-		(*str)[i] = ' ';
-		i++;
-	}
-	while ((*str)[j + k] && (*str)[i + k])
-	{
-		(*str)[i + k] = (*str)[j + k];
-		k++;
-	}
-	(*str)[i + k] = '\0';
+	if ((c <= 76 && c >= 73) || c == ' ')
+		return (true);
+	return (false);
 }
 
-int	ft_trim_replace(char **str, int i, int word)
+void	dec_one_char(char *s)
 {
-	int	j;
-
-	if ((*str)[i] == ' ' || (*str)[i] == '\n' || (*str)[i] == '\n')
+	while (*s != 0)
 	{
-		j = i;
-		while ((*str)[j] == ' ' || (*str)[j] == '\n' || (*str)[j] == '\n')
-			j++;
-		if ((*str)[j] == '\0')
-		{
-			(*str)[i] = '\0';
-			return (-2);
-		}
-		else if (word == 0)
-		{
-			ft_concat(&(*str), i, j, word);
-			i--;
-		}
-		else if (word == 1)
-			ft_concat(&(*str), i, j, word);
+		*s = *(s + 1);
+		++s;
 	}
-	return (i);
 }
 
-void	ft_trim_str(char **str)
+void	ft_trim_str(char *str)
 {
 	int	i;
-	int	word;
 
 	i = 0;
-	while ((*str)[i])
+	while (is_whitespace(*str))
+		dec_one_char(str);
+	while (str[i])
 	{
-		word = 0;
-		while ((*str)[i] && (*str)[i] != ' '
-			&& (*str)[i] != '\n' && (*str)[i] != '\n')
-		{
-			word = 1;
-			i++;
-		}
-		i = ft_trim_replace(&(*str), i, word);
-		if (i == -2)
-			break ;
-		if ((*str)[i])
+		if (is_whitespace(str[i]) && (is_whitespace(str[i + 1]) || !str[i + 1]))
+			dec_one_char(str + i);
+		else
 			i++;
 	}
 }

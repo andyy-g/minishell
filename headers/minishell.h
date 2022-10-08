@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 23:48:03 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 01:09:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void		ft_display_cd(t_err err, char *arg);
 void		ft_display_export(t_err err, char *arg);
 void		ft_display_builtin(t_err err, char *arg);
 void		ft_concat(char **str, int i, int j, int word);
-void		ft_trim_str(char **str);
+void		ft_trim_str(char *str);
 void		check_logical_node(t_node **node, pid_t **pids, int *index_cmd);
 void		skip_and_clean(t_node **cmd, int *index_cmd, int *pipe, int ret);
 int			ft_update_pwd(const char *var, int option);

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 21:31:22 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 01:09:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*ft_replacebyvar(char *str, char *var, int start, int end)
 
 	new = ft_fill_new(str, var, start, end);
 	free(str);
-	ft_trim_str(&new);
+	ft_trim_str(new);
 	return (new);
 }
 
