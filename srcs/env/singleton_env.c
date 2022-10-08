@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/17 14:34:49 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 10:45:23 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:32:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ t_env	*create_env(char **envp, int *status)
 	if (!init_shlvl(env))
 	{
 		free_env(env);
+		*status = 0;
 		return (NULL);
 	}
 	return (env);

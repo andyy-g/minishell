@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 09:04:48 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 11:31:45 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:38:16 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	ft_exit(t_node *node)
 {
 	if (node && !node->parent)
 		printf("exit\n");
-	if (node->cmd[1] && node->cmd[2])
+	if (node && node->cmd[1] && node->cmd[2])
 	{
 		if (!ft_isnum(node->cmd[1]) || is_too_high_or_low(node->cmd[1]))
 			display_error(ERR_EXIT_ARG_NO_NUM, node->cmd[1]);
@@ -100,7 +100,7 @@ int	ft_exit(t_node *node)
 			return (1);
 		}
 	}
-	else if (node->cmd[1])
+	else if (node && node->cmd[1])
 	{
 		if (!ft_isnum(node->cmd[1]) || is_too_high_or_low(node->cmd[1]))
 			display_error(ERR_EXIT_ARG_NO_NUM, node->cmd[1]);

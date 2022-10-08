@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 13:29:53 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:37:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 
 	if (!dup2_if_needed(node))
 		return (0);
-	ret = 1;
 	if (cmd_is(node->cmd[0], "echo"))
 		ret = exec_builtin(node, &ft_echo);
 	else if (cmd_is(node->cmd[0], "pwd"))
