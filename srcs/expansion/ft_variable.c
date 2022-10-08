@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 17:28:08 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 21:31:22 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	complete_str(t_pars **exp, int *j, int i, int *error)
 			display_error(ERR_AMB_REDIRECT, (*exp)->str);
 		}
 		(*exp)->token = NONE;
+		*j = i - 1;
 		return ;
 	}
 	save = *j;

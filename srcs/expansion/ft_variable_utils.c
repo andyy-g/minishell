@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 13:53:34 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 18:36:18 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 18:48:01 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ void	ft_trim_str(char **str)
 		i = ft_trim_replace(&(*str), i, word);
 		if (i == -2)
 			break ;
-		i++;
+		if ((*str)[i])
+			i++;
 	}
 }
 

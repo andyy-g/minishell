@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 18:26:38 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 23:46:40 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,9 @@ int	tree_traversal(t_node **cmd, int *pipe_fd, pid_t **pids, int *index_cmd)
 	while (*cmd && (*cmd)->type != AND && (*cmd)->type != OR)
 	{
 		ret = init_fd(*cmd, pipe_fd);
-		if (ret == 2)
+		if ((*cmd)->type == NONE || ret == 2)
 		{
-			if ((*cmd)->is_pipe)
-				close(pipe_fd[WRITE]);
-			close_fd_in_out(*cmd);
-			*cmd = next_cmd_after_redir(*cmd);
+			skip_and_clean(cmd, index_cmd, pipe_fd, ret);
 			continue ;
 		}
 		if (!ret || !fork_process(*cmd, pipe_fd, pids, *index_cmd))

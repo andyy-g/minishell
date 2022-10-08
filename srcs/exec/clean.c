@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:00:59 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 22:47:49 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 00:02:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,23 @@ void	free_tokens_ast(t_node **ast, t_dblist **tokens)
 	{
 		ast_delete_nodes(*ast);
 		*ast = NULL;
+	}
+}
+
+void	skip_and_clean(t_node **cmd, int *index_cmd, int *pipe_fd, int ret)
+{
+	if ((*cmd)->is_pipe)
+		close(pipe_fd[WRITE]);
+	close_fd_in_out(*cmd);
+	(*index_cmd)++;
+	if (ret == 2)
+	{
+		*cmd = next_cmd_after_redir(*cmd);
+		g_exit_status = 1;
+	}
+	else
+	{
+		*cmd = next_cmd(*cmd);
+		g_exit_status = 0;
 	}
 }

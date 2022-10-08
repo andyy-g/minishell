@@ -6,7 +6,7 @@
 #    By: tcarasso <tcarasso@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/11 14:47:55 by tcarasso          #+#    #+#              #
-#    Updated: 2022/10/07 19:23:37 by agranger         ###   ########.fr        #
+#    Updated: 2022/10/08 23:25:14 by agranger         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,7 @@ CFILES			=	main.c \
 					parser/cmd_w_redir.c \
 					parser/cmd_simple.c \
 					parser/sort_redir.c \
+					parser/create_str_cmd.c \
 					parser/tools.c \
 					exit/exit.c \
 					signals/eof.c \

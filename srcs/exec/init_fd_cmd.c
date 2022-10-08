@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:28:38 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 18:07:39 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 00:03:52 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ int	init_pipe(t_node *node, int prev_fd, int *pipe_fd, int ret)
 		perror("pipe");
 		return (0);
 	}
-	if (ret == 2)
-		return (2);
 	if (!is_first_cmd(node) && node->fd_in == STDIN_FILENO)
 		node->fd_in = prev_fd;
 	else if (prev_fd != -1)
@@ -83,6 +81,8 @@ int	init_pipe(t_node *node, int prev_fd, int *pipe_fd, int ret)
 		node->fd_out = pipe_fd[WRITE];
 	else
 		close(pipe_fd[WRITE]);
+	if (ret == 2)
+		return (2);
 	return (1);
 }
 

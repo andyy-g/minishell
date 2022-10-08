@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 18:27:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 23:48:03 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ void		ft_display_builtin(t_err err, char *arg);
 void		ft_concat(char **str, int i, int j, int word);
 void		ft_trim_str(char **str);
 void		check_logical_node(t_node **node, pid_t **pids, int *index_cmd);
+void		skip_and_clean(t_node **cmd, int *index_cmd, int *pipe, int ret);
 int			ft_update_pwd(const char *var, int option);
 int			expand_exit_status(char **str, int i, int j);
 int			set_signals_exec(char *cmd, t_sa *sig);
@@ -278,6 +279,7 @@ char		*concat_pathname(char *path, char *cmd);
 char		**set_status_error(int *status, char **ret);
 char		**env_to_str_arr(t_env *env);
 char		**get_envpath_value(void);
+char		**create_simple_cmd(t_pars **cmd, int *status, t_toktype *type);
 bool		env_var_exist(t_env *env, const char *var);
 bool		is_brackets(int type);
 bool		is_redir_token(t_pars *token);

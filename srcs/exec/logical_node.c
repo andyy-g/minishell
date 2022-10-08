@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 18:27:59 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 00:00:45 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@ int	get_status_last_process(pid_t *pids)
 	i = 0;
 	while (pids[i] != -1)
 	{
-		if (pids[i] == 0)
-			status = g_exit_status;
-		else
+		if (pids[i] != 0)
 			waitpid(pids[i], &status, 0);
 		i++;
 	}
+
+	if (i > 0 && pids[i - 1] == 0)
+		return (g_exit_status);
 	return (convert_status(status));
 }
 
