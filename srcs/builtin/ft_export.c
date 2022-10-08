@@ -35,28 +35,6 @@ char	*ft_create_new_value(const char *str, int i, char *new)
 	new[k] = '\0';
 	return (new);
 }
-char	*ft_strdup_value(const char *str)
-{
-	char	*new;
-	size_t	i;
-
-	i = 0;
-	new = NULL;
-	if (str)
-	{
-		while (str[i] != '\0' && str[i] != '=' && str[i] != '+')
-			i++;
-		if (str[i] == '=' || str[i] == '+')
-			new = ft_create_new_value(str, i, new);
-		else
-		{
-			new = ft_strdup("");
-			if (!new)
-				return (NULL);
-		}
-	}
-	return (new);
-}
 
 int	ft_syntax_export(char *str)
 {
@@ -74,11 +52,6 @@ int	ft_syntax_export(char *str)
 		}
 		if (str[i] == '+' && str[i + 1] && str[i + 1] == '=')
 			return (2);
-	}
-	else if (str[i] == '!')
-	{
-		display_error(ERR_EXPORT_EVENT, str + i);
-		return (-1);
 	}
 	else
 		return (0);
@@ -99,7 +72,7 @@ int	ft_export_arg(char *str, t_env **env, t_env **tmp)
 			if (!ft_create_new(&new, str))
 			{
 				ft_free(new);
-				return (1);
+				return (0);
 			}
 			(*tmp) = (*env);
 			if (option == 1 && ft_add_to_value(option, &(*tmp), &new) == 1)
@@ -109,30 +82,36 @@ int	ft_export_arg(char *str, t_env **env, t_env **tmp)
 			ft_env_sort();
 		}
 	}
-	else if (option == 0)
-		ft_error_export(option, str);
-	return (0);
+	else
+		ft_error_export(str);
+	return (1);
 }
 
 int	ft_check_exclamation(t_node *node)
 {
 	int		i;
+	int		j;
 
 	i = 1;
 	if (node)
 	{
 		while (node->cmd[i])
 		{
-			while
-			if (node->cmd[i][0] && node->cmd[i][0] == '!')
+			j = 0;
+			while (node->cmd[i][j])
 			{
-				display_error(ERR_EXPORT_EVENT, str + i);
-				return (0);
+				if (node->cmd[i][j] == '!' &&
+					node->cmd[i][j + 1] && node->cmd[i][j + 1] != '=')
+				{
+					display_error(ERR_EXPORT_EVENT, node->cmd[i] + j);
+					return (0);
+				}
+				j++;
 			}
 			i++;
 		}
 	}
-	return (1)
+	return (1);
 }
 
 int	ft_export(t_node *node)
@@ -149,7 +128,7 @@ int	ft_export(t_node *node)
 	{
 		while (node->cmd[i])
 		{
-			if (ft_export_arg(node->cmd[1], &env, &tmp) == 1)
+			if (!ft_export_arg(node->cmd[i], &env, &tmp))
 				return (1);
 			i++;
 		}

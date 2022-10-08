@@ -106,10 +106,10 @@ int	ft_create_new(t_env	**new, char *str)
 	return (1);
 }
 
-void	ft_error_export(int option, char *str)
+void	ft_error_export(char *str)
 {
-	if ((ft_strlen(str) >= 2) && str[0] == '-' && option != -1)
+	if ((ft_strlen(str) >= 2) && str[0] == '-')
 		display_error(ERR_EXPORT_INV, str);
-	else if (option != -1)
+	else
 		display_error(ERR_EXPORT_ARG, str);
 }

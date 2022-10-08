@@ -74,6 +74,29 @@ char	*ft_strdup_var(const char *str)
 	return (new);
 }
 
+char	*ft_strdup_value(const char *str)
+{
+	char	*new;
+	size_t	i;
+
+	i = 0;
+	new = NULL;
+	if (str)
+	{
+		while (str[i] != '\0' && str[i] != '=' && str[i] != '+')
+			i++;
+		if (str[i] == '=' || str[i] == '+')
+			new = ft_create_new_value(str, i, new);
+		else
+		{
+			new = ft_strdup("");
+			if (!new)
+				return (NULL);
+		}
+	}
+	return (new);
+}
+
 char	*ft_strdup_full(char *var, char *value)
 {
 	char	*new;
