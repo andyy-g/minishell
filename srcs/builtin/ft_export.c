@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 12:44:18 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 01:12:56 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 02:53:51 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,14 @@ char	*ft_strdup_value(const char *str)
 			k++;
 		}
 		new[k] = '\0';
-		return (new);
 	}
 	else
-		return (NULL);
+	{
+		new = ft_strdup("");
+		if (!new)
+			return (NULL);
+	}
+	return (new);
 }
 
 int	ft_syntax_export(char *str)

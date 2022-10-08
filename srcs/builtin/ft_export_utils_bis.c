@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 22:03:34 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 22:03:39 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/08 02:44:55 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ char	*ft_strdup_full(char *var, char *value)
 	size_t	j;
 
 	i = 0;
-	new = malloc(sizeof(char) * (ft_strlen(var) + ft_strlen(value) + 1));
+	new = malloc(sizeof(char) * (ft_strlen(var) + ft_strlen(value) + 2));
 	if (!new)
 		return (NULL);
 	while (var && var[i] != '\0')
