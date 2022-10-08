@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 19:01:32 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 11:37:25 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int	exec_cmd_fork(t_node *node, pid_t pid)
 	else if (cmd_is(node->cmd[0], "env"))
 		ret = exec_builtin(node, &ft_env);
 	else if (cmd_is(node->cmd[0], "cd"))
-		printf("CD\n");
+		ret = exec_builtin(node, &ft_cd);
 	else if (cmd_is(node->cmd[0], "unset"))
 		ret = exec_builtin(node, &ft_unset);
 	else if (cmd_is(node->cmd[0], "exit"))

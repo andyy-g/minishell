@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/08 02:31:30 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 11:17:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # include "libft.h"
 
 # define WRITE_MAX 50000
+# define LL_LIMIT "922337203685477580"
 
 extern int					g_exit_status;
 
