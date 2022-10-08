@@ -12,40 +12,48 @@
 
 #include "minishell.h"
 
+char	*ft_create_new_value(const char *str, int i, char *new)
+{
+	size_t	j;
+	size_t	k;
+
+	if (str[i] == '+')
+		i++;
+	i++;
+	j = 0;
+	while (str[i + j] != '\0')
+		j++;
+	new = malloc(sizeof(char) * (j + 1));
+	if (!new)
+		return (NULL);
+	k = 0;
+	while (k < j)
+	{
+		new[k] = str[i + k];
+		k++;
+	}
+	new[k] = '\0';
+	return (new);
+}
 char	*ft_strdup_value(const char *str)
 {
 	char	*new;
 	size_t	i;
-	size_t	j;
-	size_t	k;
 
 	i = 0;
-	while (str[i] != '\0' && str[i] != '=' && str[i] != '+')
-		i++;
-	if (str[i] == '=' || str[i] == '+')
+	new = NULL;
+	if (str)
 	{
-		if (str[i] == '+')
+		while (str[i] != '\0' && str[i] != '=' && str[i] != '+')
 			i++;
-		i++;
-		j = 0;
-		while (str[i + j] != '\0')
-			j++;
-		new = malloc(sizeof(char) * (j + 1));
-		if (!new)
-			return (NULL);
-		k = 0;
-		while (k < j)
+		if (str[i] == '=' || str[i] == '+')
+			new = ft_create_new_value(str, i, new);
+		else
 		{
-			new[k] = str[i + k];
-			k++;
+			new = ft_strdup("");
+			if (!new)
+				return (NULL);
 		}
-		new[k] = '\0';
-	}
-	else
-	{
-		new = ft_strdup("");
-		if (!new)
-			return (NULL);
 	}
 	return (new);
 }
@@ -61,25 +69,19 @@ int	ft_syntax_export(char *str)
 		while (str[i] != '\0' && str[i] != '+' && str[i] != '=')
 		{
 			if (!ft_isalnum((int)str[i]) && str[i] != '_')
-			{
-				if (str[i] == '!')
-				{
-					display_error(ERR_EXPORT_EVENT, str + i);
-					return (-1);
-				}
 				return (0);
-			}
 			i++;
 		}
+		if (str[i] == '+' && str[i + 1] && str[i + 1] == '=')
+			return (2);
+	}
+	if (str[i] == '!')
+	{
+		display_error(ERR_EXPORT_EVENT, str + i);
+		return (-1);
 	}
 	else
 		return (0);
-	if (str[i] == '+')
-	{
-		if (str[i + 1] && str[i + 1] == '=')
-			return (2);
-		return (0);
-	}
 	return (1);
 }
 
@@ -98,7 +100,7 @@ int	ft_export(t_node *node)
 	while (node->cmd[i])
 	{
 		option = ft_syntax_export(node->cmd[i]);
-		if (option == 1)
+		if (option == 1 || option == 2)
 		{
 			new = malloc(sizeof(t_env));
 			if (new)
@@ -106,33 +108,17 @@ int	ft_export(t_node *node)
 				if (!ft_create_new(&new, node->cmd[i]))
 				{
 					ft_free(new);
-					return (0);
+					return (1);
 				}
 				tmp = env;
-				option = ft_add_to_value(option, &tmp, &new);
-				if (option == 1)
+				if (option == 1 && ft_add_to_value(option, &tmp, &new) == 1)
+					add_back_env(&env, new);
+				if (option == 2 && ft_override_value(option, &tmp, &new) == 2)
 					add_back_env(&env, new);
 				ft_env_sort();
 			}
 		}
-		else if (option == 2)
-		{
-			new = malloc(sizeof(t_env));
-			if (new)
-			{
-				if (!ft_create_new(&new, node->cmd[i]))
-				{
-					ft_free(new);
-					return (0);
-				}
-				tmp = env;
-				option = ft_override_value(option, &tmp, &new);
-				if (option == 2)
-					add_back_env(&env, new);
-				ft_env_sort();
-			}
-		}
-		else
+		else if (option != -1)
 			ft_error_export(option, node->cmd[i]);
 		i++;
 	}

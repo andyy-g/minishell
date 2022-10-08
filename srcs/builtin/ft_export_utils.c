@@ -109,13 +109,7 @@ int	ft_create_new(t_env	**new, char *str)
 void	ft_error_export(int option, char *str)
 {
 	if ((ft_strlen(str) >= 2) && str[0] == '-' && option != -1)
-	{
 		display_error(ERR_EXPORT_INV, str);
-		g_exit_status = 1;
-	}
 	else if (option != -1)
-	{
 		display_error(ERR_EXPORT_ARG, str);
-		g_exit_status = 1;
-	}
 }

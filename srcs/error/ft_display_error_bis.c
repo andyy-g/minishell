@@ -77,6 +77,6 @@ void	ft_display_export(t_err err, char *arg)
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd(" : event not found", 2);
-		g_exit_status = 2;
+		g_exit_status = 0;
 	}
 }
