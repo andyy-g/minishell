@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 22:03:47 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 23:17:15 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 01:21:33 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,28 @@ void	ft_print_env_exp(t_env *env)
 	}
 }
 
-void	ft_create_new(t_env	**new, char *str)
+int	ft_create_new(t_env	**new, char *str)
 {
 	(*new)->var = ft_strdup_var(str);
+	if (!(*new)->var)
+		return (0);
 	(*new)->value = ft_strdup_value(str);
+	if (!(*new)->value)
+	{
+		ft_free((*new)->var);
+		return (0);
+	}
 	(*new)->full = ft_strdup_full((*new)->var, (*new)->value);
+	if (!(*new)->full)
+	{
+		ft_free((*new)->var);
+		ft_free((*new)->value);
+		return (0);
+	}
 	(*new)->pos = 0;
 	(*new)->prev = NULL;
 	(*new)->next = NULL;
+	return (1);
 }
 
 void	ft_error_export(int option, char *str)

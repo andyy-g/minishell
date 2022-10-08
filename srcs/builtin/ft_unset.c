@@ -6,37 +6,27 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 11:04:36 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/24 13:10:19 by charoua          ###   ########.fr       */
+/*   Updated: 2022/10/08 02:00:18 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_unset_var(t_env **env)
+int	ft_unset_var(t_env *env)
 {
-	char	*tmp;
 	t_env	*prev;
+	t_env	*next;
 
-	while ((*env)->next)
-	{
-		tmp = ft_strdup(((*env)->next)->var);
-		ft_free((*env)->var);
-		(*env)->var = tmp;
-		tmp = ft_strdup(((*env)->next)->value);
-		ft_free((*env)->value);
-		(*env)->value = tmp;
-		tmp = ft_strdup(((*env)->next)->full);
-		ft_free((*env)->full);
-		(*env)->full = tmp;
-		*env = (*env)->next;
-	}
-	prev = (*env)->prev;
-	prev->next = NULL;
-	ft_free((*env)->var);
-	ft_free((*env)->value);
-	ft_free((*env)->full);
-	ft_free((*env));
+	prev = env->prev;
+	next = env->next;
+	env->next = NULL;
+	free_env(env);
+	if (prev)
+		prev->next = next;
+	if (next)
+		next->prev = prev;
 	ft_env_sort();
+	return (1);
 }
 
 int	ft_syntax_unset(char *str)
@@ -59,17 +49,19 @@ int	ft_syntax_unset(char *str)
 	return (1);
 }
 
-void	ft_find_var(t_env **env, char *str, int size)
+int	ft_find_var(t_env **env, char *str, int size)
 {
 	while (*env)
 	{
 		if ((*env)->var && ft_ncmp(str, (*env)->var, size))
 		{
-			ft_unset_var(&(*env));
+			if (!ft_unset_var(*env))
+				return (0);
 			break ;
 		}
 		*env = (*env)->next;
 	}
+	return (1);
 }
 
 int	ft_unset(t_node *node)
@@ -85,7 +77,8 @@ int	ft_unset(t_node *node)
 		env = singleton_env(1, NULL, NULL);
 		if (ft_syntax_unset(node->cmd[i]))
 		{
-			ft_find_var(&env, node->cmd[i], ft_strlen(node->cmd[i]));
+			if (!ft_find_var(&env, node->cmd[i], ft_strlen(node->cmd[i])))
+				return (0);
 			if (err == 0)
 				g_exit_status = 0;
 		}

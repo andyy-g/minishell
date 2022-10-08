@@ -6,11 +6,23 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 14:25:04 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 19:44:55 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 01:48:13 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	expand_exit_status(char **str, int i, int j)
+{
+	char	*exit_status;
+
+	exit_status = ft_itoa(g_exit_status);
+	if (!exit_status)
+		return (-1);
+	*str = ft_replacebyvar(*str, exit_status, j, i);
+	ft_free(exit_status);
+	return (1);
+}
 
 void	ft_home(t_pars **exp)
 {

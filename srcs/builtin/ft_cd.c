@@ -6,11 +6,22 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 14:22:22 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 23:11:26 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 02:30:43 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+bool	env_var_exist(t_env *env, const char *var)
+{
+	while (env)
+	{
+		if (env->var && ft_strcmp(var, env->var) == 0)
+			return (true);
+		env = env->next;
+	}
+	return (false);
+}
 
 void	ft_go_path_oldpwd(char *env_path)
 {
@@ -62,14 +73,17 @@ int	ft_cd(t_node *node)
 			ft_go_path(1);
 		else
 		{
-			ft_update_pwd("OLDPWD", 1);
+			if (!ft_update_pwd("OLDPWD", 1))
+				return (0);
 			g_exit_status = -chdir(node->cmd[1]);
-			ft_update_pwd("PWD", 1);
+			if (!ft_update_pwd("PWD", 1))
+				return (0);
 			if (g_exit_status != 0)
 				display_error(ERR_CD_CHDIR, node->cmd[1]);
 		}
 		if (g_exit_status == 0)
-			ft_update_pwd("PWD", 1);
+			if (!ft_update_pwd("PWD", 1))
+				return (0);
 	}
 	return (1);
 }

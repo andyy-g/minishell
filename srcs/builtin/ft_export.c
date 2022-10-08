@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 12:44:18 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/06 23:52:37 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 01:12:56 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,11 @@ int	ft_export(t_node *node)
 			new = malloc(sizeof(t_env));
 			if (new)
 			{
-				ft_create_new(&new, node->cmd[i]);
+				if (!ft_create_new(&new, node->cmd[i]))
+				{
+					ft_free(new);
+					return (0);
+				}
 				tmp = env;
 				option = ft_add_to_value(option, &tmp, &new);
 				if (option == 1)
@@ -112,7 +116,11 @@ int	ft_export(t_node *node)
 			new = malloc(sizeof(t_env));
 			if (new)
 			{
-				ft_create_new(&new, node->cmd[i]);
+				if (!ft_create_new(&new, node->cmd[i]))
+				{
+					ft_free(new);
+					return (0);
+				}
 				tmp = env;
 				option = ft_override_value(option, &tmp, &new);
 				if (option == 2)

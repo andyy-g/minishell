@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 20:45:36 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 23:12:58 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 02:34:58 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,27 @@ void	ft_create_pwd(const char *var, char *cwd)
 	}
 }
 
-void	ft_update_pwd(const char *var, int option)
+int	replace_var_pwd(t_env *tmp, char *cwd)
+{
+	ft_free(tmp->value);
+	tmp->value = ft_strdup(cwd);
+	if (!tmp->value)
+	{
+		ft_free(cwd);
+		return (0);
+	}
+	ft_free(tmp->full);
+	tmp->full = ft_strdup_two(tmp->var, tmp->value);
+	if (!tmp->full)
+	{
+		ft_free(cwd);
+		return (0);
+	}
+	ft_env_sort();
+	return (1);
+}
+
+int	ft_update_pwd(const char *var, int option)
 {
 	char	*cwd;
 	t_env	*env;
@@ -80,22 +100,22 @@ void	ft_update_pwd(const char *var, int option)
 	env = singleton_env(1, NULL, NULL);
 	tmp = env;
 	cwd = (char *)malloc(sizeof(char) * PATH_MAX);
+	if (!cwd)
+		return (0);
 	if (cwd && getcwd(cwd, PATH_MAX))
 	{
 		while (tmp)
 		{
 			if (tmp->var && ft_strcmp(var, tmp->var) == 0)
 			{
-				free(tmp->value);
-				tmp->value = ft_strdup(cwd);
-				free(tmp->full);
-				tmp->full = ft_strdup_two(tmp->var, tmp->value);
-				ft_env_sort();
+				if (!replace_var_pwd(tmp, cwd))
+					return (0);
 			}
 			tmp = tmp->next;
 		}
-		if (option == 1 && !get_env_path(env, var))
+		if (option == 1 && !env_var_exist(env, var))
 			ft_create_pwd(var, cwd);
 	}
-	free(cwd);
+	ft_free(cwd);
+	return (1);
 }

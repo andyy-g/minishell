@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 21:31:35 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 02:31:30 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,17 +187,18 @@ void		sigint_hdoc(int signum);
 void		sigpipe_hdoc(int signum);
 void		sigquit_exec(int signum);
 void		add_back_env(t_env **first, t_env *new);
-void		ft_update_pwd(const char *var, int option);
 void		ft_print_env_exp(t_env *env);
-void		ft_create_new(t_env	**new, char *str);
 void		ft_error_export(int option, char *str);
 void		ft_display_cd(t_err err, char *arg);
 void		ft_display_export(t_err err, char *arg);
 void		ft_display_builtin(t_err err, char *arg);
+int			ft_update_pwd(const char *var, int option);
+int			expand_exit_status(char **str, int i, int j);
 int			set_signals_exec(char *cmd, t_sa *sig);
 int			pipe_heredoc(char *lim, t_dblist **list, t_sa *sig);	
 int			fork_heredoc_child(t_dblist **list,
 				t_sa *sig, int *pipe_heredoc, char *lim);
+int			ft_create_new(t_env	**new, char *str);
 int			fork_heredoc_parent(pid_t pid, t_pars *token, int *pipe_heredoc);
 int			convert_status(int status);
 int			is_eof_heredoc(char *input, char *lim, int line);
@@ -271,6 +272,7 @@ char		*concat_pathname(char *path, char *cmd);
 char		**set_status_error(int *status, char **ret);
 char		**env_to_str_arr(t_env *env);
 char		**get_envpath_value(void);
+bool		env_var_exist(t_env *env, const char *var);
 bool		is_brackets(int type);
 bool		is_redir_token(t_pars *token);
 bool		is_chevron(int type);

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/27 16:05:51 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 01:48:24 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ char	*ft_replacebyvar(char *str, char *var, int start, int end)
 
 int	ft_check_variable(t_pars **exp, int i, int j, int *error)
 {
-	char	*exit_status;
 	char	**str;
 	t_env	*env;
 
@@ -75,12 +74,7 @@ int	ft_check_variable(t_pars **exp, int i, int j, int *error)
 		env = env->next;
 	}
 	if (i == j + 2 && (*str)[i - 1] && (*str)[i - 1] == '?')
-	{
-		exit_status = ft_itoa(g_exit_status);
-		*str = ft_replacebyvar(*str, exit_status, j, i);
-		ft_free(exit_status);
-		return (1);
-	}
+		return (expand_exit_status(str, i, j));
 	return (0);
 }
 
@@ -120,7 +114,7 @@ int	ft_variable(t_pars **exp, int *j, int *error, bool dquote)
 		while (str[i] && (ft_isalnum((int)str[i]) || str[i] == '_'))
 			i++;
 	found = ft_check_variable(exp, i, *j, error);
-	if (!(*exp)->str)
+	if (!(*exp)->str || found == -1)
 		return (0);
 	if (found == 2)
 	{

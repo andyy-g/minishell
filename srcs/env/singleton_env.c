@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/17 14:34:49 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/22 13:30:49 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/08 01:06:37 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ t_env	*singleton_env(int i, int *status, char **envp)
 		{
 			env = create_env(envp, status);
 			ft_env_sort();
+			if (!env)
+				*status = 0;
 			return (env);
 		}
 		else
