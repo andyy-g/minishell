@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/06 15:53:53 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/07 19:18:57 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 03:35:29 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int	fork_heredoc_child(t_dblist **list, t_sa *sig, int *pipe_heredoc, char *lim)
 		return (0);
 	close(pipe_heredoc[WRITE]);
 	ft_free(pipe_heredoc);
+	free_heredoc((*list)->curr, NULL);
 	ft_free(lim);
 	free_tokens_ast(NULL, list);
 	exit_minishell(NULL);
@@ -100,7 +101,6 @@ int	fork_heredoc_parent(pid_t pid, t_pars *token, int *pipe_heredoc)
 	waitpid(pid, &status, 0);
 	status = convert_status(status);
 	g_exit_status = status;
-	clean_heredoc(token, NULL);
 	token->heredoc = pipe_heredoc;
 	close(pipe_heredoc[WRITE]);
 	if (status == 130)

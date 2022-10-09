@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:08:05 by agranger          #+#    #+#             */
-/*   Updated: 2022/09/29 14:33:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 03:40:39 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,16 +78,17 @@ bool	must_be_expanded(char *lim)
 	return (true);
 }
 
-void	free_heredoc(t_pars *curr)
+void	free_heredoc(t_pars *tok, t_node *node)
 {
-	while (curr)
+	while (tok)
 	{
-		if (curr->token == HEREDOC && curr->heredoc)
-		{
-			close(curr->heredoc[READ]);
-			ft_free(curr->heredoc);
-		}
-		curr = curr->prev;
+		clean_heredoc(tok, NULL);
+		tok = tok->prev;
+	}
+	while (node)
+	{
+		clean_heredoc(NULL, node);
+		node = node->parent;
 	}
 	return ;
 }

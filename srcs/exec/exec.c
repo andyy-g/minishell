@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 23:46:40 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 03:40:03 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	tree_traversal(t_node **cmd, int *pipe_fd, pid_t **pids, int *index_cmd)
 		}
 		if (!ret || !fork_process(*cmd, pipe_fd, pids, *index_cmd))
 			return (0);
-		clean_heredoc(NULL, (*cmd)->parent);
+		free_heredoc(NULL, *cmd);
 		*cmd = next_cmd(*cmd);
 		(*index_cmd)++;
 	}

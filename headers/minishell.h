@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/09 01:09:29 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 03:36:12 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void		ft_clear_exp(t_dblist **list, t_pars **exp, int pos);
 void		display_error(t_err err, char *arg);
 void		remove_pars(t_pars **token);
 void		ft_home(t_pars **exp);
-void		free_heredoc(t_pars *curr);
+void		free_heredoc(t_pars *tok, t_node *node);
 void		which_error(t_node *node);
 void		exit_child_builtin(t_node *node);
 void		close_fd_in_out(t_node *node);
