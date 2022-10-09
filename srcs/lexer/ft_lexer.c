@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:10:58 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/07 20:28:16 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 03:48:34 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int	ft_lexer(char *str, t_dblist **list, int *err, t_sa *sig)
 	if (error == -1)
 	{
 		*err = 1;
-		free_heredoc(pars);
+		free_heredoc(pars, NULL);
 	}
 	return (1);
 }

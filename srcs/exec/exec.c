@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/09 03:40:03 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 04:29:44 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,13 +108,14 @@ int	exec(t_node *ast, t_sa *sig)
 			ast = next_cmd(ast);
 		else if (is_builtin_no_fork(ast->cmd[0]) && is_uniq_cmd(ast))
 		{	
+			ft_free(pids);
+			pids = NULL;
 			if (!launch_exec_wo_fork(ast))
 				return (0);
 			ast = next_cmd(ast);
 		}
-		else
-			if (!launch_exec_fork(&ast, sig, &pids, &index_cmd))
-				return (0);
+		else if (!launch_exec_fork(&ast, sig, &pids, &index_cmd))
+			return (0);
 		check_logical_node(&ast, &pids, &index_cmd);
 	}
 	ft_free(pids);

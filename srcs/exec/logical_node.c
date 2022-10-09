@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 11:38:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/09 03:42:10 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 04:24:45 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	get_status_last_process(pid_t *pids)
 
 	status = 0;
 	i = 0;
+	if (!pids)
+		return (g_exit_status);
 	while (pids[i] != -1)
 	{
 		if (pids[i] != 0)
