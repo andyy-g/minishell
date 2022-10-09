@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 15:48:08 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/09 01:09:15 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 07:16:04 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ char	*ft_replacebyvar(char *str, char *var, int start, int end)
 
 	new = ft_fill_new(str, var, start, end);
 	free(str);
-	ft_trim_str(new);
 	return (new);
 }
 
@@ -65,7 +64,8 @@ void	complete_str(t_pars **exp, int *j, int i, int *error)
 
 	if (!*j && !(*exp)->str[i])
 	{
-		if ((*exp)->prev && is_chevron((*exp)->prev->token))
+		if ((*exp)->prev && (is_chevron((*exp)->prev->token)
+				&& (*exp)->prev->token != HEREDOC))
 		{
 			*error = 1;
 			display_error(ERR_AMB_REDIRECT, (*exp)->str);

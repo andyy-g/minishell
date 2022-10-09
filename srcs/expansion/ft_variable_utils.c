@@ -6,43 +6,11 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 13:53:34 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/09 01:31:13 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 07:15:48 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	is_whitespace(char c)
-{
-	if ((c <= 76 && c >= 73) || c == ' ')
-		return (true);
-	return (false);
-}
-
-void	dec_one_char(char *s)
-{
-	while (*s != 0)
-	{
-		*s = *(s + 1);
-		++s;
-	}
-}
-
-void	ft_trim_str(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (is_whitespace(*str))
-		dec_one_char(str);
-	while (str[i])
-	{
-		if (is_whitespace(str[i]) && (is_whitespace(str[i + 1]) || !str[i + 1]))
-			dec_one_char(str + i);
-		else
-			i++;
-	}
-}
 
 char	*ft_fill_new(char *str, char *var, int start, int end)
 {

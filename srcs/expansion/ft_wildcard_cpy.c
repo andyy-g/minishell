@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 14:26:43 by charoua           #+#    #+#             */
-/*   Updated: 2022/09/22 13:39:34 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 07:24:08 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	ft_copy_pars(t_pars **prev, char *dir)
 		new->token = (*prev)->token;
 		new->db_quote = (*prev)->db_quote;
 		new->sp_quote = (*prev)->sp_quote;
+		new->heredoc = NULL;
 		new->prev = (*prev);
 		new->next = next;
 		(*prev)->next = new;

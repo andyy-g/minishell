@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 12:57:20 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/09 03:41:51 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/09 06:35:57 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ bool	is_env_variable(t_pars *exp, int i)
 		return (true);
 	if (exp->str[i] == '$' && exp->str[i + 1]
 		&& (ft_isalnum(exp->str[i + 1]) || exp->str[i + 1] == '_'
-			|| exp->str[i + 1] == '?'))
+			|| exp->str[i + 1] == '?') && exp->token != LIMITOR)
 		return (true);
 	return (false);
 }
