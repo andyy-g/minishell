@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 10:46:21 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 22:48:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/11 15:58:21 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ int	dup2_if_needed(t_node *node)
 			return (0);
 		}
 	}
+	close(node->fd_in);
 	if (node->fd_out != STDOUT_FILENO)
 	{
 		if (dup2(node->fd_out, STDOUT_FILENO) == -1)
@@ -100,6 +101,7 @@ int	dup2_if_needed(t_node *node)
 			return (0);
 		}
 	}
+	close(node->fd_out);
 	return (1);
 }
 
