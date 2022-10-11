@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 14:19:50 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/09 04:29:44 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/11 16:21:07 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ int	exec(t_node *ast, t_sa *sig)
 			ft_free(pids);
 			pids = NULL;
 			if (!launch_exec_wo_fork(ast))
-				return (0);
+				return (free_pids_exit(pids));
 			ast = next_cmd(ast);
 		}
 		else if (!launch_exec_fork(&ast, sig, &pids, &index_cmd))
-			return (0);
+			return (free_pids_exit(pids));
 		check_logical_node(&ast, &pids, &index_cmd);
 	}
 	ft_free(pids);

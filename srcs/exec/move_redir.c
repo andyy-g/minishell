@@ -6,7 +6,7 @@
 /*   By: agranger <agranger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:19:28 by agranger          #+#    #+#             */
-/*   Updated: 2022/10/08 18:07:47 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/11 16:19:42 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,10 @@ t_node	*next_cmd_after_redir(t_node *node)
 			node = node->left;
 	}
 	return (node);
+}
+
+int	free_pids_exit(pid_t *pids)
+{
+	free(pids);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: charoua <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/09 08:46:50 by charoua           #+#    #+#             */
-/*   Updated: 2022/10/09 03:36:12 by agranger         ###   ########.fr       */
+/*   Updated: 2022/10/11 16:20:15 by agranger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,7 @@ void		ft_concat(char **str, int i, int j, int word);
 void		ft_trim_str(char *str);
 void		check_logical_node(t_node **node, pid_t **pids, int *index_cmd);
 void		skip_and_clean(t_node **cmd, int *index_cmd, int *pipe, int ret);
+int			free_pids_exit(pid_t *pids);
 int			ft_update_pwd(const char *var, int option);
 int			expand_exit_status(char **str, int i, int j);
 int			set_signals_exec(char *cmd, t_sa *sig);
